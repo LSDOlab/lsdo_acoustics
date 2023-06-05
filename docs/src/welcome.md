@@ -1,15 +1,12 @@
-# Welcome to lsdo_project_template
+# Welcome to LSDO Acoustics
 
-![alt text](/src/images/lsdolab.png "Title displayed")
+![alt text](/src/images/lsdo_acoustics_v1.png "LSDO Acoustics")
 
-This page describes conceptually the purpose of your package at a high-level.
-Start with a one sentence description of your package.
-For example, "This repository serves as a template for all LSDOlab projects with regard to documentation, testing and hosting of open-source code."
-Include figures from the relevant paper and citation.
+This repository holds the code for different rotorcraft noise models (tonal and broadband).
 
-# Cite us
+# Cite us (tbp)
 ```none
-@article{lsdo2023,
+@article{lsdoacoustics,
         Author = { Author 1, Author 2, and Author 3},
         Journal = {Name of the Journal},
         Title = {Title of your paper},
