@@ -1,4 +1,4 @@
-# lsdo_project_template
+# lsdo_acoustics
 
 <!---
 [![Python](https://img.shields.io/pypi/pyversions/lsdo_project_template)](https://img.shields.io/pypi/pyversions/lsdo_project_template)
@@ -13,38 +13,36 @@
 [![Issues](https://img.shields.io/github/issues/LSDOlab/lsdo_project_template.svg)](https://github.com/LSDOlab/lsdo_project_template/issues)
 
 
-A template repository for LSDOlab projects
+<!-- This repository serves as a template for all LSDOlab projects with regard to documentation, testing and hosting of open-source code. -->
 
-This repository serves as a template for all LSDOlab projects with regard to documentation, testing and hosting of open-source code.
-
-*README.md file contains high-level information about your package: it's purpose, high-level instructions for installation and usage.*
+This repository holds the code for different rotorcraft noise models (tonal and broadband).
 
 # Installation
 
-## Installation instructions for users
+<!-- ## Installation instructions for users
 For direct installation with all dependencies, run on the terminal or command line
 ```sh
-pip install git+https://github.com/LSDOlab/lsdo_project_template.git
+pip install git+https://github.com/LSDOlab/lsdo_acoustics.git
 ```
 If you want users to install a specific branch, run
 ```sh
-pip install git+https://github.com/LSDOlab/lsdo_project_template.git@branch
+pip install git+https://github.com/LSDOlab/lsdo_acoustics.git@branch
 ```
 
-**Enabled by**: `packages=find_packages()` in the `setup.py` file.
+**Enabled by**: `packages=find_packages()` in the `setup.py` file. -->
 
 ## Installation instructions for developers
-To install `lsdo_project_template`, first clone the repository and install using pip.
+To install `lsdo_acoustics`, first clone the repository and install using pip.
 On the terminal or command line, run
 ```sh
-git clone https://github.com/LSDOlab/lsdo_project_template.git
-pip install -e ./lsdo_project_template
+git clone https://github.com/LSDOlab/lsdo_acoustics
+pip install -e ./lsdo_acoustics
 ```
 
-# For Developers
+<!-- # For Developers
 For details on documentation, refer to the README in `docs` directory.
 
-For details on testing/pull requests, refer to the README in `tests` directory.
+For details on testing/pull requests, refer to the README in `tests` directory. -->
 
 # License
-This project is licensed under the terms of the **GNU Lesser General Public License v3.0**.
+This project is licensed under the terms of the **MIT License**.
