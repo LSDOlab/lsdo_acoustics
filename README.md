@@ -15,7 +15,17 @@
 
 <!-- This repository serves as a template for all LSDOlab projects with regard to documentation, testing and hosting of open-source code. -->
 
-This repository holds the code for different rotorcraft noise models (tonal and broadband).
+This repository holds the various rotorcraft noise models (tonal and broadband) used in the NASA ULI project.
+
+# Models
+This repository holds models for two types of noise sources: tonal and broadband. The models that are being implemented are listed below.
+
+## Tonal noise models
+- Lowson
+- Kvurt-Stalnov
+
+## Broadband noise models
+- Brooks-Pope-Marcolini (BPM)
 
 # Installation
 
