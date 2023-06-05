@@ -10,7 +10,7 @@ the package along with any code snippets necessary to explain the software desig
 ## Referencing using bib files
 
 You can add references in the `references.bib` file and cite them 
-in the page like this {cite:p}`perez2011python`. 
+in the page like this {cite:p}`lowson1969theoretical`, {cite:p}`kvurt2022blade`, {cite:p}`brooks1989airfoil`.
 You can also include a list of references cited at the end as shown below.
 
 ## Bibliography
