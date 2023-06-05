@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='lsdo_acoustics',
-    version='0.1.0',
+    version='0.0.0',
     author='Luca Scotzniovsky',
     author_email='lscotzni@ucsd.edu',
     license='MIT',
