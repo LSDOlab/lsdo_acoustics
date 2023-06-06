@@ -43,7 +43,7 @@ class LowsonSPLModel(csdl.Model):
         An = self.create_output('An', shape=(num_nodes, num_observers, num_harmonic_modes, B, lam))
         Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_harmonic_modes, B, lam))
         bladeSPL = self.create_output('bladeSPL', shape=(num_nodes, num_observers, num_harmonic_modes, B))
-        # SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_harmonic_modes)) # UNCOMMENT LATER
+        SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_harmonic_modes)) # UNCOMMENT LATER
         # SPL_per_rotor = self.create_output('SPL_per_rotor', shape=(num_nodes, num_observers))
 
         # aaa = self.declare_variable('aaa', 1)
@@ -107,18 +107,32 @@ class LowsonSPLModel(csdl.Model):
 
                 bladeSPL[:,:,m-1,q] = 10.*csdl.log10((sum_A_B) / (2*P_ref**2)) # REWRITE IN TERMS OF SUM(AN) AND SUM(BN)
         
-        #     SPL_m[:,:,m] = 10*csdl.log10(csdl.sum(10.**(bladeSPL[:,:,m,:])/10., axes=(3,)))
-        
+            # SPL_m[:,:,m] = 10*csdl.log10(csdl.sum(10.**(bladeSPL[:,:,m,:])/10., axes=(3,)))
+            print(bladeSPL.shape)
+            ex = csdl.exp_a(10.,bladeSPL[:,:,m-1,:]/10.)
+            print(ex.shape)
+            ex_sum = csdl.sum(ex, axes=(3,))
+            SPL_m[:,:,m-1] = 10*csdl.log10(ex_sum)
+        SPL_per_rotor = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
         # SPL_per_rotor = 10*csdl.log10(csdl.sum(10.**(SPL_m/10.), axes=(2,))) # num_nodes * num_observers
-        # self.register_output('SPL_per_rotor', SPL_per_rotor)
-        dummy = self.register_output('dummy', csdl.sum(bladeSPL))
+        self.register_output('SPL_per_rotor', SPL_per_rotor)
+        # dummy = self.register_output('dummy', csdl.sum(bladeSPL))
+        print(SPL_per_rotor.shape)
+        
 
 if __name__ == '__main__':
     from python_csdl_backend import Simulator
+    import time
     
-    m = LowsonSPLModel(num_nodes=1, num_blades=2, num_observers=1)
+    m = LowsonSPLModel(num_nodes=2, num_blades=2, num_observers=2)
+    n = 100
     sim = Simulator(m)
-    sim.run()
+    t1 = time.time()
+    for i in range(n):
+        sim.run()
+    t2 = time.time()
+    print(t2-t1)
+    print((t2-t1)/n)
     
 
 '''
