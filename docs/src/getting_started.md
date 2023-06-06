@@ -9,7 +9,7 @@ git clone https://github.com/LSDOlab/lsdo_acoustics
 pip install -e ./lsdo_acoustics
 ```
 
-# License
+## License
 This project is licensed under the terms of the **MIT License**.
 
 ## Setting up Documentation
