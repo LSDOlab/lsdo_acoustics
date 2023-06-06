@@ -30,6 +30,9 @@ class LowsonModel(csdl.Model):
         sectional_D = self.declare_variable('sectional_D', shape=(num_rad,))
         sectional_T = self.declare_variable('sectional_T', shape=(num_rad,))
 
+        # FOURIER SERIES TRUNCATION INDICES:
+        load_harmonics = np.arange(0,11,1) # looking at values from 0 to 10
+
         '''
         NOTE:
         - add model that computes the observer position relative to EACH rotor and the angle \theta 

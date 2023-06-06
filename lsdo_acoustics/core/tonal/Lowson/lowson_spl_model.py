@@ -8,6 +8,7 @@ class LowsonSPLModel(csdl.Model):
         self.parameters.declare('num_observers', default=1)
         self.parameters.declare('harmonics', default=[1,2,3])
         self.parameters.declare('P_ref', default=2e-5)
+        self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
 
     
     def define(self):
@@ -36,19 +37,15 @@ class LowsonSPLModel(csdl.Model):
 
         # lam = np.arange(0,11,1)
         num_harmonic_modes = len(harmonic_mode_num)
-        lam = 10 # truncation for the infinite sum
+        lam = 10 + 1 # truncation for the infinite sum
         # An = self.create_output('An', shape=(harmonic_mode_num[-1], B, lam))
         # Bn = self.create_output('Bn', shape=(harmonic_mode_num[-1], B, lam))
 
         An = self.create_output('An', shape=(num_nodes, num_observers, num_harmonic_modes, B, lam))
         Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_harmonic_modes, B, lam))
         bladeSPL = self.create_output('bladeSPL', shape=(num_nodes, num_observers, num_harmonic_modes, B))
-        SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_harmonic_modes)) # UNCOMMENT LATER
-        # SPL_per_rotor = self.create_output('SPL_per_rotor', shape=(num_nodes, num_observers))
+        SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_harmonic_modes))
 
-        # aaa = self.declare_variable('aaa', 1)
-        # bbb = self.declare_variable('bbb', 3)
-        # ccc = bbb**aaa
 
         asdf = self.declare_variable('dummy_output', np.ones((num_nodes, num_observers, 1, 1, 1)))
         # for q in range(1,B+1):
