@@ -51,13 +51,11 @@ class LoadIntegrationModel(csdl.Model):
         # bD_list = self.create_output('bD_list', shape=(num_nodes, num_blades, len(load_harmonics)))
 
         input_shape = aT_integrand.shape
-        output_shape = aT_integrand.shape[:-1] # NOT USED
         dim = 3
         input_names = ['aT_integrand', 'aD_integrand', 'bT_integrand', 'bD_integrand']
         output_names = ['aT_list', 'aD_list', 'bT_list', 'bD_list']
 
         for i in range(4):
-
             self.add(
                 TrapezoidMethod(
                     input_name=input_names[i],
@@ -68,14 +66,9 @@ class LoadIntegrationModel(csdl.Model):
             )
 
         '''
-        - Output coefficients should have a a size of (num_nodes,)
-        - Each operating condition for each rotor has a set of 4 Fourier coeff. that defines the loading
+        OUTPUT SHAPE OF aT_list, ... is (num_nodes, num_blades, num_harmonics)
         '''
 
-
-
-
-        asdf = self.register_output('asdf', sectional_D*sectional_T) # dummy output
 
 
 class TrapezoidMethod(csdl.Model):
@@ -93,9 +86,9 @@ class TrapezoidMethod(csdl.Model):
 
         h = self.declare_variable('step_size')
         f = self.declare_variable(input_name, shape=input_shape)
-
         out_pre_integration = (f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
         out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
+        print(out.shape)
 
 '''
 NOTE:

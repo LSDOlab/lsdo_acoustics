@@ -6,7 +6,7 @@ class LowsonSPLModel(csdl.Model):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_blades', default=2)
         self.parameters.declare('num_observers', default=1)
-        self.parameters.declare('harmonics', default=[1,2,3])
+        self.parameters.declare('blade_harmonics', default=[1,2,3])
         self.parameters.declare('P_ref', default=2e-5)
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
 
@@ -15,8 +15,9 @@ class LowsonSPLModel(csdl.Model):
         num_nodes = self.parameters['num_nodes']
         B = self.parameters['num_blades']
         num_observers = self.parameters['num_observers']
-        harmonic_mode_num = self.parameters['harmonics']
+        blade_harmonics = self.parameters['blade_harmonics']
         P_ref = self.parameters['P_ref']
+        load_harmonics = self.parameters['load_harmonics']
 
         a = self.declare_variable('speed_of_sound')
         M = self.declare_variable('forward_mach_number') # mach number traveling forward
@@ -34,24 +35,19 @@ class LowsonSPLModel(csdl.Model):
         # b_D = 
 
         theta = self.declare_variable('observer_theta', shape=(num_nodes, num_observers))
+        num_blade_harmonics = len(blade_harmonics)
 
-        # lam = np.arange(0,11,1)
-        num_harmonic_modes = len(harmonic_mode_num)
-        lam = 10 + 1 # truncation for the infinite sum
-        # An = self.create_output('An', shape=(harmonic_mode_num[-1], B, lam))
-        # Bn = self.create_output('Bn', shape=(harmonic_mode_num[-1], B, lam))
-
-        An = self.create_output('An', shape=(num_nodes, num_observers, num_harmonic_modes, B, lam))
-        Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_harmonic_modes, B, lam))
-        bladeSPL = self.create_output('bladeSPL', shape=(num_nodes, num_observers, num_harmonic_modes, B))
-        SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_harmonic_modes))
+        An = self.create_output('An', shape=(num_nodes, num_observers, num_blade_harmonics, B, len(load_harmonics)))
+        Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_blade_harmonics, B, len(load_harmonics)))
+        bladeSPL = self.create_output('bladeSPL', shape=(num_nodes, num_observers, num_blade_harmonics, B))
+        SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_blade_harmonics))
 
 
         asdf = self.declare_variable('dummy_output', np.ones((num_nodes, num_observers, 1, 1, 1)))
         # for q in range(1,B+1):
-        for m in harmonic_mode_num: # looping over harmonic modes
+        for m in blade_harmonics: # looping over harmonic modes
             for q in range(B):  # looping over number of blades
-                for i in range(0,lam):  # looping through summation of Fourier coefficients
+                for i in range(len(load_harmonics)):  # looping through summation of Fourier coefficients
                     ind = m*B-i
                     # IF CLAUSES
                     if np.mod(m*B-i,2) == 0: # n-lam is even
