@@ -53,7 +53,7 @@ class LoadIntegrationModel(csdl.Model):
         input_shape = aT_integrand.shape
         dim = 3
         input_names = ['aT_integrand', 'aD_integrand', 'bT_integrand', 'bD_integrand']
-        output_names = ['aT_list', 'aD_list', 'bT_list', 'bD_list']
+        output_names = ['aT', 'aD', 'bT', 'bD']
 
         for i in range(4):
             self.add(
@@ -66,7 +66,7 @@ class LoadIntegrationModel(csdl.Model):
             )
 
         '''
-        OUTPUT SHAPE OF aT_list, ... is (num_nodes, num_blades, num_harmonics)
+        OUTPUT SHAPE OF aT, ... is (num_nodes, num_blades, num_harmonics)
         '''
 
 
@@ -86,7 +86,7 @@ class TrapezoidMethod(csdl.Model):
 
         h = self.declare_variable('step_size')
         f = self.declare_variable(input_name, shape=input_shape)
-        out_pre_integration = (f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
+        out_pre_integration = 1/(2*np.pi)*(f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
         out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
         print(out.shape)
 

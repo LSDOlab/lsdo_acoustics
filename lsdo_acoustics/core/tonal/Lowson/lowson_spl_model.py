@@ -29,10 +29,10 @@ class LowsonSPLModel(csdl.Model):
         omega = rpm*2*np.pi/60 # conversion to radians per second
 
         # FOURIER COEFFICIENTS FOR THRUST AND DRAG
-        # a_T = 
-        # b_T = 
-        # a_D = 
-        # b_D = 
+        a_T = self.declare_variable('a_T', shape=(num_nodes, B, len(load_harmonics)))
+        b_T = self.declare_variable('b_T', shape=(num_nodes, B, len(load_harmonics)))
+        a_D = self.declare_variable('a_D', shape=(num_nodes, B, len(load_harmonics)))
+        b_D = self.declare_variable('b_D', shape=(num_nodes, B, len(load_harmonics)))
 
         theta = self.declare_variable('observer_theta', shape=(num_nodes, num_observers))
         num_blade_harmonics = len(blade_harmonics)
@@ -41,7 +41,6 @@ class LowsonSPLModel(csdl.Model):
         Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_blade_harmonics, B, len(load_harmonics)))
         bladeSPL = self.create_output('bladeSPL', shape=(num_nodes, num_observers, num_blade_harmonics, B))
         SPL_m = self.create_output('SPL_m', shape=(num_nodes, num_observers, num_blade_harmonics))
-
 
         asdf = self.declare_variable('dummy_output', np.ones((num_nodes, num_observers, 1, 1, 1)))
         # for q in range(1,B+1):
@@ -53,43 +52,51 @@ class LowsonSPLModel(csdl.Model):
                     if np.mod(m*B-i,2) == 0: # n-lam is even
                         # REAL
                         if np.mod(ind, 4) == 2:
-                            An[:,:,m-1,q,i] = q*i*asdf
+                            coeff = -1
                         elif np.mod(ind, 4) == 0:
-                            An[:,:,m-1,q,i] = q*i*asdf
+                            coeff = 1
+                        
+                        An[:,:,m-1,q,i] = coeff/(4*np.pi) * q*i*asdf + 1
 
                         # IMAG
                         if (-ind+1<0) and (np.mod(np.abs(-ind+1),4)==1):
-                            Bn[:,:,m-1,q,i] = q*i*asdf
+                            coeff = -1.
 
                         elif (-ind+1<0) and (np.mod(np.abs(-ind+1),4)==3):
-                            Bn[:,:,m-1,q,i] = q*i*asdf
+                            coeff = 1.
 
                         elif (-ind+1>0) and (np.mod(np.abs(-ind+1),4)==1):
-                            Bn[:,:,m-1,q,i] = q*i*asdf
+                            coeff = 1.
 
                         elif (-ind+1>0) and (np.mod(np.abs(-ind+1),4)==3):
-                            Bn[:,:,m-1,q,i] = q*i*asdf
+                            coeff = -1.
+
+                        Bn[:,:,m-1,q,i] = coeff/(4*np.pi)*q*i*asdf + 2
                         
 
                     if np.mod(m*B-i,2) == 1: # n-lam is odd
                         # REAL
                         if np.mod(-ind+1, 4) == 2:
-                            An[:,:,m-1,q,i] = q*i*asdf + 1
+                            coeff = 1.
                         elif np.mod(-ind+1, 4) == 0:
-                            An[:,:,m-1,q,i] = q*i*asdf
+                            coeff = -1.
+
+                        An[:,:,m-1,q,i] = coeff/(4*np.pi) * q*i*asdf + 3
                         
                         # IMAG
                         if (-ind<0) and (np.mod(np.abs(ind),4)==1):
-                            Bn[:,:,m-1,q,i] = q*i*asdf
+                            coeff = -1.
 
                         elif (-ind<0) and (np.mod(np.abs(ind),4)==3):
-                            Bn[:,:,m-1,q,i] = q*i*asdf + 4
+                            coeff = 1.
 
                         elif (-ind>0) and (np.mod(np.abs(ind),4)==1):
-                            Bn[:,:,m-1,q,i] = q*i*asdf + 5
+                            coeff = 1.
 
                         elif (-ind>0) and (np.mod(np.abs(ind),4)==3):
-                            Bn[:,:,m-1,q,i] = q*i*asdf + 6
+                            coeff = -1.
+
+                        Bn[:,:,m-1,q,i] = coeff/(4*np.pi)*q*i*asdf + 4
 
                 
                 # bladeAn[q] = csdl.sum(An, axes=(0,)) # An needs to be multidimensional, CHECK THE AXES INPUT
