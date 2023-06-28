@@ -3,7 +3,8 @@ from typing import Union
 
 class Acoustics(object):
     def __init__(self, 
-                 design_condition: CADDEE.DesignCondition, 
+                #  design_condition: CADDEE.DesignCondition, 
+                 design_condition: None,
                  aircraft_position: np.array,
                  ):
         self.design_condition = design_condition
@@ -37,8 +38,7 @@ class Acoustics(object):
         if isinstance(name, list):
             if len(name) > 1:
                 raise TypeError('Cannot define multiple stand-alone observers at once. \
-                                For directivity plots, please use setup_directivity_plot.'
-                                )
+                                For directivity plots, please use setup_directivity_plot.')
             
         num_locations = obs_position.shape[0]
         if num_locations > 1 and stationary: 
@@ -50,7 +50,8 @@ class Acoustics(object):
         #     self.directivity_names.append(name)
         # else:
         #     self.directivity_names.append(False)
-                        
+        if len(obs_position.shape) == 1:
+            obs_position = obs_position.reshape(1,3)
         self.observer_position.append(obs_position)
         self.observer_time_vector.append(time_vector)
         self.observer_velocity.append(obs_velocity)
@@ -74,12 +75,26 @@ class Acoustics(object):
                                name: str,
                                center_point: np.array,
                                radius: float,
-                               num_azim: int=25):
+                               num_azim: int=25,
+                               orientation = np.array([0., 1., 0.])
+                               ):
+        '''
+        Inputs:
+        - name: String to identify directivity plot points/observers
+        - center point: The center point defining the directivity plot
+        - radius: Radius around center where we want to 
+        - num_azim: Azimuthal discretization of directivity plot
+        - orientation: Normal vector of the directivity plot. By default, it points vertically
+        '''
+
+        if np.linalg.norm(orientation - np.array([0., 1., 0.])) > 1e-6:
+            raise Warning('Orientation has not been implemented yet \
+                          By default, the surface normal vector points vertically.')
         
-        angles = np.linspace(0.,2*np.pi, num_azim)
+        angles = np.linspace(0.,2*np.pi*(num_azim-1)/num_azim, num_azim)
         dir_plot_boundary = np.empty((num_azim,3))
         dir_plot_boundary[:,0] = radius*np.cos(angles) + center_point[0]
-        dir_plot_boundary[:,1] = radius*np.cos(angles) + center_point[1]
+        dir_plot_boundary[:,1] = radius*np.sin(angles) + center_point[1]
         dir_plot_boundary[:,2] = center_point[2]
 
         # NOTE: STORE NAME AND MAYBE SOMETHING ELSE TO CALL OR REFER TO THAT DATA
@@ -88,9 +103,9 @@ class Acoustics(object):
         self.add_observer(
             name=name,
             obs_position=dir_plot_boundary,
-            time_vector=np.array[0],
+            time_vector=np.array([0]),
             directivity=True,
-            stationary=True
+            stationary=True,
         )
         self.directivity_names.append(name)
 

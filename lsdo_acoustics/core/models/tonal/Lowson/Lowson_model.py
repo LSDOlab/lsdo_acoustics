@@ -1,7 +1,8 @@
 import csdl
 import numpy as np
-from load_integration_model import LoadIntegrationModel
-from lowson_spl_model import LowsonSPLModel
+from lsdo_acoustics.core.models.tonal.Lowson.load_integration_model import LoadIntegrationModel
+# from load_integration_model import LoadIntegrationModel
+from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model import LowsonSPLModel
 
 class LowsonModel(csdl.Model):
     def initialize(self):

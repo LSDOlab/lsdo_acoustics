@@ -28,7 +28,7 @@ setup(
         'sphinx-autoapi',
         'numpydoc',
         'gitpython',
-        'sphinx-collections @ git+https://github.com/anugrahjo/sphinx-collections.git', # 'sphinx-collections',
+        # 'sphinx-collections @ git+https://github.com/anugrahjo/sphinx-collections.git', # 'sphinx-collections',
         'sphinxcontrib-bibtex',
         'setuptools',
         'wheel',

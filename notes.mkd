@@ -1,0 +1,27 @@
+TO-DO:
+- think about model structure 
+    - interchangeability of models
+- finding structure of forces from BET/BEMT
+    - need to know how the outputs from rotor model are organized
+
+
+
+NOTES:
+- high level output SPL (sound level pressure; eq. 27, Kvurt AIAA 2022)
+- this is dependent on rms pressure deviations, which comes from magnitude of n-th sound harmonic c_n (or c_{mB})
+- coefficients A_lambdaD, B_lambdaD, A_lambdaT, B_lambdaD all represent the loading at the patches of the rotor mesh
+
+- different SPL models will have different files: Lowson, BPM, Kvurt-Stalnov (KS)
+
+- total SPL will have be an array of length (num_observers), as we are calculating SPL at these prescribed locations
+    - this includes the outputs for directivity plots, etc. where we treat the plots as just a group of observers
+
+
+
+WORKFLOW:
+- sectional drag and thrust of the blades come from some propeller model (I believe BEMT)
+- other discrete properties are given
+- sectional loads come in from BET/BEMT
+- 2 MAIN STEPS:
+    - Fourier coefficients are calculated using the results from loading (using integration)
+    - These fourier coefficients are then used to run the actual Lowson model and calculate SPL
