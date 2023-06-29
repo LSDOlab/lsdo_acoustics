@@ -73,7 +73,7 @@ class Acoustics(object):
     # Directivity plot
     def setup_directivity_plot(self,
                                name: str,
-                               center_point: np.array,
+                               center_point: np.array, # LATER ADD 'aircraft as another option
                                radius: float,
                                num_azim: int=25,
                                orientation = np.array([0., 1., 0.])
@@ -82,6 +82,7 @@ class Acoustics(object):
         Inputs:
         - name: String to identify directivity plot points/observers
         - center point: The center point defining the directivity plot
+            - 'aircraft' is used for unsteady segments
         - radius: Radius around center where we want to 
         - num_azim: Azimuthal discretization of directivity plot
         - orientation: Normal vector of the directivity plot. By default, it points vertically

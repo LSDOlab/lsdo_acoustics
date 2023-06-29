@@ -12,6 +12,7 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.parameters.declare('acoustics_data', acoustics_data)
 
         self.observer_group_dictionaries = acoustics_data.observer_group_dictionaries
+        self.aircraft_position = acoustics_data.aircraft_position
         self.model_name = model_name
         self.custom_model = custom_model
 
@@ -132,6 +133,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.observer_count = []
         self.observer_time = []
 
+        self.num_observers = 0
+
         observer_groups = self.observer_group_dictionaries
         for observer_group in observer_groups: # loop over list
             observer_group_name = observer_group['name']
@@ -143,34 +146,54 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             print(list(observer_group_time))
             print(observer_group_time[:])
             
-            self.observer_x_location.extend(observer_group_position[:, 0])
-            self.observer_y_location.extend(observer_group_position[:, 1])
-            self.observer_z_location.extend(observer_group_position[:, 2])
+            for i in range(len(observer_group_time)):
+                self.observer_x_location.extend(observer_group_position[:, 0])
+                self.observer_y_location.extend(observer_group_position[:, 1])
+                self.observer_z_location.extend(observer_group_position[:, 2])
 
             observer_count = observer_group_position.shape[0]
             self.observer_name_list.extend(
                 [observer_group_name] * observer_count
             )
 
+            # if len(observer_group_time) == 1:
+            #     self.observer_time.extend(
+            #         # [observer_group_time] * observer_count
+            #         [list(observer_group_time)] * observer_count
+            #     )
+            # else:
+            #     self.observer_time.append(
+            #         # [observer_group_time] * observer_count
+            #         list(observer_group_time) * observer_count
+            #     )
+
             if len(observer_group_time) == 1:
                 self.observer_time.extend(
                     # [observer_group_time] * observer_count
-                    [list(observer_group_time)] * observer_count
+                    list(observer_group_time) * observer_count
                 )
             else:
-                self.observer_time.append(
+                self.observer_time.extend(
                     # [observer_group_time] * observer_count
                     list(observer_group_time) * observer_count
                 )
+
+
+            # self.observer_time.extend(observer_group_time)
+            print(len(observer_group_time), observer_group_position.shape[0])
+            self.num_observers += (len(observer_group_time) * observer_group_position.shape[0])
         
-        self.num_observers = len(self.observer_name_list)
+        self.num_observer_groups = len(self.observer_name_list)
 
         self.observer_data = {
+            'name': self.observer_name_list,
+            'aircraft_position': np.resize(self.aircraft_position, (3,self.num_observers)),
+            # 'aircraft_position': self.aircraft_position,
             'x': np.array(self.observer_x_location),
             'y': np.array(self.observer_y_location),
             'z': np.array(self.observer_z_location),
-            'name': self.observer_name_list,
-            'time': self.observer_time,
+            'time': np.array(self.observer_time),
+            'num_observers': self.num_observers # this accounts for the additional observers from time segments
         }
             
         return self.observer_data

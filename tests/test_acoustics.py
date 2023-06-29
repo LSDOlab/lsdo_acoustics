@@ -1,6 +1,8 @@
 import numpy as np
 from lsdo_acoustics.core.acoustics import Acoustics
 from lsdo_acoustics.core.m3l_models.lowson_m3l_model import Lowson
+from python_csdl_backend import Simulator
+from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 
 
 a = Acoustics(design_condition=1, 
@@ -22,3 +24,25 @@ a_m3l = Lowson(mesh='mesh', acoustics_data=a)
 # a_m3l.set_acoustics(a)
 # a_m3l.observer_group_dictionaries = a.observer_group_dictionaries
 a_m3l._assemble_observers()
+
+observer_data = a_m3l.observer_data
+
+
+m = SteadyObserverLocationModel(
+    # num_nodes=2,
+    aircraft_location=observer_data['aircraft_position'],
+    init_obs_x_loc=observer_data['x'],
+    init_obs_y_loc=observer_data['y'],
+    init_obs_z_loc=observer_data['z'],
+    time_vectors=observer_data['time'],
+    total_num_observers=observer_data['num_observers']
+)
+
+sim = Simulator(m)
+sim.run()
+
+print('x:', sim['rel_obs_x_pos'])
+print('y:', sim['rel_obs_y_pos'])
+print('z:', sim['rel_obs_z_pos'])
+print('dist:', sim['rel_obs_dist'])
+print('angle:', sim['rel_obs_angle'])
