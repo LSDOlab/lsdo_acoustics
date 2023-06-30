@@ -3,6 +3,7 @@ import numpy as np
 from lsdo_acoustics.core.models.broadband.BPM_model import BPMModel
 from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
 from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
+from lsdo_acoustics.core.models.broadband.barry_magliozzi_model import BarryMagliozziBroadbandModel
 
 class AcousticsModelTemplate(m3l.ExplicitOperation):
 
@@ -46,10 +47,13 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         - csdl_model: csdl.Model()
             The csdl model that computes the outputs
         '''
-
         if self.model_name == 'BPM':
             model = BPMModel(
                 observer_data=observer_data,
+            )
+        elif self.model_name == 'BMBroadband':
+            model = BarryMagliozziBroadbandModel(
+                observer_data=observer_data
             )
         else:
             model = self.custom_model(
