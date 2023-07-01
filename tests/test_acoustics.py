@@ -1,6 +1,6 @@
 import numpy as np
-from lsdo_acoustics.core.acoustics import Acoustics
-from lsdo_acoustics.core.m3l_models.lowson_m3l_model import Lowson
+from lsdo_acoustics import Acoustics
+from lsdo_acoustics.core.m3l_models import Lowson
 from python_csdl_backend import Simulator
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 
