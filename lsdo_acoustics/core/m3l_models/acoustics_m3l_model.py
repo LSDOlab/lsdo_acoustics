@@ -1,21 +1,26 @@
 import m3l
 import numpy as np
-from lsdo_acoustics.core.models.broadband.BPM_model import BPMModel
-from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
-from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
-from lsdo_acoustics.core.models.broadband.barry_magliozzi_model import BarryMagliozziBroadbandModel
 
 class AcousticsModelTemplate(m3l.ExplicitOperation):
 
-    def initialize(self, mesh, acoustics_data, model_name='acoustics', custom_model=None):
-        self.parameters.declare('mesh', mesh)
-        self.parameters.declare('custom_model', custom_model)
-        self.parameters.declare('acoustics_data', acoustics_data)
+    def initialize(self, kwargs):
+        self.parameters.declare('mesh', default=None)
+        self.parameters.declare('model_name', types=str, default='SHO-TIME')
+        self.parameters.declare('custom_model', default=None)
+        self.parameters.declare('acoustics_data', default=None)
 
+        # self.observer_group_dictionaries = acoustics_data.observer_group_dictionaries
+        # self.aircraft_position = acoustics_data.aircraft_position
+        # self.model_name = model_name
+        # self.custom_model = custom_model
+
+    def setup_acoustics_data(self):
+        acoustics_data = self.parameters['acoustics_data']
         self.observer_group_dictionaries = acoustics_data.observer_group_dictionaries
         self.aircraft_position = acoustics_data.aircraft_position
-        self.model_name = model_name
-        self.custom_model = custom_model
+
+        self.model_name = self.parameters['model_name']
+        self.custom_model = self.parameters['custom_model']
 
     def compute_tonal_noise(self, observer_data: None):
         '''
@@ -25,10 +30,12 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         '''
 
         if self.model_name == 'KS':
+            from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
             model = KvurtStalnovModel(
                 observer_data=observer_data,
             )
         elif self.model_name == 'Lowson':
+            from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
             model = LowsonModel(
                 observer_data=observer_data,
             )
@@ -48,10 +55,12 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             The csdl model that computes the outputs
         '''
         if self.model_name == 'BPM':
+            from lsdo_acoustics.core.models.broadband.BPM_model import BPMModel
             model = BPMModel(
                 observer_data=observer_data,
             )
         elif self.model_name == 'BMBroadband':
+            from lsdo_acoustics.core.models.broadband.barry_magliozzi_model import BarryMagliozziBroadbandModel
             model = BarryMagliozziBroadbandModel(
                 observer_data=observer_data
             )
@@ -129,6 +138,9 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         - convert the observers in each mission segment to one single vector
         - len is (sum of observers per segment, )
         '''
+        # SETTING UP ACOUSTICS DATA HERE
+        self.setup_acoustics_data()
+
         # self.observer_list = []
         self.observer_name_list = []
         self.observer_x_location = []

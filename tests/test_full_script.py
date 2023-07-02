@@ -27,7 +27,7 @@ rotor_1 = cd.Rotor(
     primitive_names=rotor_1_primitive_names
 )
 
-rotor_7_primitive_names = list(spatial_rep.get_primitives(search_names=['rotor_7_disk']).keys())
+rotor_7_primitive_names = list(spatial_rep.get_primitives(search_names=['Rotor_7_disk']).keys())
 rotor_7 = cd.Rotor(
     name='rotor_7', 
     spatial_representation=spatial_rep, 
@@ -119,6 +119,8 @@ bem_model_7 = BEM(component=rotor_7, mesh=rotor_7_bem_mesh)
 bem_model_7.set_module_input('rpm', val=1200)
 bem_forces_7, bem_moments_7 = bem_model_7.evaluate(ac_states=ac_states)
 
+# NOTE: CODE HAS NO ISSUES UP TO HERE
+exit()
 '''
 ================================ ACOUSTICS MODELS ================================
 '''

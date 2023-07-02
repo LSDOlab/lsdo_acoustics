@@ -4,9 +4,8 @@ from lsdo_acoustics.core.models.total_noise_model import TotalAircraftNoiseModel
 
 class TotalAircraftNoise(m3l.ExplicitOperation):
     
-    def initialize(self, observer_data=None):
-        self.parameters.declare('observer_data')
-        self.observer_data = observer_data
+    def initialize(self, kwargs):
+        self.parameters.declare('observer_data', default=None)
 
     def compute(self, var_names):
         model = TotalAircraftNoiseModel(
@@ -23,6 +22,7 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
         Outputs:
         - total spl from aircraft at each observer location
         '''
+        self.observer_data = self.parameters['observer_data']
         # NOTE: NEED TO FIGURE OUT HOW TO DEAL WITH NAMING CONVENTION
         # var_names = ...
 
