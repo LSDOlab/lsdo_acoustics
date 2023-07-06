@@ -13,7 +13,7 @@ class SteadyObserverLocationModel(csdl.Model):
         self.parameters.declare('init_obs_y_loc')
         self.parameters.declare('init_obs_z_loc')
         self.parameters.declare('time_vectors')
-        self.parameters.declare('total_num_observers', default=1) # NOT OBSERVER GROUPS
+        self.parameters.declare('total_num_observers') # NOT OBSERVER GROUPS
     
     def define(self):
         num_nodes = self.parameters['num_nodes']

@@ -5,4 +5,5 @@ from lsdo_acoustics.core import m3l_models
 
 from pathlib import Path
 ROOT = Path(__file__).parents[0]
-GEOMETRY_PATH = ROOT / 'core' / 'sample_geometry'
+GEOMETRY_PATH = ROOT / 'core' / 'sample_geometry' / 'geometry'
+IMPORTS_PATH = ROOT / 'core' / 'sample_geometry' / 'imports'

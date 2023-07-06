@@ -4,7 +4,7 @@ import lsdo_geo as lg
 import m3l
 from python_csdl_backend import Simulator
 import array_mapper as am 
-from lsdo_acoustics import GEOMETRY_PATH
+from lsdo_acoustics import GEOMETRY_PATH, IMPORTS_PATH
 
 caddee = cd.CADDEE()
 caddee.system_representation = system_rep = cd.SystemRepresentation()
@@ -12,8 +12,8 @@ caddee.system_parameterization = system_param = cd.SystemParameterization(system
 
 file_name = GEOMETRY_PATH / 'side_by_side_rotors.stp'
 spatial_rep = system_rep.spatial_representation
-spatial_rep.import_file(file_name=file_name)
-spatial_rep.refit_geometry(file_name=file_name)
+spatial_rep.import_file(file_name=file_name, file_path=str(IMPORTS_PATH))
+spatial_rep.refit_geometry(file_name=file_name, file_path=str(IMPORTS_PATH))
 
 '''
 FWD EVAL TEST CASE:
@@ -45,9 +45,9 @@ p11 = rotor_1.project(np.array([0.000, 25.000, 0.000]), direction=np.array([0.,0
 p12 = rotor_1.project(np.array([15.000, 40.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
 p21 = rotor_1.project(np.array([-15.000, 40.000 , 0.000]), direction=np.array([0.,0.,1.]), plot=False)
 p22 = rotor_1.project(np.array([0.000, 55.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
-rotor_1_in_plane_x = am.subtract([p12-p21])
-rotor_1_in_plane_y = am.subtract([p22-p11])
-rotor_1_origin = rotor_1.project(np.array([0.000, -40.000, 0.000]))
+rotor_1_in_plane_x = am.subtract(p12,p21)
+rotor_1_in_plane_y = am.subtract(p22,p11)
+rotor_1_origin = rotor_1.project(np.array([0.000, -40.000, 0.000]), direction=np.array([0.,0.,1.]))
 system_rep.add_output('rotor_1_in_plane_x', quantity=rotor_1_in_plane_x)
 system_rep.add_output('rotor_1_in_plane_y', quantity=rotor_1_in_plane_y)
 system_rep.add_output('rotor_1_origin', quantity=rotor_1_origin)
@@ -57,9 +57,9 @@ p11 = rotor_1.project(np.array([0.000, -25.000, 0.000]), direction=np.array([0.,
 p12 = rotor_1.project(np.array([15.000, -40.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
 p21 = rotor_1.project(np.array([-15.000, -40.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
 p22 = rotor_1.project(np.array([0.000, -55.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
-rotor_2_in_plane_x = am.subtract([p12-p21])
-rotor_2_in_plane_y = am.subtract([p11-p22])
-rotor_2_origin = rotor_2.project(np.array([0.000, -40.000, 0.000]))
+rotor_2_in_plane_x = am.subtract(p12, p21)
+rotor_2_in_plane_y = am.subtract(p11, p22)
+rotor_2_origin = rotor_2.project(np.array([0.000, -40.000, 0.000]), direction=np.array([0.,0.,1.]))
 system_rep.add_output('rotor_2_in_plane_x', quantity=rotor_2_in_plane_x)
 system_rep.add_output('rotor_2_in_plane_y', quantity=rotor_2_in_plane_y)
 system_rep.add_output('rotor_2_origin', quantity=rotor_2_origin)

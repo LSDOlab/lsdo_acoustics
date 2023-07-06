@@ -7,7 +7,7 @@ class LowsonSPLModel(csdl.Model):
         self.parameters.declare('num_blades', default=2)
         self.parameters.declare('num_observers', default=1)
         self.parameters.declare('modes', default=[1,2,3])
-        self.parameters.declare('harmonics', default=np.arange(0,11,1))
+        self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
         self.parameters.declare('component_name')
 
     
@@ -19,7 +19,7 @@ class LowsonSPLModel(csdl.Model):
         num_observers = self.parameters['num_observers']
         modes = self.parameters['modes']
         num_modes = len(modes)
-        harmonics = self.parameters['harmonics']
+        harmonics = self.parameters['load_harmonics']
         num_harmonics = len(harmonics)
 
         component_name = self.parameters['component_name']
@@ -199,8 +199,3 @@ if __name__ == '__main__':
     sim.run()
 
     
-
-'''
-NOTE:
-- Include 3 harmonic mode numbers (m = 1,2,3)
-'''

@@ -3,14 +3,14 @@ import caddee.api as cd
 import lsdo_geo as lg
 import m3l
 from python_csdl_backend import Simulator
-from caddee import IMPORTS_FILES_FOLDER
+from caddee import GEOMETRY_FILES_FOLDER
 import array_mapper as am
 
 caddee = cd.CADDEE()
 caddee.system_representation = system_rep = cd.SystemRepresentation()
 caddee.system_parameterization = system_param = cd.SystemParameterization(system_representation=system_rep)
 
-file_name = IMPORTS_FILES_FOLDER / 'LPC_test.stp'
+file_name = GEOMETRY_FILES_FOLDER / 'lift_plus_cruise_final.stp'
 spatial_rep = system_rep.spatial_representation
 spatial_rep.import_file(file_name=file_name)
 spatial_rep.refit_geometry(file_name=file_name)
@@ -44,7 +44,7 @@ p21 = rotor_1.project(np.array([10.070, -18.750, 6.730]), direction=np.array([0.
 p22 = rotor_1.project(np.array([0.070, -18.750, 6.730]), direction=np.array([0., 0., 1.]), plot=False)
 rotor_1_in_plane_1 = am.subtract(p11,p12)
 rotor_1_in_plane_2 = am.subtract(p21,p22)
-rotor_1_origin = rotor_1.project(np.array([5.070, -18.750, 6.730]))
+rotor_1_origin = rotor_1.project(np.array([5.070, -18.750, 6.730]), direction=np.array([0., 0., 1.]))
 system_rep.add_output('rotor_1_in_plane_1', quantity=rotor_1_in_plane_1)
 system_rep.add_output('rotor_1_in_plane_2', quantity=rotor_1_in_plane_2)
 system_rep.add_output('rotor_1_origin', quantity=rotor_1_origin)
@@ -56,7 +56,7 @@ p21 = rotor_7.project(np.array([0.070, 18.750, 6.730]), direction=np.array([0., 
 p22 = rotor_7.project(np.array([10.070, 18.750, 6.730]), direction=np.array([0., 0., 1.]), plot=False)
 rotor_7_in_plane_1 = am.subtract(p11,p12)
 rotor_7_in_plane_2 = am.subtract(p21,p22)
-rotor_7_origin = rotor_7.project(np.array([5.070, 18.750, 6.730]))
+rotor_7_origin = rotor_7.project(np.array([5.070, 18.750, 6.730]), direction=np.array([0., 0., 1.]))
 system_rep.add_output('rotor_7_in_plane_1', quantity=rotor_7_in_plane_1)
 system_rep.add_output('rotor_7_in_plane_2', quantity=rotor_7_in_plane_2)
 system_rep.add_output('rotor_7_origin', quantity=rotor_7_origin)
