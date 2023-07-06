@@ -6,23 +6,33 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
     
     def initialize(self, kwargs):
         self.parameters.declare('observer_data', default=None)
+        self.parameters.declare('component_list', default=[])
+
+        self.num_nodes = 1
 
     def compute(self, var_names):
         model = TotalAircraftNoiseModel(
-            var_names=var_names
+            num_nodes = self.num_nodes,
+            num_observers=self.observer_data['num_observers'],
+            component_list=self.component_list
         )
 
         return model
 
-    def evaluate(self, *noise_components) -> m3l.Variable:
+    def evaluate(self) -> m3l.Variable:
         '''
         This method computes the total aircraft noise at the observer locations.
         Inputs:
-        - tonal and broadband spl for each rotor at each observer location
+        - NONE; 
+            - NOTE: we automatically parse the noise variables based on the 
+                    component name provided in the initialize step
         Outputs:
         - total spl from aircraft at each observer location
         '''
         self.observer_data = self.parameters['observer_data']
+        self.component_list = self.parameters['component_list']
+        for component in self.component_list:
+            print(component.name)
         # NOTE: NEED TO FIGURE OUT HOW TO DEAL WITH NAMING CONVENTION
         # var_names = ...
 

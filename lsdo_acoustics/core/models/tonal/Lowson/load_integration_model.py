@@ -16,8 +16,17 @@ class LoadIntegrationModel(csdl.Model):
         num_nodes = self.parameters['num_nodes']
         load_harmonics = self.parameters['load_harmonics']
         
-        sectional_D = self.declare_variable('sectional_D', shape=(num_nodes, num_blades, num_azim, num_radial)) # num_azim should provide the number of timesteps
-        sectional_T = self.declare_variable('sectional_T', shape=(num_nodes, num_blades, num_azim, num_radial))
+        sectional_D = csdl.expand(
+            self.declare_variable('sectional_D', shape=(num_nodes, num_azim, num_radial)), # num_azim should provide the number of timesteps
+            shape=(num_nodes, num_blades, num_azim, num_radial),
+            indices='ijk->iajk'
+        )
+        
+        sectional_T = csdl.expand(
+            self.declare_variable('sectional_T', shape=(num_nodes, num_azim, num_radial)), # num_azim should provide the number of timesteps
+            shape=(num_nodes, num_blades, num_azim, num_radial),
+            indices='ijk->iajk'
+        )
 
         radial_sum_D = csdl.sum(sectional_D, axes=(3,)) # total blade drag as a function of theta
         radial_sum_T = csdl.sum(sectional_T, axes=(3,)) # total blade thrust as a function of theta

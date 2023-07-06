@@ -4,6 +4,7 @@ from lsdo_acoustics.core.m3l_models import Lowson
 from python_csdl_backend import Simulator
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 
+from lsdo_acoustics.core.dummy_component import DummyComponent
 
 a = Acoustics(design_condition=1, 
               aircraft_position=np.array([0,0,0])
@@ -20,7 +21,10 @@ a.setup_directivity_plot(name='plot',
                          num_azim=4
                          )
 print(a.observer_group_dictionaries)
-a_m3l = Lowson(mesh='mesh', acoustics_data=a)
+
+dummy_rotor = DummyComponent(name='rotor')
+
+a_m3l = Lowson(component=dummy_rotor, mesh='mesh', acoustics_data=a)
 # a_m3l.set_acoustics(a)
 # a_m3l.observer_group_dictionaries = a.observer_group_dictionaries
 a_m3l._assemble_observers()

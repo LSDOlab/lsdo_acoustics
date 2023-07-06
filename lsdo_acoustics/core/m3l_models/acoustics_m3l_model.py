@@ -4,25 +4,25 @@ import numpy as np
 class AcousticsModelTemplate(m3l.ExplicitOperation):
 
     def initialize(self, kwargs):
+        self.parameters.declare('component', default=None)
         self.parameters.declare('mesh', default=None)
         self.parameters.declare('model_name', types=str, default='SHO-TIME')
         self.parameters.declare('custom_model', default=None)
         self.parameters.declare('acoustics_data', default=None)
 
-        # self.observer_group_dictionaries = acoustics_data.observer_group_dictionaries
-        # self.aircraft_position = acoustics_data.aircraft_position
-        # self.model_name = model_name
-        # self.custom_model = custom_model
+        self.num_nodes = 1
 
     def setup_acoustics_data(self):
         acoustics_data = self.parameters['acoustics_data']
         self.observer_group_dictionaries = acoustics_data.observer_group_dictionaries
         self.aircraft_position = acoustics_data.aircraft_position
 
+        self.component_name = self.parameters['component'].name
+
         self.model_name = self.parameters['model_name']
         self.custom_model = self.parameters['custom_model']
 
-    def compute_tonal_noise(self, observer_data: None):
+    def compute_tonal_noise(self, rotor_name: str, observer_data: None):
         '''
         Outputs:
         - csdl_model: csdl.Model()
@@ -32,15 +32,21 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         if self.model_name == 'KS':
             from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
             model = KvurtStalnovModel(
+                num_nodes=self.num_nodes,
+                rotor_name=rotor_name,
                 observer_data=observer_data,
             )
         elif self.model_name == 'Lowson':
             from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
             model = LowsonModel(
+                num_nodes=self.num_nodes,
+                rotor_name=rotor_name,
                 observer_data=observer_data,
             )
         else:
             model = self.custom_model(
+                num_nodes=self.num_nodes,
+                rotor_name=rotor_name,
                 observer_data=observer_data,
             )
             # NOTE: or model = self.add_custom_csdl_model(...)
@@ -48,7 +54,7 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
 
         return model
     
-    def compute_broadband_noise(self, observer_data: None):
+    def compute_broadband_noise(self, rotor_name: str, observer_data: None):
         '''
         Outputs:
         - csdl_model: csdl.Model()
@@ -57,15 +63,21 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         if self.model_name == 'BPM':
             from lsdo_acoustics.core.models.broadband.BPM_model import BPMModel
             model = BPMModel(
+                num_nodes=self.num_nodes,
+                rotor_name=rotor_name,
                 observer_data=observer_data,
             )
         elif self.model_name == 'BMBroadband':
             from lsdo_acoustics.core.models.broadband.barry_magliozzi_model import BarryMagliozziBroadbandModel
             model = BarryMagliozziBroadbandModel(
+                num_nodes=self.num_nodes,
+                rotor_name=rotor_name,
                 observer_data=observer_data
             )
         else:
             model = self.custom_model(
+                num_nodes=self.num_nodes,
+                rotor_name=rotor_name,
                 observer_data=observer_data,
             )
             # NOTE: or model = self.add_custom_csdl_model(...)
@@ -81,9 +93,11 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         - spl: sound pressure level (dB) at a set of observer locations
         '''
         observer_data = self._assemble_observers()
-        operation_csdl = self.compute_tonal_noise(observer_data=observer_data)
-
-        rotor_name = mesh.name # NOTE: THIS IS TEMPORARY; CHANGE LATER
+        rotor_name = self.component_name
+        operation_csdl = self.compute_tonal_noise(
+            rotor_name=rotor_name,
+            observer_data=observer_data
+        )
 
         arguments = {}
         if rotor_loading is not None:
@@ -107,7 +121,11 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         - spl: sound pressure level (dB) at a set of observer locations
         '''
         observer_data = self._assemble_observers()
-        operation_csdl = self.compute_broadband_noise(observer_data=observer_data)
+        rotor_name = self.component_name
+        operation_csdl = self.compute_broadband_noise(
+            rotor_name=rotor_name,
+            observer_data=observer_data
+        )
 
         arguments = {}
         if rotor_loading is not None:

@@ -1,6 +1,7 @@
 import numpy as np
 from lsdo_acoustics import Acoustics
 from lsdo_acoustics.core.m3l_models import TotalAircraftNoise
+from lsdo_acoustics.core.dummy_component import DummyComponent
 
 a = Acoustics(design_condition=1, 
               aircraft_position=np.array([0,0,0])
@@ -17,8 +18,10 @@ a.setup_directivity_plot(name='plot',
                          num_azim=4
                          )
 
-aaa = 1
-bbb = 2
+aaa = DummyComponent(name='aaa')
+bbb = DummyComponent(name='bbb')
 
-total_aircraft_noise_model = TotalAircraftNoise(observer_data=a)
-total_aircraft_noise_model.evaluate(aaa,bbb)
+component_list = [aaa, bbb]
+
+total_aircraft_noise_model = TotalAircraftNoise(observer_data=a, component_list=component_list)
+total_aircraft_noise_model.evaluate()
