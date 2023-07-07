@@ -9,9 +9,9 @@ class LowsonModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('mesh')
-        self.parameters.declare('num_nodes')
         self.parameters.declare('num_blades')
         self.parameters.declare('observer_data')
+        self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
 
@@ -48,6 +48,7 @@ class LowsonModel(csdl.Model):
         # region observer position model
         self.add(
             SteadyObserverLocationModel(
+                component_name=component_name,
                 aircraft_location=observer_data['aircraft_position'],
                 init_obs_x_loc=observer_data['x'],
                 init_obs_y_loc=observer_data['y'],

@@ -34,6 +34,7 @@ observer_data = a_m3l.observer_data
 
 m = SteadyObserverLocationModel(
     # num_nodes=2,
+    component_name='rotor',
     aircraft_location=observer_data['aircraft_position'],
     init_obs_x_loc=observer_data['x'],
     init_obs_y_loc=observer_data['y'],

@@ -1,11 +1,11 @@
 import numpy as np
 import csdl
 
-class BarryMagliozziBroadbandModel(csdl.Model):
+class SKMSPLModel(csdl.Model):
     def initialize(self):
+        self.parameters.declare('component_name')
         self.parameters.declare('num_nodes')
         self.parameters.declare('num_observers')
-        self.parameters.declare('component_name')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_radial')
 
@@ -67,7 +67,7 @@ class BarryMagliozziBroadbandModel(csdl.Model):
         self.register_output(f'{component_name}_broadband_SPL', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
 
 if __name__ == '__main__':
-    model = BarryMagliozziBroadbandModel(
+    model = SKMSPLModel(
         num_nodes=2,
         num_observers=3,
         component_name='dummy',

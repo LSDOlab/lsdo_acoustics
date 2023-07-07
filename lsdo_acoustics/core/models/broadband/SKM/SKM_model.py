@@ -1,34 +1,26 @@
-import csdl 
-import numpy as np 
-from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
-from lsdo_acoustics.core.models.tonal.KS.ks_spl_model import KSSPLModel
+import numpy as np
+import csdl
 
-class KvurtStalnovModel(csdl.Model):
+from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
+from lsdo_acoustics.core.models.broadband.SKM.skm_spl_model import SKMSPLModel
+
+class SKMBroadbandModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('mesh')
-        # self.parameters.declare('num_radial')
         self.parameters.declare('observer_data')
-        self.parameters.declare('num_blades', default=2)
+        self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
-        self.parameters.declare('modes', default=[1,2,3])
-        self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
 
     def define(self):
         component_name = self.parameters['component_name']
         mesh = self.parameters['mesh']
-        num_radial = mesh.parameters['num_radial']
         observer_data = self.parameters['observer_data']
+        num_blades = self.parameters['num_blades'] 
         num_nodes = self.parameters['num_nodes']
 
-        modes = self.parameters['modes']
-        load_harmonics = self.parameters['load_harmonics']
-        num_blades = self.parameters['num_blades']
+        num_radial = mesh.parameters['num_radial']
 
-        self.declare_variable(f'{component_name}_thrust_origin') # CENTER OF ROTOR
-        # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
-
-        # region observer location model
         self.add(
             SteadyObserverLocationModel(
                 component_name=component_name,
@@ -42,29 +34,28 @@ class KvurtStalnovModel(csdl.Model):
             ),
             'steady_observer_location_model'
         )
-        # endregion
 
-        # region KS SPL model
         self.add(
-            KSSPLModel(
-                component_name=component_name,
+            SKMSPLModel(
                 num_nodes=num_nodes,
                 num_observers=observer_data['num_observers'],
+                component_name=component_name,
                 num_blades=num_blades,
-                num_radial=num_radial,
-                modes=modes,
-                load_harmonics=load_harmonics
+                num_radial=num_radial
             ),
-            'ks_spl_model'
+            'skm_spl_model'
         )
-        # endregion
 
 if __name__ == '__main__':
-    model = KvurtStalnovModel(
+    model = SKMBroadbandModel(
+        num_nodes=2,
+        num_observers=3,
         component_name='dummy',
-        num_radial=5,
-        num_observers=2
+        num_blades=2,
+        num_radial=5
     )
+
     from python_csdl_backend import Simulator
     sim = Simulator(model)
+
     sim.run()

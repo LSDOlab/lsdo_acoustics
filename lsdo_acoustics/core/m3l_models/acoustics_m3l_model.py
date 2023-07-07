@@ -33,20 +33,20 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
             model = KvurtStalnovModel(
                 num_nodes=self.num_nodes,
-                rotor_name=rotor_name,
+                component_name=rotor_name,
                 observer_data=observer_data,
             )
         elif self.model_name == 'Lowson':
             from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
             model = LowsonModel(
                 num_nodes=self.num_nodes,
-                rotor_name=rotor_name,
+                component_name=rotor_name,
                 observer_data=observer_data,
             )
         else:
             model = self.custom_model(
                 num_nodes=self.num_nodes,
-                rotor_name=rotor_name,
+                component_name=rotor_name,
                 observer_data=observer_data,
             )
             # NOTE: or model = self.add_custom_csdl_model(...)
@@ -61,23 +61,23 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             The csdl model that computes the outputs
         '''
         if self.model_name == 'BPM':
-            from lsdo_acoustics.core.models.broadband.BPM_model import BPMModel
+            from lsdo_acoustics.core.models.broadband.BPM.BPM_model import BPMModel
             model = BPMModel(
                 num_nodes=self.num_nodes,
-                rotor_name=rotor_name,
+                component_name=rotor_name,
                 observer_data=observer_data,
             )
-        elif self.model_name == 'BMBroadband':
-            from lsdo_acoustics.core.models.broadband.barry_magliozzi_model import BarryMagliozziBroadbandModel
-            model = BarryMagliozziBroadbandModel(
+        elif self.model_name == 'SKM':
+            from lsdo_acoustics.core.models.broadband.SKM.SKM_model import SKMBroadbandModel
+            model = SKMBroadbandModel(
                 num_nodes=self.num_nodes,
-                rotor_name=rotor_name,
+                component_name=rotor_name,
                 observer_data=observer_data
             )
         else:
             model = self.custom_model(
                 num_nodes=self.num_nodes,
-                rotor_name=rotor_name,
+                component_name=rotor_name,
                 observer_data=observer_data,
             )
             # NOTE: or model = self.add_custom_csdl_model(...)
@@ -140,11 +140,6 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         broadband_spl = m3l.Variable(name=f'{rotor_name}_broadband_spl', shape=self.num_observers, operation=broadband_noise_operation)
 
         return broadband_spl
-
-    def set_acoustics(self):
-        pass
-
-
 
 
     def _assemble_observers(self):
