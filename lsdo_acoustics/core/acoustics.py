@@ -4,10 +4,10 @@ from typing import Union
 class Acoustics(object):
     def __init__(self, 
                 #  design_condition: CADDEE.DesignCondition, 
-                 design_condition: None,
+                #  design_condition: None,
                  aircraft_position: np.array,
                  ):
-        self.design_condition = design_condition
+        # self.design_condition = design_condition
         self.aircraft_position = aircraft_position
 
         self.observer_group_dictionaries = [] # WE PASS THIS INTO M3L MODEL

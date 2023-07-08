@@ -5,7 +5,10 @@ from lsdo_acoustics.core.models.tonal.Lowson.load_integration_model import LoadI
 # from load_integration_model import LoadIntegrationModel
 from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model import LowsonSPLModel
 
-class LowsonModel(csdl.Model):
+
+from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
+
+class LowsonModel(ModuleCSDL):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('mesh')
@@ -25,7 +28,7 @@ class LowsonModel(csdl.Model):
 
         mesh = self.parameters['mesh']
         num_radial = mesh.parameters['num_radial']
-        num_azim = mesh.parameters['num_tangential']
+        # num_azim = mesh.parameters['num_tangential']
     
         # FOR TESTING PURPOSES
         sectional_D = self.declare_variable(

@@ -26,7 +26,7 @@ class LowsonSPLModel(csdl.Model):
 
         a = self.declare_variable('speed_of_sound')
         M = self.declare_variable('forward_mach_number') # mach number traveling forward
-        R = self.declare_variable('rotor_radius')
+        R = self.declare_variable(f'{component_name}_radius')
         
         rpm = self.declare_variable('rpm', shape=(num_nodes,))
 

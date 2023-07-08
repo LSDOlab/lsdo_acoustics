@@ -9,14 +9,14 @@
         <CORX Value="0.000000000000000000e+00" ID="HKIKGFKZYKA"/>
         <CORY Value="0.000000000000000000e+00" ID="FTMZPLKYTMG"/>
         <CORZ Value="0.000000000000000000e+00" ID="JJADCQVKRMX"/>
-        <PanX Value="-1.135958576202392578e+01" ID="IVNOLGYQAAD"/>
-        <PanY Value="-4.633350372314453125e-01" ID="IWNZKAITQFJ"/>
-        <RotationX Value="2.703426098022023538e+01" ID="MRVLJKKIXVQ"/>
-        <RotationY Value="-5.212810619837486570e+01" ID="TCREKDKMQDM"/>
-        <RotationZ Value="-7.144695475629742987e+01" ID="HHANANOHCDG"/>
+        <PanX Value="3.901177883148193359e+00" ID="IVNOLGYQAAD"/>
+        <PanY Value="-3.539789676666259766e+00" ID="IWNZKAITQFJ"/>
+        <RotationX Value="-3.138601697215089459e+01" ID="MRVLJKKIXVQ"/>
+        <RotationY Value="-1.328280958082069958e+02" ID="TCREKDKMQDM"/>
+        <RotationZ Value="7.350390037579262348e+00" ID="HHANANOHCDG"/>
         <ViewportX Value="0.000000000000000000e+00" ID="TTESMWHEYZQ"/>
         <ViewportY Value="0.000000000000000000e+00" ID="BGTFNJQUDPV"/>
-        <Zoom Value="1.684375554323196411e-01" ID="LTPRMTUAMLX"/>
+        <Zoom Value="3.148214146494865417e-02" ID="LTPRMTUAMLX"/>
       </AdjustView>
       <AirfoilExport>
         <AFAppendGeomIDFlag Value="1.000000000000000000e+00" ID="RFTQMKIUNLN"/>
@@ -314,7 +314,132 @@
     </Lights>
     <Measure>
       <Num_of_Rulers>0</Num_of_Rulers>
-      <Num_of_Probes>0</Num_of_Probes>
+      <Num_of_Probes>5</Num_of_Probes>
+      <Probe_0>
+        <ParmContainer>
+          <ID>WFPIGSKING</ID>
+          <Name>Default</Name>
+          <Measure>
+            <KGaussian Value="0.000000000000000000e+00" ID="PJMBTGHUBTO"/>
+            <Kmax Value="0.000000000000000000e+00" ID="UWONXLYQLTW"/>
+            <Kmean Value="0.000000000000000000e+00" ID="NXSNTVPZFPY"/>
+            <Kmin Value="0.000000000000000000e+00" ID="LQVKGQEHLSE"/>
+            <Len Value="5.315189128353681181e-01" ID="SGQZZHGSAUN"/>
+            <NX Value="0.000000000000000000e+00" ID="NKZDCVJVLST"/>
+            <NY Value="0.000000000000000000e+00" ID="UPDPSXFBJBX"/>
+            <NZ Value="1.000000000000000000e+00" ID="HCOVPEMKGLA"/>
+            <OriginIndx Value="0.000000000000000000e+00" ID="WYDJNMBCFQI"/>
+            <OriginU Value="0.000000000000000000e+00" ID="CTEQCHUIPIV"/>
+            <OriginW Value="1.992232394893044510e-03" ID="YVGPAGZZLZN"/>
+            <Precision Value="3.000000000000000000e+00" ID="FTYYXVOBKUT"/>
+            <Visible Value="1.000000000000000000e+00" ID="FXJOWIYDCQJ"/>
+            <X Value="0.000000000000000000e+00" ID="HSGYKWBYDCW"/>
+            <Y Value="0.000000000000000000e+00" ID="UULWVNBNTSJ"/>
+            <Z Value="0.000000000000000000e+00" ID="LZQUKZXEKQT"/>
+          </Measure>
+          <OriginGeomID>OKIAWNBYEO</OriginGeomID>
+        </ParmContainer>
+      </Probe_0>
+      <Probe_1>
+        <ParmContainer>
+          <ID>NSNJBMYLHY</ID>
+          <Name>Default</Name>
+          <Measure>
+            <KGaussian Value="0.000000000000000000e+00" ID="AOUIGAJVGXI"/>
+            <Kmax Value="0.000000000000000000e+00" ID="JEPHDTPTXWM"/>
+            <Kmean Value="0.000000000000000000e+00" ID="TAMAYVGFYQK"/>
+            <Kmin Value="0.000000000000000000e+00" ID="ZPVMRBCBNIK"/>
+            <Len Value="9.394750317718710164e+00" ID="BFVGIAYZLGV"/>
+            <NX Value="0.000000000000000000e+00" ID="HYYVVMKBETW"/>
+            <NY Value="0.000000000000000000e+00" ID="DGVAYTNCKRH"/>
+            <NZ Value="1.000000000000000000e+00" ID="PYOJVNYOEYC"/>
+            <OriginIndx Value="0.000000000000000000e+00" ID="ZNAQYEMWZLY"/>
+            <OriginU Value="1.000000000000000000e+00" ID="GSKXEFVNWKC"/>
+            <OriginW Value="7.500000000000000000e-01" ID="UDITFEEVZQR"/>
+            <Precision Value="3.000000000000000000e+00" ID="TSOWFORZKBL"/>
+            <Visible Value="1.000000000000000000e+00" ID="BSUVZJZHRRV"/>
+            <X Value="1.500000000000000000e+01" ID="SXYTRPJUXSW"/>
+            <Y Value="0.000000000000000000e+00" ID="LWKPZUBTACD"/>
+            <Z Value="9.184850993605149917e-16" ID="AKEOZRPHWQW"/>
+          </Measure>
+          <OriginGeomID>OKIAWNBYEO</OriginGeomID>
+        </ParmContainer>
+      </Probe_1>
+      <Probe_2>
+        <ParmContainer>
+          <ID>BKWZJFVEMV</ID>
+          <Name>Default</Name>
+          <Measure>
+            <KGaussian Value="0.000000000000000000e+00" ID="PUCVIUYIGVX"/>
+            <Kmax Value="0.000000000000000000e+00" ID="QSVQTZFWVBO"/>
+            <Kmean Value="0.000000000000000000e+00" ID="KFBYNWMQDWX"/>
+            <Kmin Value="0.000000000000000000e+00" ID="UQPTNATEZWJ"/>
+            <Len Value="9.391332552538987244e+00" ID="ZQHPVUEOXYD"/>
+            <NX Value="0.000000000000000000e+00" ID="XUPBLEBXSBF"/>
+            <NY Value="0.000000000000000000e+00" ID="HAMDYEVAMVA"/>
+            <NZ Value="1.000000000000000000e+00" ID="OKBDKBDLPUY"/>
+            <OriginIndx Value="0.000000000000000000e+00" ID="BCOPOJFZGOX"/>
+            <OriginU Value="1.000000000000000000e+00" ID="RGFPMWSLLTI"/>
+            <OriginW Value="2.500000000000000000e-01" ID="BZATTGCOVUC"/>
+            <Precision Value="3.000000000000000000e+00" ID="EXWTNMIMWBG"/>
+            <Visible Value="1.000000000000000000e+00" ID="YRHIMRJRIMS"/>
+            <X Value="-1.500000000000000000e+01" ID="HLKOUBGFUDS"/>
+            <Y Value="0.000000000000000000e+00" ID="BGAOJRKMKMI"/>
+            <Z Value="-9.184850993605149917e-16" ID="CZZGAWSVQJZ"/>
+          </Measure>
+          <OriginGeomID>OKIAWNBYEO</OriginGeomID>
+        </ParmContainer>
+      </Probe_2>
+      <Probe_3>
+        <ParmContainer>
+          <ID>NIPHLZUOGW</ID>
+          <Name>Default</Name>
+          <Measure>
+            <KGaussian Value="0.000000000000000000e+00" ID="QYRNEWCDICR"/>
+            <Kmax Value="0.000000000000000000e+00" ID="YRAQWPDINMJ"/>
+            <Kmean Value="0.000000000000000000e+00" ID="NFLLTAUJBVE"/>
+            <Kmin Value="0.000000000000000000e+00" ID="LOTLWPUKBOH"/>
+            <Len Value="7.812070895713543628e+00" ID="EQWNNOLDXUM"/>
+            <NX Value="0.000000000000000000e+00" ID="IFKOUOIYGJW"/>
+            <NY Value="0.000000000000000000e+00" ID="JAAYREGENRH"/>
+            <NZ Value="1.000000000000000000e+00" ID="QORRUWLFFCY"/>
+            <OriginIndx Value="0.000000000000000000e+00" ID="SZUQPMDEVIZ"/>
+            <OriginU Value="1.000000000000000000e+00" ID="HFELFYJQQIB"/>
+            <OriginW Value="0.000000000000000000e+00" ID="JIDTVIDPLUN"/>
+            <Precision Value="3.000000000000000000e+00" ID="WJWBNQOHBFG"/>
+            <Visible Value="1.000000000000000000e+00" ID="QSKOWRXSLZW"/>
+            <X Value="0.000000000000000000e+00" ID="BJECYOVSSTE"/>
+            <Y Value="1.500000000000000000e+01" ID="UEDDKEBVYQB"/>
+            <Z Value="0.000000000000000000e+00" ID="MQZBAVDPORS"/>
+          </Measure>
+          <OriginGeomID>OKIAWNBYEO</OriginGeomID>
+        </ParmContainer>
+      </Probe_3>
+      <Probe_4>
+        <ParmContainer>
+          <ID>XFBULJFOKC</ID>
+          <Name>Default</Name>
+          <Measure>
+            <KGaussian Value="0.000000000000000000e+00" ID="NRFYZFEOUXI"/>
+            <Kmax Value="0.000000000000000000e+00" ID="IWWLGYAXNRK"/>
+            <Kmean Value="0.000000000000000000e+00" ID="DTZAHQOMQHT"/>
+            <Kmin Value="0.000000000000000000e+00" ID="MRAETPWRSLW"/>
+            <Len Value="7.813443188928450134e+00" ID="YTFBELSEOMK"/>
+            <NX Value="0.000000000000000000e+00" ID="IVNOOOKGDOT"/>
+            <NY Value="0.000000000000000000e+00" ID="TQTRNOZKVOP"/>
+            <NZ Value="1.000000000000000000e+00" ID="UNHSUICAHDX"/>
+            <OriginIndx Value="0.000000000000000000e+00" ID="TEBVUJXDMCT"/>
+            <OriginU Value="1.000000000000000000e+00" ID="OWDBOXHFVHS"/>
+            <OriginW Value="5.000000000000000000e-01" ID="TDTFOCMOOZP"/>
+            <Precision Value="3.000000000000000000e+00" ID="QFIEQZAWSLP"/>
+            <Visible Value="1.000000000000000000e+00" ID="BDSCXJLJNQX"/>
+            <X Value="0.000000000000000000e+00" ID="VNVIZHWQYUM"/>
+            <Y Value="-1.500000000000000000e+01" ID="KYLAJZMDIUH"/>
+            <Z Value="0.000000000000000000e+00" ID="HTHTLQVRLOT"/>
+          </Measure>
+          <OriginGeomID>OKIAWNBYEO</OriginGeomID>
+        </ParmContainer>
+      </Probe_4>
       <Num_of_RSTprobes>0</Num_of_RSTprobes>
     </Measure>
     <Geom>
@@ -1211,7 +1336,7 @@
         </ParasiteDragProps>
         <PropGeom>
           <MaxGrowth Value="1.963769402454648594e+00" ID="AHTQMSRMYMQ"/>
-          <SmallPanelW Value="0.000000000000000000e+00" ID="VWBGFWKGYEH"/>
+          <SmallPanelW Value="1.000000000000000000e+12" ID="VWBGFWKGYEH"/>
         </PropGeom>
         <Shape>
           <Tess_U Value="1.200000000000000000e+01" ID="IAKEWVSRUNA"/>
@@ -2382,6 +2507,80 @@
         <CurrStructIndex Value="-1.000000000000000000e+00" ID="UFHBCTDJGRQ"/>
       </Struct>
     </ParmContainer>
+    <FeaPropertyInfo>
+      <ParmContainer>
+        <ID>WBMZGEYRVO</ID>
+        <Name>DefaultShell</Name>
+        <FeaProperty>
+          <CrossSecArea Value="1.000000000000000056e-01" ID="LOKVAEFSHRH"/>
+          <CrossSecArea_FEM Value="1.000000000000000056e-01" ID="ADZJZNZBGYP"/>
+          <CrossSectType Value="0.000000000000000000e+00" ID="TBDDEDKTLLO"/>
+          <Dim1 Value="1.000000000000000056e-01" ID="UDOKHJSMMYE"/>
+          <Dim1_FEM Value="1.000000000000000056e-01" ID="UIWZMRAZBAS"/>
+          <Dim2 Value="1.000000000000000056e-01" ID="JRSWBLHAKQD"/>
+          <Dim2_FEM Value="1.000000000000000056e-01" ID="XZXFYVUSGGX"/>
+          <Dim3 Value="1.000000000000000056e-01" ID="BKDXCLUJDNE"/>
+          <Dim3_FEM Value="1.000000000000000056e-01" ID="FXZODUVVXAV"/>
+          <Dim4 Value="1.000000000000000056e-01" ID="DVILAJMYMVZ"/>
+          <Dim4_FEM Value="1.000000000000000056e-01" ID="AJFFJKMAZVV"/>
+          <Dim5 Value="1.000000000000000056e-01" ID="AFXKFJECAFX"/>
+          <Dim5_FEM Value="1.000000000000000056e-01" ID="FKSYCBSVDBF"/>
+          <Dim6 Value="1.000000000000000056e-01" ID="KJAVIBKBSSX"/>
+          <Dim6_FEM Value="1.000000000000000056e-01" ID="FSOYHGKIIXN"/>
+          <FeaMaterialIndex Value="-1.000000000000000000e+00" ID="TUDCMTUSOEB"/>
+          <FeaPropertyType Value="0.000000000000000000e+00" ID="HZFCJCSMLUC"/>
+          <Ixx Value="1.000000000000000056e-01" ID="FQTCORCXJGZ"/>
+          <Ixx_FEM Value="1.000000000000000056e-01" ID="CISKKWUEIIB"/>
+          <Iyy Value="1.000000000000000056e-01" ID="XPYAPDSGHUD"/>
+          <Iyy_FEM Value="1.000000000000000056e-01" ID="AIMPEFSPQZL"/>
+          <Izy Value="1.000000000000000056e-01" ID="KKINLXEWAVA"/>
+          <Izy_FEM Value="1.000000000000000056e-01" ID="ANWILKEKJOA"/>
+          <Izz Value="1.000000000000000056e-01" ID="QJUWLVWNUHU"/>
+          <Izz_FEM Value="1.000000000000000056e-01" ID="ZHUBGEUNHNF"/>
+          <LengthUnit Value="3.000000000000000000e+00" ID="SPYPCJJMTJP"/>
+          <Thickness Value="1.000000000000000056e-01" ID="AIDUYMRANOT"/>
+          <Thickness_FEM Value="1.000000000000000056e-01" ID="BGRMFSNDEPU"/>
+        </FeaProperty>
+      </ParmContainer>
+      <FeaMaterialID>_Al6061T6</FeaMaterialID>
+    </FeaPropertyInfo>
+    <FeaPropertyInfo>
+      <ParmContainer>
+        <ID>QFVWDWTFMN</ID>
+        <Name>DefaultBeam</Name>
+        <FeaProperty>
+          <CrossSecArea Value="1.000000000000000056e-01" ID="ZUQNDHOMHOC"/>
+          <CrossSecArea_FEM Value="1.000000000000000056e-01" ID="PTWEULROGRI"/>
+          <CrossSectType Value="0.000000000000000000e+00" ID="WMVIHLPPKWN"/>
+          <Dim1 Value="1.000000000000000056e-01" ID="XBQFWZLRJLV"/>
+          <Dim1_FEM Value="1.000000000000000056e-01" ID="QJCJHGPHZSH"/>
+          <Dim2 Value="1.000000000000000056e-01" ID="NMPGRCXEWAP"/>
+          <Dim2_FEM Value="1.000000000000000056e-01" ID="NGEUJLKVYVS"/>
+          <Dim3 Value="1.000000000000000056e-01" ID="EFHXZBEZXWQ"/>
+          <Dim3_FEM Value="1.000000000000000056e-01" ID="SLFOKSVQAJO"/>
+          <Dim4 Value="1.000000000000000056e-01" ID="EYASFZPWNFX"/>
+          <Dim4_FEM Value="1.000000000000000056e-01" ID="MFLQQEXGMOF"/>
+          <Dim5 Value="1.000000000000000056e-01" ID="VOCEODUMDCU"/>
+          <Dim5_FEM Value="1.000000000000000056e-01" ID="NZQEOEMYEQS"/>
+          <Dim6 Value="1.000000000000000056e-01" ID="RCWLIFHMAIN"/>
+          <Dim6_FEM Value="1.000000000000000056e-01" ID="EXECPVOLDIH"/>
+          <FeaMaterialIndex Value="-1.000000000000000000e+00" ID="BYIMOFEKFJJ"/>
+          <FeaPropertyType Value="1.000000000000000000e+00" ID="DSRLOJQZAWS"/>
+          <Ixx Value="1.000000000000000056e-01" ID="EYDJEWHIQYX"/>
+          <Ixx_FEM Value="1.000000000000000056e-01" ID="EWWWMETHDJW"/>
+          <Iyy Value="1.000000000000000056e-01" ID="WMOXSGUXFZV"/>
+          <Iyy_FEM Value="1.000000000000000056e-01" ID="VHBWVFLINAN"/>
+          <Izy Value="1.000000000000000056e-01" ID="JFIFEYXVGLB"/>
+          <Izy_FEM Value="1.000000000000000056e-01" ID="EWDIMNSNOVG"/>
+          <Izz Value="1.000000000000000056e-01" ID="CKQAPAHZGOL"/>
+          <Izz_FEM Value="1.000000000000000056e-01" ID="LEXRLDHXYKD"/>
+          <LengthUnit Value="3.000000000000000000e+00" ID="BUSSXDIKHOQ"/>
+          <Thickness Value="1.000000000000000056e-01" ID="MSGJZTIXZLE"/>
+          <Thickness_FEM Value="1.000000000000000056e-01" ID="LOUYETESVBA"/>
+        </FeaProperty>
+      </ParmContainer>
+      <FeaMaterialID>_Al6061T6</FeaMaterialID>
+    </FeaPropertyInfo>
   </StructureMgr>
   <ClippingMgr>
     <ParmContainer>

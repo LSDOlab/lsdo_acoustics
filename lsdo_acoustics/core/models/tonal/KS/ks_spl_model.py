@@ -51,12 +51,12 @@ class KSSPLModel(csdl.Model):
         RPM = self.declare_variable('revolutions_per_minute') # NOTE: UPDATE/FIX LATER
         # BPF = m*RPM*B/60.
         theta = csdl.arccos(x/S)
-        r = self.declare_variable('nondim_sectional_radius', shape=(num_nodes, num_radial))
+        r = self.declare_variable('nondim_sectional_radius', shape=(num_nodes, num_radial)) # NOTE: ADJUST LATER 
         lambda_i = self.declare_variable('sectional_inflow_ratio', shape=(num_nodes, num_radial))
         phi = lambda_i/r # DELETE
 
         omega = RPM*2*np.pi/60
-        R = self.declare_variable('rotor_radius')
+        R = self.declare_variable(f'{component_name}_radius')
         a = self.declare_variable('speed_of_sound')
         c = self.declare_variable('rotor_chord', shape=(num_radial,))
 

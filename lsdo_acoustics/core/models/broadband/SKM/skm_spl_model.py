@@ -28,7 +28,7 @@ class SKMSPLModel(csdl.Model):
 
         R_skm = csdl.expand(
             self.declare_variable(
-                'propeller_radius',
+                f'{component_name}_radius',
                 shape=(1,)
             ),
             (num_nodes,num_observers)
