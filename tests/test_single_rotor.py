@@ -6,6 +6,22 @@ from python_csdl_backend import Simulator
 import array_mapper as am
 from lsdo_acoustics import GEOMETRY_PATH, IMPORTS_PATH
 
+from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
+
+from lsdo_acoustics import Acoustics
+from lsdo_acoustics.core.m3l_models import Lowson, KS, SKM, TotalAircraftNoise
+
+'''
+This test script connects the acoustics models to BEM.
+The demonstrated case considers 2 flight segments: steady hover and cruise.
+The hover tonal noise is computed using the KS model.
+The cruise tonal noise is computed using the Lowson model (sort of in edge-wise flight).
+
+
+NEED TO ADD A-WEIGHTING
+67 dBA @ 250 feet below aircraft (Uber Elevate paper)
+'''
+
 caddee = cd.CADDEE()
 caddee.system_representation = system_rep = cd.SystemRepresentation()
 caddee.system_parameterization = system_param = cd.SystemParameterization(system_representation=system_rep)
@@ -14,6 +30,10 @@ file_name = GEOMETRY_PATH / 'single_rotor.stp'
 spatial_rep = system_rep.spatial_representation
 spatial_rep.import_file(file_name=file_name, file_path=str(IMPORTS_PATH))
 spatial_rep.refit_geometry(file_name=file_name, file_path=str(IMPORTS_PATH))
+
+'''
+======================================== GEOMETRY ========================================
+'''
 
 # ==================== ROTOR DISK ====================
 prefix = 'rotor'
@@ -50,6 +70,7 @@ rotor_blade = cd.Rotor(
 )
 system_rep.add_component(rotor_blade)
 
+# PROJECTIONS
 le_tip = np.array([-0.032, 0.5, 0.007])
 le_root = np.array([-0.014, 0.1, 0.015])
 te_tip = np.array([0.032, 0.5, -0.007])
@@ -60,13 +81,13 @@ offset_y = 0.05
 offset_z = 0.05
 num_radial = 25
 blade_le = np.linspace(
-    le_tip + np.array([-offset_x, 2*offset_y, offset_z]),
     le_root + np.array([-offset_x, -offset_y, offset_z]),
+    le_tip + np.array([-offset_x, 2*offset_y, offset_z]),
     num_radial
 ) # array around LE with offsets
 blade_te = np.linspace(
-    te_tip - np.array([-offset_x, -2*offset_y, offset_z]),
     te_root - np.array([-offset_x, offset_y, offset_z]),
+    te_tip - np.array([-offset_x, -2*offset_y, offset_z]),
     num_radial
 ) # array around TE with offsets
 
@@ -80,15 +101,19 @@ rotor_disk_te_proj = rotor_disk.project(p_te.evaluate(), direction=np.array([0.,
 
 rotor_v_dist_le = am.subtract(p_le, rotor_disk_le_proj) # vertical distance from LE to disk
 rotor_v_dist_te = am.subtract(p_te, rotor_disk_te_proj) # vertical distance from TE to disk
-rotor_v_dist_tot = am.subtract(rotor_v_dist_te, rotor_v_dist_le) 
+rotor_v_dist_tot = am.subtract(rotor_v_dist_le, rotor_v_dist_te) 
 
 system_rep.add_output(f'{prefix}_blade_chord_length', rotor_blade_chord)
 system_rep.add_output(f'{prefix}_blade_twist', rotor_v_dist_tot)
 
+'''
+======================================== SYSTEM MODEL ========================================
+'''
 caddee.system_model = system_model = cd.SystemModel()
-
 design_scenario = cd.DesignScenario(name='single_rotor_test')
-test_model = m3l.Model()
+
+# ==================== CRUISE ====================
+cruise_model = m3l.Model()
 cruise_condition = cd.CruiseCondition(name='cruise')
 cruise_condition.atmosphere_model = cd.SimpleAtmosphereModel()
 
@@ -99,12 +124,10 @@ cruise_condition.set_module_input(name='wing_incidence_angle', val=np.deg2rad(0)
 cruise_condition.set_module_input(name='pitch_angle', val=np.deg2rad(2), dv_flag=False, lower=np.deg2rad(0), upper=np.deg2rad(5))
 cruise_condition.set_module_input(name='observer_location', val=np.array([0, 0, 500]))
 ac_states = cruise_condition.evaluate_ac_states()
-test_model.register_output(ac_states)
+cruise_model.register_output(ac_states)
 
 
 # region BEM
-from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
-
 rotor_bem_mesh = BEMMesh(
     meshes=dict(
         rotor_in_plane_1=rotor_in_plane_x,
@@ -121,15 +144,13 @@ rotor_bem_mesh = BEMMesh(
 )
 bem_model = BEM(component=rotor_disk, mesh=rotor_bem_mesh, disk_prefix='rotor_disk', blade_prefix='rotor_blade')
 bem_model.set_module_input('rpm', val=1200.)
-# bem_forces, bem_moments = bem_model.evaluate(ac_states=ac_states)
-_, _, dT, dQ, dD = bem_model.evaluate(ac_states=ac_states)
-# test_model.register_output(bem_forces)
+_, _, dT, dQ, dD, CT = bem_model.evaluate(ac_states=ac_states)
+cruise_model.register_output(dT)
+cruise_model.register_output(dD)
+cruise_model.register_output(CT)
 # endregion
 
 # region acoustics
-from lsdo_acoustics import Acoustics
-from lsdo_acoustics.core.m3l_models import Lowson, SKM, TotalAircraftNoise
-
 cruise_acoustics = Acoustics(
     aircraft_position = np.array([0.,0.,30])
 )
@@ -157,41 +178,162 @@ lowson_model = Lowson(
 )
 
 cruise_tonal_SPL = lowson_model.evaluate_tonal_noise(dT, dD, ac_states)
-test_model.register_output(cruise_tonal_SPL)
+cruise_model.register_output(cruise_tonal_SPL)
+
+# ks_model = KS(
+#     component=rotor_disk,
+#     mesh=rotor_bem_mesh,
+#     # mesh=acoustics_mesh,
+#     acoustics_data=cruise_acoustics,
+# )
+# cruise_tonal_SPL = ks_model.evaluate_tonal_noise(dT, dD, ac_states)
+# cruise_model.register_output(cruise_tonal_SPL)
 
 skm_model = SKM(
     component=rotor_disk,
     mesh=rotor_bem_mesh,
     acoustics_data=cruise_acoustics
 )
-cruise_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states)
-test_model.register_output(cruise_broadband_SPL)
-
+cruise_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
+cruise_model.register_output(cruise_broadband_SPL)
 
 total_noise_model = TotalAircraftNoise(
     acoustics_data=cruise_acoustics,
     component_list=[rotor_disk],
 )
-cruise_total_SPL = total_noise_model.evaluate([cruise_tonal_SPL, cruise_broadband_SPL])
-test_model.register_output(cruise_total_SPL)
+noise_components = [cruise_tonal_SPL, cruise_broadband_SPL]
+
+cruise_total_SPL = total_noise_model.evaluate(noise_components)
+cruise_model.register_output(cruise_total_SPL)
 # endregion
 
-cruise_condition.add_m3l_model('test_model', test_model)
+cruise_condition.add_m3l_model('cruise_model', cruise_model)
 design_scenario.add_design_condition(cruise_condition)
+
+# ==================== HOVER ====================
+hover_model = m3l.Model()
+hover_condition = cd.HoverCondition(name='hover')
+hover_condition.atmosphere_model = cd.SimpleAtmosphereModel()
+
+hover_condition.set_module_input(name='altitude', val=500)
+hover_condition.set_module_input(name='observer_location', val=np.array([0, 0, 500]))
+hover_condition.set_module_input(name='hover_time', val=120.)
+ac_states = hover_condition.evaluate_ac_states()
+hover_model.register_output(ac_states)
+
+# region BEM
+rotor_bem_mesh = BEMMesh(
+    meshes=dict(
+        rotor_in_plane_1=rotor_in_plane_x,
+        rotor_in_plane_2=rotor_in_plane_y,
+        rotor_origin=rotor_origin
+    ),
+    airfoil='NACA_4412',
+    num_blades=3,
+    chord_b_spline_rep=True,
+    twist_b_spline_rep=True,
+    num_radial=num_radial,
+    num_tangential=30,
+    mesh_units='ft'
+    # use_airfoil_ml=False
+)
+bem_model = BEM(component=rotor_disk, mesh=rotor_bem_mesh, disk_prefix='rotor_disk', blade_prefix='rotor_blade')
+bem_model.set_module_input('rpm', val=1200.)
+_, _, dT, dQ, dD, CT = bem_model.evaluate(ac_states=ac_states)
+hover_model.register_output(dT)
+hover_model.register_output(dD)
+hover_model.register_output(CT)
+# endregion
+
+# region acoustics
+hover_acoustics = Acoustics(
+    aircraft_position = np.array([0.,0.,30])
+)
+
+hover_acoustics.add_observer(
+    name='obs1',
+    obs_position=np.array([40., 0., 0.]),
+    time_vector=np.array([0.]),
+)
+
+from lsdo_acoustics.core.acoustics_mesh import AcousticsMesh
+
+acoustics_mesh = AcousticsMesh(
+    # rotor_disk_mesh=rotor_bem_mesh,
+    num_radial=num_radial,
+    num_azimuthal=10,
+    num_blades=3
+)
+
+# lowson_model = Lowson(
+#     component=rotor_disk,
+#     mesh=rotor_bem_mesh,
+#     # mesh=acoustics_mesh,
+#     acoustics_data=cruise_acoustics,
+# )
+
+# cruise_tonal_SPL = lowson_model.evaluate_tonal_noise(dT, dD, ac_states)
+# cruise_model.register_output(cruise_tonal_SPL)
+
+ks_model = KS(
+    component=rotor_disk,
+    mesh=rotor_bem_mesh,
+    # mesh=acoustics_mesh,
+    acoustics_data=hover_acoustics,
+)
+hover_tonal_SPL = ks_model.evaluate_tonal_noise(dT, dD, ac_states)
+hover_model.register_output(hover_tonal_SPL)
+
+skm_model = SKM(
+    component=rotor_disk,
+    mesh=rotor_bem_mesh,
+    acoustics_data=hover_acoustics
+)
+hover_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
+hover_model.register_output(hover_broadband_SPL)
+
+total_noise_model = TotalAircraftNoise(
+    acoustics_data=hover_acoustics,
+    component_list=[rotor_disk],
+)
+noise_components = [hover_tonal_SPL, hover_broadband_SPL]
+
+hover_total_SPL = total_noise_model.evaluate(noise_components)
+hover_model.register_output(hover_total_SPL)
+# endregion
+
+hover_condition.add_m3l_model('hover_model', hover_model)
+design_scenario.add_design_condition(hover_condition)
 
 system_model.add_design_scenario(design_scenario=design_scenario)
 caddee_csdl_model = caddee.assemble_csdl()
+
+# =================== CONNECTIONS ===================
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.lowson_spl_model.rpm'
+)
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.ks_spl_model.rpm'
+)
 
 caddee_csdl_model.connect(
     'system_model.single_rotor_test.cruise.cruise.cruise_ac_states_operation.cruise_altitude',
     'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.atmosphere_model.altitude'
 )
+
 caddee_csdl_model.connect(
-    'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
-    'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.lowson_spl_model.rpm'
+    'system_model.single_rotor_test.hover.hover.hover_ac_states_operation.hover_altitude',
+    'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.atmosphere_model.altitude'
+)
+
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.phi_bracketed_search_group.phi_distribution',
+    'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.ks_spl_model.phi'
 )
 
 sim = Simulator(caddee_csdl_model, analytics=True, display_scripts=True, user_defined_name='single_rotor')
-# sim['system_model.single_rotor_test.cruise.cruise.rotor_bem_model.thrust_vector']
+
 sim.run()
 print(sim['system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.thrust_vector'])

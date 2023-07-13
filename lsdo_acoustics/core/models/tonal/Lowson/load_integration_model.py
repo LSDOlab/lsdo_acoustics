@@ -30,12 +30,7 @@ class LoadIntegrationModel(csdl.Model):
 
         radial_sum_D = csdl.sum(sectional_D, axes=(2,)) # total blade drag as a function of theta
         radial_sum_T = csdl.sum(sectional_T, axes=(2,)) # total blade thrust as a function of theta
-        print('SHAPE')
-        print(sectional_D.shape)
-        print(sectional_T.shape)
 
-        print(radial_sum_D.shape)
-        print(radial_sum_T.shape)
 
 
         theta = np.linspace(0., 2*np.pi, num_azim) # we assume num_azim is the number of azimuthal divisions in ONE ROTATION

@@ -29,9 +29,11 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         if self.model_name == 'KS':
             from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
             model = KvurtStalnovModel(
-                num_nodes=self.num_nodes,
                 component_name=self.rotor_name,
+                mesh=self.mesh,
+                num_blades=self.mesh.parameters['num_blades'],
                 observer_data=self.observer_data,
+                num_nodes=self.num_nodes,
             )
         elif self.model_name == 'Lowson':
             from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
@@ -104,18 +106,14 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         # NEEDED BY M3L
         self.name = f'{self.component_name}_{self.model_name}_tonal_model'
         self.arguments = {}
-        if self.model_name == 'Lowson':
-            # self.arguments[f'{self.rotor_name}_dT'] = thrust_input
-            # self.arguments[f'{self.rotor_name}_dD'] = drag_input
-            self.arguments['_dT'] = thrust_input
-            self.arguments['_dD'] = drag_input
-            self.arguments['Vx'] = ac_states['u']
-            self.arguments['Vy'] = ac_states['v']
-            self.arguments['Vz'] = ac_states['w']
+        self.arguments['_dT'] = thrust_input
+        self.arguments['_dD'] = drag_input
+        self.arguments['Vx'] = ac_states['u']
+        self.arguments['Vy'] = ac_states['v']
+        self.arguments['Vz'] = ac_states['w']
             # self.arguments['z'] = ac_states['z']
-        elif self.model_name == 'KS':
-            self.arguments[f'{self.rotor_name}_dTdr'] = thrust_input
-            self.arguments[f'{self.rotor_name}_dDdr'] = drag_input
+        if self.model_name == 'KS':
+            pass
 
         tonal_spl = m3l.Variable(
             name=f'{self.rotor_name}_tonal_spl', 
@@ -126,7 +124,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         return tonal_spl
     
     def evaluate_broadband_noise(self, 
-                                 ac_states: m3l.Variable=None) -> m3l.Variable:
+                                 ac_states: m3l.Variable=None,
+                                 CT: m3l.Variable=None) -> m3l.Variable:
         '''
         This method computes the broadband noise for one rotor.
 
@@ -144,6 +143,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.arguments['Vx'] = ac_states['u']
         self.arguments['Vy'] = ac_states['v']
         self.arguments['Vz'] = ac_states['w']
+        if CT is not None:
+            self.arguments['CT'] = CT
 
         broadband_spl = m3l.Variable(
             name=f'{self.rotor_name}_broadband_spl', 

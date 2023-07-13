@@ -12,6 +12,7 @@ class KSSPLModel(csdl.Model):
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
         self.parameters.declare('num_blades', default=2)
         self.parameters.declare('num_radial')
+        self.parameters.declare('num_azim')
 
     def sears_function(self, m, omega, r, R, c):
         Ut = omega*r*R
@@ -39,30 +40,40 @@ class KSSPLModel(csdl.Model):
         B = self.parameters['num_blades']
 
         num_radial = self.parameters['num_radial']
+        num_azim = self.parameters['num_azim']
 
         q = 0.05 # gust amplification factor
 
-        rho = self.declare_variable('rho')
+        rho = self.declare_variable('density')
         x = csdl.reshape(self.declare_variable('rel_obs_x_pos', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
         y = self.declare_variable('rel_obs_y_pos', shape=(num_nodes, 1, num_observers))
         z = self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers))
         S = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
 
-        RPM = self.declare_variable('revolutions_per_minute') # NOTE: UPDATE/FIX LATER
+        RPM = self.declare_variable('rpm') # NOTE: UPDATE/FIX LATER
         # BPF = m*RPM*B/60.
         theta = csdl.arccos(x/S)
-        r = self.declare_variable('nondim_sectional_radius', shape=(num_nodes, num_radial)) # NOTE: ADJUST LATER 
-        lambda_i = self.declare_variable('sectional_inflow_ratio', shape=(num_nodes, num_radial))
-        phi = lambda_i/r # DELETE
+        
+        phi = csdl.reshape(self.declare_variable('phi', shape=(num_nodes, num_radial, num_azim))[:,:,0], (num_nodes, num_radial))
 
         omega = RPM*2*np.pi/60
-        R = self.declare_variable(f'{component_name}_radius')
+        # R = self.declare_variable(f'{component_name}_radius')
+        R = self.declare_variable('propeller_radius')
         a = self.declare_variable('speed_of_sound')
-        c = self.declare_variable('rotor_chord', shape=(num_radial,))
+        c = self.declare_variable('chord_profile', shape=(num_radial,))
+        r = self.declare_variable('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
 
         # setting up the steady loads
-        dTdR_real_loads = self.declare_variable('dTdR', shape=(num_nodes, num_radial)) 
-        dDdR_real_loads = self.declare_variable('dDdR', shape=(num_nodes, num_radial))
+        dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim)) 
+        dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))
+        dr = self.declare_variable('dr')
+
+        dTdR_inputs = dT / csdl.expand(dr, shape=dT.shape)
+        dDdR_inputs = dD / csdl.expand(dr, shape=dD.shape)
+
+        dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
+        dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
+
         dTdR_imag_loads = self.declare_variable('dTdR_imag', val=0., shape=(num_nodes, num_radial)) # FIX SHAPE
         dDdR_imag_loads = self.declare_variable('dDdR_imag', val=0., shape=(num_nodes, num_radial)) # FIX SHAPE
 
@@ -70,14 +81,17 @@ class KSSPLModel(csdl.Model):
         target_shape = (num_nodes, num_observers, 1, num_radial, 1)
 
         theta_exp = csdl.expand(theta, target_shape, 'ij->ijabc')
-        r_exp = csdl.expand(r, target_shape, 'ij->iabjc')
-        lambda_i_exp = csdl.expand(lambda_i, target_shape, 'ij->iabjc')
-        phi_exp = lambda_i_exp/r_exp
+        r_exp = csdl.expand(r, target_shape, 'i->abcid')
+        # lambda_i_exp = csdl.expand(lambda_i, target_shape, 'ij->iabjc')
+        # phi_exp = lambda_i_exp/r_exp
+        phi_exp = csdl.expand(phi, target_shape, 'ij->iabjc')
         omega_exp = csdl.expand(omega, target_shape)
         R_exp = csdl.expand(R, target_shape)
         a_exp = csdl.expand(a, target_shape)
         c_exp = csdl.expand(c, target_shape, 'i->abcid')
         rho_exp = csdl.expand(rho, target_shape)
+
+        lambda_i_exp = phi_exp * r_exp
 
         # ======================== CREATING OUTPUTS ========================
         An = self.create_output('An', shape=(num_nodes, num_observers, num_modes, num_radial, num_harmonics))
@@ -207,7 +221,7 @@ class KSSPLModel(csdl.Model):
                 axes=(2,)
             )
         ) # FIX TO SUM ACROSS THE MODES
-        self.register_output(f'{component_name}_tonal_SPL', tonal_SPL_rotor) # SHAPE OF (num_nodes, num_observers)
+        self.register_output(f'{component_name}_tonal_spl', tonal_SPL_rotor) # SHAPE OF (num_nodes, num_observers)
 
 
 
@@ -226,7 +240,7 @@ class TrapezoidMethod(csdl.Model):
         output_name = self.parameters['output_name']
         dim = self.parameters['dim']
 
-        h = self.declare_variable('step_size')
+        h = self.declare_variable('dr')
         # h = self.parameters['step_size']
 
         f = self.declare_variable(input_name, shape=input_shape)
