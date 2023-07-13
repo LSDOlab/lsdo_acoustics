@@ -82,7 +82,8 @@ class SteadyObserverLocationModel(csdl.Model):
         # ROTOR POSITION RELATIVE TO NOSE OF AIRCRAFT
         rotor_position = csdl.expand(
             self.declare_variable(
-                f'{component_name}_thrust_origin', # NOTE: CHECK AGAIN LATER
+                f'{component_name}_origin', # NOTE: CHECK AGAIN LATER
+                val=0.,
                 shape=((3,))
             ),
             shape=(num_nodes, 3, num_observers),

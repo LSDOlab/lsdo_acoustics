@@ -1,7 +1,8 @@
 import numpy as np
 import csdl
+from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
-class SKMSPLModel(csdl.Model):
+class SKMSPLModel(ModuleCSDL):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('num_nodes')
@@ -28,7 +29,7 @@ class SKMSPLModel(csdl.Model):
 
         R_skm = csdl.expand(
             self.declare_variable(
-                f'{component_name}_radius',
+                'propeller_radius',
                 shape=(1,)
             ),
             (num_nodes,num_observers)
@@ -64,7 +65,7 @@ class SKMSPLModel(csdl.Model):
         SPL150_SKM = 10*csdl.log10(1e-10 + (Omega_skm*R_skm)**6*Ab_skm*(CT_skm/sigma_skm)**2) - 42.9
         SPL_SKM = SPL150_SKM + 20*csdl.log10(1e-10 + csdl.sin(theta0_skm)/(S0_skm/150))
 
-        self.register_output(f'{component_name}_broadband_SPL', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
+        self.register_module_output(f'{component_name}_broadband_spl', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
 
 if __name__ == '__main__':
     model = SKMSPLModel(

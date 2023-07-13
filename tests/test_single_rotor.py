@@ -15,27 +15,75 @@ spatial_rep = system_rep.spatial_representation
 spatial_rep.import_file(file_name=file_name, file_path=str(IMPORTS_PATH))
 spatial_rep.refit_geometry(file_name=file_name, file_path=str(IMPORTS_PATH))
 
-rotor_primitive_names = list(
+# ==================== ROTOR DISK ====================
+prefix = 'rotor'
+rotor_disk_primitive_names = list(
     spatial_rep.get_primitives(search_names=['Rotor_disk']).keys()
 )
-rotor = cd.Rotor(
-    name='rotor',
+rotor_disk = cd.Rotor(
+    name=f'{prefix}_disk',
     spatial_representation=spatial_rep,
-    primitive_names=rotor_primitive_names
+    primitive_names=rotor_disk_primitive_names
 )
+system_rep.add_component(rotor_disk)
 
-system_rep.add_component(rotor)
-
-p11 = rotor.project(np.array([15.000, 0.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
-p12 = rotor.project(np.array([-15.000, 0.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
-p21 = rotor.project(np.array([0.000, 15.000 , 0.000]), direction=np.array([0.,0.,1.]), plot=False)
-p22 = rotor.project(np.array([0.000, -15.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
+# PROJECTIONS
+p11 = rotor_disk.project(np.array([0.500, 0.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
+p12 = rotor_disk.project(np.array([-0.500, 0.000, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
+p21 = rotor_disk.project(np.array([0.000, 0.500 , 0.000]), direction=np.array([0.,0.,1.]), plot=False)
+p22 = rotor_disk.project(np.array([0.000, -0.500, 0.000]), direction=np.array([0.,0.,1.]), plot=False)
 rotor_in_plane_x = am.subtract(p11,p12)
 rotor_in_plane_y = am.subtract(p21,p22)
-rotor_origin = rotor.project(np.array([0.000, 0.000, 0.000]), direction=np.array([0.,0.,1.]))
-system_rep.add_output('rotor_in_plane_x', quantity=rotor_in_plane_x)
-system_rep.add_output('rotor_in_plane_y', quantity=rotor_in_plane_y)
-system_rep.add_output('rotor_origin', quantity=rotor_origin)
+rotor_origin = rotor_disk.project(np.array([0.000, 0.000, 0.000]), direction=np.array([0.,0.,1.]))
+system_rep.add_output(f'{prefix}_disk_in_plane_1', quantity=rotor_in_plane_x)
+system_rep.add_output(f'{prefix}_disk_in_plane_2', quantity=rotor_in_plane_y)
+system_rep.add_output(f'{prefix}_disk_origin', quantity=rotor_origin)
+
+# ==================== ROTOR BLADES ====================
+rotor_blade_primitive_names = list(
+    spatial_rep.get_primitives(search_names=['Rotor_blades, 0']).keys()
+)
+rotor_blade = cd.Rotor(
+    name=f'{prefix}_blade',
+    spatial_representation=spatial_rep,
+    primitive_names=rotor_blade_primitive_names
+)
+system_rep.add_component(rotor_blade)
+
+le_tip = np.array([-0.032, 0.5, 0.007])
+le_root = np.array([-0.014, 0.1, 0.015])
+te_tip = np.array([0.032, 0.5, -0.007])
+te_root = np.array([0.014, 0.1, -0.015])
+
+offset_x = 0.05
+offset_y = 0.05
+offset_z = 0.05
+num_radial = 25
+blade_le = np.linspace(
+    le_tip + np.array([-offset_x, 2*offset_y, offset_z]),
+    le_root + np.array([-offset_x, -offset_y, offset_z]),
+    num_radial
+) # array around LE with offsets
+blade_te = np.linspace(
+    te_tip - np.array([-offset_x, -2*offset_y, offset_z]),
+    te_root - np.array([-offset_x, offset_y, offset_z]),
+    num_radial
+) # array around TE with offsets
+
+p_le = rotor_blade.project(blade_le, direction=np.array([0., 0., -1.]), grid_search_n=50, plot=False) # projection onto LE of BLADE
+p_te = rotor_blade.project(blade_te, direction=np.array([0., 0., 1.]), grid_search_n=50, plot=False) # projection onto TE of BLADE
+
+rotor_blade_chord = am.subtract(p_le, p_te) # produces array map of vectors radially, from TE to LE
+
+rotor_disk_le_proj = rotor_disk.project(p_le.evaluate(), direction=np.array([0., 0., -1.]), grid_search_n=50, plot=False) # LE projected onto disk
+rotor_disk_te_proj = rotor_disk.project(p_te.evaluate(), direction=np.array([0., 0., 1.]), grid_search_n=50, plot=False) # TE projected onto disk
+
+rotor_v_dist_le = am.subtract(p_le, rotor_disk_le_proj) # vertical distance from LE to disk
+rotor_v_dist_te = am.subtract(p_te, rotor_disk_te_proj) # vertical distance from TE to disk
+rotor_v_dist_tot = am.subtract(rotor_v_dist_te, rotor_v_dist_le) 
+
+system_rep.add_output(f'{prefix}_blade_chord_length', rotor_blade_chord)
+system_rep.add_output(f'{prefix}_blade_twist', rotor_v_dist_tot)
 
 caddee.system_model = system_model = cd.SystemModel()
 
@@ -66,18 +114,21 @@ rotor_bem_mesh = BEMMesh(
     airfoil='NACA_4412',
     num_blades=3,
     chord_b_spline_rep=True,
-    twist_b_spline_rep=True
+    twist_b_spline_rep=True,
+    num_radial=num_radial,
+    num_tangential=30,
+    use_airfoil_ml=False
 )
-bem_model = BEM(component=rotor, mesh=rotor_bem_mesh, disk_prefix='disk', blade_prefix='blade')
+bem_model = BEM(component=rotor_disk, mesh=rotor_bem_mesh, disk_prefix='rotor_disk', blade_prefix='rotor_blade')
 bem_model.set_module_input('rpm', val=1200.)
-bem_forces, bem_moments = bem_model.evaluate(ac_states=ac_states)
-test_model.register_output(bem_forces)
+# bem_forces, bem_moments = bem_model.evaluate(ac_states=ac_states)
+_, _, dT, dQ, dD = bem_model.evaluate(ac_states=ac_states)
+# test_model.register_output(bem_forces)
 # endregion
 
 # region acoustics
 from lsdo_acoustics import Acoustics
-from lsdo_acoustics.core.m3l_models import Lowson
-from lsdo_acoustics.core.m3l_models import SKM
+from lsdo_acoustics.core.m3l_models import Lowson, SKM, TotalAircraftNoise
 
 cruise_acoustics = Acoustics(
     aircraft_position = np.array([0.,0.,30])
@@ -92,26 +143,37 @@ cruise_acoustics.add_observer(
 from lsdo_acoustics.core.acoustics_mesh import AcousticsMesh
 
 acoustics_mesh = AcousticsMesh(
-    rotor_disk_mesh=rotor_bem_mesh,
-    num_tangential=10,
+    # rotor_disk_mesh=rotor_bem_mesh,
+    num_radial=num_radial,
+    num_azimuthal=10,
+    num_blades=3
 )
 
 lowson_model = Lowson(
-    component=rotor,
+    component=rotor_disk,
     mesh=rotor_bem_mesh,
-    acoustics_data=cruise_acoustics
+    # mesh=acoustics_mesh,
+    acoustics_data=cruise_acoustics,
 )
-cruise_tonal_SPL = lowson_model.evaluate_tonal_noise(bem_forces)
+
+cruise_tonal_SPL = lowson_model.evaluate_tonal_noise(dT, dD, ac_states)
 test_model.register_output(cruise_tonal_SPL)
 
 skm_model = SKM(
-    component=rotor,
+    component=rotor_disk,
     mesh=rotor_bem_mesh,
     acoustics_data=cruise_acoustics
 )
-cruise_broadband_SPL = skm_model.evaluate_broadband_noise(bem_forces)
+cruise_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states)
 test_model.register_output(cruise_broadband_SPL)
 
+
+total_noise_model = TotalAircraftNoise(
+    acoustics_data=cruise_acoustics,
+    component_list=[rotor_disk],
+)
+cruise_total_SPL = total_noise_model.evaluate([cruise_tonal_SPL, cruise_broadband_SPL])
+test_model.register_output(cruise_total_SPL)
 # endregion
 
 cruise_condition.add_m3l_model('test_model', test_model)
@@ -120,5 +182,16 @@ design_scenario.add_design_condition(cruise_condition)
 system_model.add_design_scenario(design_scenario=design_scenario)
 caddee_csdl_model = caddee.assemble_csdl()
 
-sim = Simulator(caddee_csdl_model)
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.cruise.cruise.cruise_ac_states_operation.cruise_altitude',
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.atmosphere_model.altitude'
+)
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.lowson_spl_model.rpm'
+)
+
+sim = Simulator(caddee_csdl_model, analytics=True, display_scripts=True, user_defined_name='single_rotor')
+# sim['system_model.single_rotor_test.cruise.cruise.rotor_bem_model.thrust_vector']
 sim.run()
+print(sim['system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.thrust_vector'])

@@ -4,7 +4,9 @@ import csdl
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 from lsdo_acoustics.core.models.broadband.SKM.skm_spl_model import SKMSPLModel
 
-class SKMBroadbandModel(csdl.Model):
+from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
+
+class SKMBroadbandModel(ModuleCSDL):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('mesh')
@@ -21,6 +23,33 @@ class SKMBroadbandModel(csdl.Model):
 
         num_radial = mesh.parameters['num_radial']
 
+        self.register_module_input(f'{component_name}_origin', shape=(3,), promotes=True) * 0.3048
+        self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+
+        # Thrust vector and origin
+        units = 'ft'
+        if units == 'ft':
+            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+        else:
+            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
+            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
+                        
+        R = csdl.pnorm(in_plane_y, 2) / 2
+        rotor_radius = self.register_module_output('propeller_radius', R)
+
+        # Chord 
+        # chord = self.register_module_input(f'{component_name}_chord_length', shape=(num_radial, 3), promotes=True)
+        chord = self.register_module_input('rotor_blade_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
+        chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
+        if units == 'ft':
+            chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
+        else:
+            chord_profile = self.register_output('chord_profile', chord_length)
+
+
         self.add(
             SteadyObserverLocationModel(
                 component_name=component_name,
@@ -34,6 +63,10 @@ class SKMBroadbandModel(csdl.Model):
             ),
             'steady_observer_location_model'
         )
+
+        norm_hub_rad = 0.2
+        dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)
+        self.register_output('dr', dr)
 
         self.add(
             SKMSPLModel(

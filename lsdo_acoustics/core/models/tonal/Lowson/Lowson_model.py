@@ -28,21 +28,56 @@ class LowsonModel(ModuleCSDL):
 
         mesh = self.parameters['mesh']
         num_radial = mesh.parameters['num_radial']
-        # num_azim = mesh.parameters['num_tangential']
+        num_azim = mesh.parameters['num_tangential']
     
         # FOR TESTING PURPOSES
         sectional_D = self.declare_variable(
-            'sectional_D', 
-            shape=(num_nodes, num_azim, num_radial)
+            '_dD', 
+            shape=(num_nodes, num_radial, num_azim)
         )
         sectional_T = self.declare_variable(
-            'sectional_T', 
-            shape=(num_nodes, num_azim, num_radial)
+            '_dT', 
+            shape=(num_nodes, num_radial, num_azim)
         )
 
-        self.declare_variable(f'{component_name}_thrust_origin')
-        # PARSING MESH
-        
+        # self.declare_variable(f'{component_name}_thrust_origin', shape=(3,))
+        self.register_module_input(f'{component_name}_origin', shape=(3,), promotes=True) * 0.3048
+        self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        self.register_module_input('altitude', shape=(num_nodes,), promotes=True)
+
+        # Thrust vector and origin
+        units = 'ft'
+        if units == 'ft':
+            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+        else:
+            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
+            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
+                        
+        R = csdl.pnorm(in_plane_y, 2) / 2
+        self.register_module_output('propeller_radius', R)
+
+        # region atmospheric model (to get speed of sound)
+        from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
+        self.add(
+            AtmosphereModel(
+                shape=(num_nodes,),
+            ),
+            'atmosphere_model'
+        )
+        # endregion
+
+        a = self.declare_variable('speed_of_sound', shape=(num_nodes,))
+        Vx = self.declare_variable('Vx', shape=(num_nodes,))
+        Vy = self.declare_variable('Vy', shape=(num_nodes,))
+        Vz = self.declare_variable('Vz', shape=(num_nodes,))
+
+        M = self.register_output(
+            'mach_number',
+            (Vx**2 + Vy**2 + Vz**2)**0.5/a
+        )
 
         '''
         NOTE:
@@ -58,7 +93,8 @@ class LowsonModel(ModuleCSDL):
                 init_obs_z_loc=observer_data['z'],
                 time_vectors=observer_data['time'],
                 total_num_observers=observer_data['num_observers'],
-            )
+            ),
+            'observer_location_model'
         )
         # endregion
         # NOTE: NEED ROTOR LOCATION RELATIVE TO AIRCRAFT CG

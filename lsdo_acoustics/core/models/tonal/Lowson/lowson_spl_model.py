@@ -1,7 +1,8 @@
 import csdl
 import numpy as np
+from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
-class LowsonSPLModel(csdl.Model):
+class LowsonSPLModel(ModuleCSDL):
     def initialize(self):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_blades', default=2)
@@ -25,10 +26,13 @@ class LowsonSPLModel(csdl.Model):
         component_name = self.parameters['component_name']
 
         a = self.declare_variable('speed_of_sound')
-        M = self.declare_variable('forward_mach_number') # mach number traveling forward
-        R = self.declare_variable(f'{component_name}_radius')
+        M = self.declare_variable('mach_number') # mach number traveling forward
+        R = self.declare_variable('propeller_radius')
         
-        rpm = self.declare_variable('rpm', shape=(num_nodes,))
+        rpm = csdl.reshape(
+            self.register_module_input('rpm', shape=(num_nodes,1), units='rpm', promotes=True),
+            (num_nodes, ),
+        )
 
 
         omega = rpm*2*np.pi/60 # conversion to radians per second
@@ -39,15 +43,16 @@ class LowsonSPLModel(csdl.Model):
         z = csdl.reshape(self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
         S = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
 
-        theta = csdl.arctan(z/(x**2+y**2)**0.5)
+        theta = csdl.arctan(z/(x**2+y**2 + 1e-6)**0.5)
+        self.register_output('dummy', theta)
         # beta = (1 - M**2)**0.5
         r1 = S*(1.-csdl.expand(M,(num_nodes, num_observers))*csdl.cos(theta))
 
         # FOURIER COEFFICIENTS FOR THRUST AND DRAG
-        a_T = self.declare_variable('a_T', shape=(num_nodes, B, num_harmonics))
-        b_T = self.declare_variable('b_T', shape=(num_nodes, B, num_harmonics))
-        a_D = self.declare_variable('a_D', shape=(num_nodes, B, num_harmonics))
-        b_D = self.declare_variable('b_D', shape=(num_nodes, B, num_harmonics))
+        a_T = self.declare_variable('aT', shape=(num_nodes, B, num_harmonics))
+        b_T = self.declare_variable('bT', shape=(num_nodes, B, num_harmonics))
+        a_D = self.declare_variable('aD', shape=(num_nodes, B, num_harmonics))
+        b_D = self.declare_variable('bD', shape=(num_nodes, B, num_harmonics))
 
         # theta = self.declare_variable('observer_theta', shape=(num_nodes, num_observers))
 
@@ -181,7 +186,7 @@ class LowsonSPLModel(csdl.Model):
             # TOTAL SHAPE OF SPL_m IS (num_nodes, num_observers, num_modes)
 
         rotor_tonal_spl = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
-        self.register_output(f'{component_name}_tonal_SPL', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
+        self.register_output(f'{component_name}_tonal_spl', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
         print(rotor_tonal_spl.shape)
         
 

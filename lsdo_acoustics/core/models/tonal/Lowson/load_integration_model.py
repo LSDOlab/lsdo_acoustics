@@ -17,19 +17,25 @@ class LoadIntegrationModel(csdl.Model):
         load_harmonics = self.parameters['load_harmonics']
         
         sectional_D = csdl.expand(
-            self.declare_variable('sectional_D', shape=(num_nodes, num_azim, num_radial)), # num_azim should provide the number of timesteps
-            shape=(num_nodes, num_blades, num_azim, num_radial),
+            self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim)), # num_azim should provide the number of timesteps
+            shape=(num_nodes, num_blades, num_radial, num_azim),
             indices='ijk->iajk'
         )
         
         sectional_T = csdl.expand(
-            self.declare_variable('sectional_T', shape=(num_nodes, num_azim, num_radial)), # num_azim should provide the number of timesteps
-            shape=(num_nodes, num_blades, num_azim, num_radial),
+            self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim)), # num_azim should provide the number of timesteps
+            shape=(num_nodes, num_blades, num_radial, num_azim),
             indices='ijk->iajk'
         )
 
-        radial_sum_D = csdl.sum(sectional_D, axes=(3,)) # total blade drag as a function of theta
-        radial_sum_T = csdl.sum(sectional_T, axes=(3,)) # total blade thrust as a function of theta
+        radial_sum_D = csdl.sum(sectional_D, axes=(2,)) # total blade drag as a function of theta
+        radial_sum_T = csdl.sum(sectional_T, axes=(2,)) # total blade thrust as a function of theta
+        print('SHAPE')
+        print(sectional_D.shape)
+        print(sectional_T.shape)
+
+        print(radial_sum_D.shape)
+        print(radial_sum_T.shape)
 
 
         theta = np.linspace(0., 2*np.pi, num_azim) # we assume num_azim is the number of azimuthal divisions in ONE ROTATION
@@ -71,7 +77,9 @@ class LoadIntegrationModel(csdl.Model):
                     input_shape=input_shape,
                     dim=dim,
                     output_name=output_names[i],
-                )
+                    num_azim=num_azim
+                ),
+                f'{output_names[i]}_load_integration_model'
             )
 
         '''
@@ -86,18 +94,20 @@ class TrapezoidMethod(csdl.Model):
         self.parameters.declare('input_shape', types=tuple)
         self.parameters.declare('dim', types=int) # dimension in which sum is taken for numerical integration
         self.parameters.declare('output_name')
+        self.parameters.declare('num_azim')
 
     def define(self):
         input_name = self.parameters['input_name']
         input_shape = self.parameters['input_shape']
         output_name = self.parameters['output_name']
         dim = self.parameters['dim']
+        num_azim = self.parameters['num_azim']
 
-        h = self.declare_variable('step_size')
+        h = self.declare_variable('dtheta', val=2.*np.pi/num_azim) # FIX TO USE THE AZIMUTHAL SEPARATIONS
         f = self.declare_variable(input_name, shape=input_shape)
         out_pre_integration = 1/(2*np.pi)*(f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
         out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
-        print(out.shape)
+        # print(out.shape)
 
 '''
 NOTE:

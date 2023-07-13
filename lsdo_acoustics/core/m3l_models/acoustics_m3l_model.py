@@ -71,7 +71,9 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             model = SKMBroadbandModel(
                 num_nodes=self.num_nodes,
                 component_name=self.rotor_name,
-                observer_data=self.observer_data
+                observer_data=self.observer_data,
+                mesh=self.mesh,
+                num_blades=self.mesh.parameters['num_blades']
             )
         else:
             model = self.custom_model(
@@ -84,7 +86,10 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
 
         return model
 
-    def evaluate_tonal_noise(self, rotor_loading: m3l.Variable=None) -> m3l.Variable:
+    def evaluate_tonal_noise(self, 
+                             thrust_input: m3l.Variable=None, 
+                             drag_input: m3l.Variable=None, 
+                             ac_states: m3l.Variable=None) -> m3l.Variable:
         '''
         This method computes the tonal noise for one rotor.
 
@@ -99,8 +104,18 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         # NEEDED BY M3L
         self.name = f'{self.component_name}_{self.model_name}_tonal_model'
         self.arguments = {}
-        if rotor_loading is not None:
-            self.arguments[f'{self.rotor_name}_rotor_loading'] = rotor_loading
+        if self.model_name == 'Lowson':
+            # self.arguments[f'{self.rotor_name}_dT'] = thrust_input
+            # self.arguments[f'{self.rotor_name}_dD'] = drag_input
+            self.arguments['_dT'] = thrust_input
+            self.arguments['_dD'] = drag_input
+            self.arguments['Vx'] = ac_states['u']
+            self.arguments['Vy'] = ac_states['v']
+            self.arguments['Vz'] = ac_states['w']
+            # self.arguments['z'] = ac_states['z']
+        elif self.model_name == 'KS':
+            self.arguments[f'{self.rotor_name}_dTdr'] = thrust_input
+            self.arguments[f'{self.rotor_name}_dDdr'] = drag_input
 
         tonal_spl = m3l.Variable(
             name=f'{self.rotor_name}_tonal_spl', 
@@ -110,7 +125,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
 
         return tonal_spl
     
-    def evaluate_broadband_noise(self, rotor_loading: m3l.Variable=None) -> m3l.Variable:
+    def evaluate_broadband_noise(self, 
+                                 ac_states: m3l.Variable=None) -> m3l.Variable:
         '''
         This method computes the broadband noise for one rotor.
 
@@ -120,12 +136,14 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.model_type = 'broadband'
         self.observer_data = self._assemble_observers()
         self.rotor_name = self.component_name
+        self.mesh = self.parameters['mesh']
 
         # NEEDED BY M3L
         self.name = f'{self.component_name}_{self.model_name}_broadband_model'
         self.arguments = {}
-        if rotor_loading is not None:
-            self.arguments[f'{self.rotor_name}_rotor_loading'] = rotor_loading
+        self.arguments['Vx'] = ac_states['u']
+        self.arguments['Vy'] = ac_states['v']
+        self.arguments['Vz'] = ac_states['w']
 
         broadband_spl = m3l.Variable(
             name=f'{self.rotor_name}_broadband_spl', 
