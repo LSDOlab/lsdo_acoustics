@@ -9,7 +9,7 @@ from lsdo_acoustics import GEOMETRY_PATH, IMPORTS_PATH
 from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
 
 from lsdo_acoustics import Acoustics
-from lsdo_acoustics.core.m3l_models import Lowson, KS, SKM, TotalAircraftNoise
+from lsdo_acoustics.core.m3l_models import Lowson, KS, SKM, GL, TotalAircraftNoise
 
 '''
 This test script connects the acoustics models to BEM.
@@ -208,7 +208,7 @@ cruise_model.register_output(cruise_total_SPL)
 # endregion
 
 cruise_condition.add_m3l_model('cruise_model', cruise_model)
-design_scenario.add_design_condition(cruise_condition)
+# design_scenario.add_design_condition(cruise_condition)
 
 # ==================== HOVER ====================
 hover_model = m3l.Model()
@@ -284,13 +284,21 @@ ks_model = KS(
 hover_tonal_SPL = ks_model.evaluate_tonal_noise(dT, dD, ac_states)
 hover_model.register_output(hover_tonal_SPL)
 
-skm_model = SKM(
+gl_model = GL(
     component=rotor_disk,
     mesh=rotor_bem_mesh,
     acoustics_data=hover_acoustics
 )
-hover_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
+hover_broadband_SPL = gl_model.evaluate_broadband_noise(ac_states, CT)
 hover_model.register_output(hover_broadband_SPL)
+
+# skm_model = SKM(
+#     component=rotor_disk,
+#     mesh=rotor_bem_mesh,
+#     acoustics_data=cruise_acoustics
+# )
+# cruise_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
+# cruise_model.register_output(cruise_broadband_SPL)
 
 total_noise_model = TotalAircraftNoise(
     acoustics_data=hover_acoustics,
@@ -316,6 +324,11 @@ caddee_csdl_model.connect(
 caddee_csdl_model.connect(
     'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
     'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.ks_spl_model.rpm'
+)
+
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.hover.hover.rotor_disk_GL_broadband_model.gl_spl_model.rpm'
 )
 
 caddee_csdl_model.connect(

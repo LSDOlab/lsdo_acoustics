@@ -47,7 +47,7 @@ class TotalAircraftNoiseModel(ModuleCSDL):
                 axes=(0,)
             )
         )
-        self.register_module_output('total_noise', total_noise)
+        self.register_module_output('total_spl', total_noise)
 
         # indiv_rotor_noise = self.create_output(
         #     'indiv_rotor_noise',

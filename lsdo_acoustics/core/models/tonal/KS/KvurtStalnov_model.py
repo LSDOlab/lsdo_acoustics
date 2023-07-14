@@ -28,6 +28,7 @@ class KvurtStalnovModel(ModuleCSDL):
         modes = self.parameters['modes']
         load_harmonics = self.parameters['load_harmonics']
         num_blades = self.parameters['num_blades']
+        num_observers = observer_data['num_observers']
 
         self.register_module_input(f'{component_name}_origin', shape=(3,), promotes=True) * 0.3048
         # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
@@ -102,6 +103,26 @@ class KvurtStalnovModel(ModuleCSDL):
             'ks_spl_model'
         )
         # endregion
+
+    #     # A-WEIGHTING
+    #     tonal_spl = self.declare_variable(f'{component_name}_tonal_spl', (num_nodes, num_observers))
+
+    #     BPF_ex = csdl.expand(BPF, (num_nodes, num_observers), 'i->ia')
+    #     A_weighting = self.A_weighting(BPF_ex)
+
+    #     A_weighted_SPL_rotor = 10.*csdl.log10(
+    #         csdl.exp_a(10., (tonal_spl + A_weighting)/10.)
+    #     )
+    #     self.register_output(f'{component_name}_A_weighted_tonal_spl', A_weighted_SPL_rotor)
+
+
+
+    # def A_weighting(self, f):
+    #     C = 12194**2*1000**4/((1000**2+20.6**2)*np.sqrt((1000**2+107.7**2)*(1000**2+737.9**2))*(1000**2+12194**2))
+    #     RA = 12194**2*f**4 / ((f**2+20.6**2)*((f**2+107.7**2)*(f**2+737.9**2))**0.5*(f**2+12194**2))
+    #     A = 20*csdl.log(RA) - 20*np.log10(C)
+
+    #     return A
 
 if __name__ == '__main__':
     model = KvurtStalnovModel(
