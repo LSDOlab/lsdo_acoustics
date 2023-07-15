@@ -71,6 +71,9 @@ class KSSPLModel(csdl.Model):
         dTdR_inputs = dT / csdl.expand(dr, shape=dT.shape)
         dDdR_inputs = dD / csdl.expand(dr, shape=dD.shape)
 
+        self.register_output('aaa', dTdR_inputs)
+        self.register_output('bbb', dDdR_inputs)
+
         dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
         dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
 
@@ -92,6 +95,7 @@ class KSSPLModel(csdl.Model):
         rho_exp = csdl.expand(rho, target_shape)
 
         lambda_i_exp = phi_exp * r_exp
+        self.register_output('lambda_test', lambda_i_exp)
 
         # ======================== CREATING OUTPUTS ========================
         An = self.create_output('An', shape=(num_nodes, num_observers, num_modes, num_radial, num_harmonics))

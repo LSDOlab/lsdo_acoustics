@@ -79,7 +79,7 @@ te_root = np.array([0.014, 0.1, -0.015])
 offset_x = 0.05
 offset_y = 0.05
 offset_z = 0.05
-num_radial = 25
+num_radial = 40
 blade_le = np.linspace(
     le_root + np.array([-offset_x, -offset_y, offset_z]),
     le_tip + np.array([-offset_x, 2*offset_y, offset_z]),
@@ -117,7 +117,7 @@ cruise_model = m3l.Model()
 cruise_condition = cd.CruiseCondition(name='cruise')
 cruise_condition.atmosphere_model = cd.SimpleAtmosphereModel()
 
-cruise_condition.set_module_input(name='mach_number', val=0.17)
+cruise_condition.set_module_input(name='mach_number', val=0.0705)
 cruise_condition.set_module_input(name='range', val=40000)
 cruise_condition.set_module_input(name='altitude', val=500)
 cruise_condition.set_module_input(name='wing_incidence_angle', val=np.deg2rad(0))
@@ -135,15 +135,15 @@ rotor_bem_mesh = BEMMesh(
         rotor_origin=rotor_origin
     ),
     airfoil='NACA_4412',
-    num_blades=3,
+    num_blades=2,
     chord_b_spline_rep=True,
     twist_b_spline_rep=True,
     num_radial=num_radial,
-    num_tangential=30,
-    use_airfoil_ml=False
+    num_tangential=100,
+    use_airfoil_ml=True
 )
 bem_model = BEM(component=rotor_disk, mesh=rotor_bem_mesh, disk_prefix='rotor_disk', blade_prefix='rotor_blade')
-bem_model.set_module_input('rpm', val=1200.)
+bem_model.set_module_input('rpm', val=5500.)
 _, _, dT, dQ, dD, CT = bem_model.evaluate(ac_states=ac_states)
 cruise_model.register_output(dT)
 cruise_model.register_output(dD)
@@ -152,12 +152,12 @@ cruise_model.register_output(CT)
 
 # region acoustics
 cruise_acoustics = Acoustics(
-    aircraft_position = np.array([0.,0.,30])
+    aircraft_position = np.array([0.,0.,0])
 )
 
 cruise_acoustics.add_observer(
     name='obs1',
-    obs_position=np.array([40., 0., 0.]),
+    obs_position=np.array([0., 0., 1.75]),
     time_vector=np.array([0.]),
 )
 
@@ -208,7 +208,7 @@ cruise_model.register_output(cruise_total_SPL)
 # endregion
 
 cruise_condition.add_m3l_model('cruise_model', cruise_model)
-# design_scenario.add_design_condition(cruise_condition)
+design_scenario.add_design_condition(cruise_condition)
 
 # ==================== HOVER ====================
 hover_model = m3l.Model()
@@ -229,7 +229,7 @@ rotor_bem_mesh = BEMMesh(
         rotor_origin=rotor_origin
     ),
     airfoil='NACA_4412',
-    num_blades=3,
+    num_blades=4,
     chord_b_spline_rep=True,
     twist_b_spline_rep=True,
     num_radial=num_radial,
@@ -238,7 +238,7 @@ rotor_bem_mesh = BEMMesh(
     # use_airfoil_ml=False
 )
 bem_model = BEM(component=rotor_disk, mesh=rotor_bem_mesh, disk_prefix='rotor_disk', blade_prefix='rotor_blade')
-bem_model.set_module_input('rpm', val=1200.)
+bem_model.set_module_input('rpm', val=5500.)
 _, _, dT, dQ, dD, CT = bem_model.evaluate(ac_states=ac_states)
 hover_model.register_output(dT)
 hover_model.register_output(dD)
@@ -247,12 +247,12 @@ hover_model.register_output(CT)
 
 # region acoustics
 hover_acoustics = Acoustics(
-    aircraft_position = np.array([0.,0.,30])
+    aircraft_position = np.array([0.,0.,0])
 )
 
 hover_acoustics.add_observer(
     name='obs1',
-    obs_position=np.array([40., 0., 0.]),
+    obs_position=np.array([1.5, 0., 0]),
     time_vector=np.array([0.]),
 )
 
@@ -297,8 +297,8 @@ hover_model.register_output(hover_broadband_SPL)
 #     mesh=rotor_bem_mesh,
 #     acoustics_data=cruise_acoustics
 # )
-# cruise_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
-# cruise_model.register_output(cruise_broadband_SPL)
+# hover_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
+# hover_model.register_output(cruise_broadband_SPL)
 
 total_noise_model = TotalAircraftNoise(
     acoustics_data=hover_acoustics,
@@ -349,4 +349,4 @@ caddee_csdl_model.connect(
 sim = Simulator(caddee_csdl_model, analytics=True, display_scripts=True, user_defined_name='single_rotor')
 
 sim.run()
-print(sim['system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.thrust_vector'])
+# print(sim['system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.thrust_vector'])
