@@ -18,16 +18,18 @@ class KSSPLModel(csdl.Model):
     def sears_function(self, m, omega, r, R, c):
         Ut = omega*r*R
         k = m*omega*c/(2*Ut)
+
         S_real = ((csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2 - csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) + \
         csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,0) - csdl.bessel(k,1,1)*csdl.bessel(k,2,0)*csdl.bessel(k,2,1)) - \
-        (csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2) + csdl.bessel(k,1,0)**2*csdl.bessel(k,2,1) - \
-        csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) - csdl.bessel(k,1,0)*csdl.bessel(k,2,1)**2) \
-            / ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2)
+        ((csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2) + csdl.bessel(k,1,0)**2*csdl.bessel(k,2,1) - \
+        csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) - csdl.bessel(k,1,0)*csdl.bessel(k,2,1)**2)) \
+            / ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2)  # RECHECK
+        
         S_imag = -(csdl.bessel(k,1,1)**3 + csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + \
             csdl.bessel(k,1,1)**2*csdl.bessel(k,2,0)+ csdl.bessel(k,1,0)*csdl.bessel(k,2,0)*csdl.bessel(k,2,1) + \
-            csdl.bessel(k,1,0)**2*csdl.bessel(k,1,1)) - csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) - \
-            csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + csdl.bessel(k,1,1)*csdl.bessel(k,2,1)**2 / \
-            ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2) # CHECK THIS LINE AGAIN
+            csdl.bessel(k,1,0)**2*csdl.bessel(k,1,1) - csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) - \
+            csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + csdl.bessel(k,1,1)*csdl.bessel(k,2,1)**2) / \
+            ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2) # RECHECK
         return S_real, S_imag
 
     def define(self):
