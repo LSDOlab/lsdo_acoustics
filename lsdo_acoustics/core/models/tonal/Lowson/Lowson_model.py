@@ -17,6 +17,7 @@ class LowsonModel(ModuleCSDL):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
+        self.parameters.declare('debug', default=False)
 
     def define(self):
         component_name = self.parameters['component_name']
@@ -29,6 +30,8 @@ class LowsonModel(ModuleCSDL):
         mesh = self.parameters['mesh']
         num_radial = mesh.parameters['num_radial']
         num_azim = mesh.parameters['num_tangential']
+
+        test = self.parameters['debug'] # USE FOR VALIDATION PURPOSES
     
         # FOR TESTING PURPOSES
         sectional_D = self.declare_variable(
@@ -46,18 +49,21 @@ class LowsonModel(ModuleCSDL):
         self.register_module_input('altitude', shape=(num_nodes,), promotes=True)
 
         # Thrust vector and origin
-        units = 'ft'
-        if units == 'ft':
-            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
-            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
-            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+        if test:
+            self.declare_variable('propeller_radius')
         else:
-            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
-            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
-            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
-                        
-        R = csdl.pnorm(in_plane_y, 2) / 2
-        self.register_module_output('propeller_radius', R)
+            units = 'ft'
+            if units == 'ft':
+                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+            else:
+                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
+                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
+                            
+            R = csdl.pnorm(in_plane_y, 2) / 2
+            self.register_module_output('propeller_radius', R)
 
         # region atmospheric model (to get speed of sound)
         from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
@@ -67,17 +73,18 @@ class LowsonModel(ModuleCSDL):
             ),
             'atmosphere_model'
         )
-        # endregion
 
         a = self.declare_variable('speed_of_sound', shape=(num_nodes,))
-        Vx = self.declare_variable('Vx', shape=(num_nodes,))
-        Vy = self.declare_variable('Vy', shape=(num_nodes,))
-        Vz = self.declare_variable('Vz', shape=(num_nodes,))
+        # endregion
 
-        M = self.register_output(
-            'mach_number',
-            (Vx**2 + Vy**2 + Vz**2)**0.5/a
-        )
+        if test:
+            M  = self.declare_variable('mach_number')
+        else:
+            Vx = self.declare_variable('Vx', shape=(num_nodes,))
+            Vy = self.declare_variable('Vy', shape=(num_nodes,))
+            Vz = self.declare_variable('Vz', shape=(num_nodes,))
+
+            M = self.register_output( 'mach_number', (Vx**2 + Vy**2 + Vz**2)**0.5/a)
 
         '''
         NOTE:

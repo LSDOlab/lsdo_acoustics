@@ -34,7 +34,6 @@ class LowsonSPLModel(ModuleCSDL):
             (num_nodes, ),
         )
 
-
         omega = rpm*2*np.pi/60 # conversion to radians per second
 
         # DATA ON OBSERVER LOCATIONS

@@ -16,6 +16,7 @@ class KvurtStalnovModel(ModuleCSDL):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
+        self.parameters.declare('debug', default=False)
 
     def define(self):
         component_name = self.parameters['component_name']
@@ -30,28 +31,37 @@ class KvurtStalnovModel(ModuleCSDL):
         num_blades = self.parameters['num_blades']
         num_observers = observer_data['num_observers']
 
+        test = self.parameters['debug']
+
         self.register_module_input(f'{component_name}_origin', shape=(3,), promotes=True) * 0.3048
         # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
-        # Thrust vector and origin
-        units = 'ft'
-        if units == 'ft':
-            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
-            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
-            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+        if test:
+            rotor_radius = self.declare_variable('propeller_radius')
+            chord_profile = self.declare_variable('chord_profile', shape=(num_radial,))
+            self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
         else:
-            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
-            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
-            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
-                        
-        R = csdl.pnorm(in_plane_y, 2) / 2
-        rotor_radius = self.register_module_output('propeller_radius', R)
+            # Thrust vector and origin
+            units = 'ft'
+            if units == 'ft':
+                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+            else:
+                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
+                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
+                            
+            R = csdl.pnorm(in_plane_y, 2) / 2
+            rotor_radius = self.register_module_output('propeller_radius', R)
 
-        chord = self.register_module_input('rotor_blade_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
-        chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
-        if units == 'ft':
-            chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
-        else:
-            chord_profile = self.register_output('chord_profile', chord_length)
+            chord = self.register_module_input('rotor_blade_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
+            chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
+            if units == 'ft':
+                chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
+            else:
+                chord_profile = self.register_output('chord_profile', chord_length)
+            
+            self.declare_variable('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
 
         self.register_module_input('altitude', shape=(num_nodes,))
         Vx = self.declare_variable('Vx', shape=(num_nodes,))

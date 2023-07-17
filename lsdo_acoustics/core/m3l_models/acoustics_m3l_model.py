@@ -201,11 +201,6 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             observer_group_name = observer_group['name']
             observer_group_position = observer_group['init_position']
             observer_group_time = observer_group['time_vec']
-            print(observer_group_name)
-            print(observer_group_position)
-            print(observer_group_position.shape)
-            print(list(observer_group_time))
-            print(observer_group_time[:])
             
             for i in range(len(observer_group_time)):
                 self.observer_x_location.extend(observer_group_position[:, 0])
@@ -216,17 +211,6 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             self.observer_name_list.extend(
                 [observer_group_name] * observer_count
             )
-
-            # if len(observer_group_time) == 1:
-            #     self.observer_time.extend(
-            #         # [observer_group_time] * observer_count
-            #         [list(observer_group_time)] * observer_count
-            #     )
-            # else:
-            #     self.observer_time.append(
-            #         # [observer_group_time] * observer_count
-            #         list(observer_group_time) * observer_count
-            #     )
 
             if len(observer_group_time) == 1:
                 self.observer_time.extend(
@@ -239,9 +223,6 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
                     list(observer_group_time) * observer_count
                 )
 
-
-            # self.observer_time.extend(observer_group_time)
-            print(len(observer_group_time), observer_group_position.shape[0])
             self.num_observers += (len(observer_group_time) * observer_group_position.shape[0])
         
         self.num_observer_groups = len(self.observer_name_list)

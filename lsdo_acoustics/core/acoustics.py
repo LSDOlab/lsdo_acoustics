@@ -111,6 +111,73 @@ class Acoustics(object):
         self.directivity_names.append(name)
 
     '''
+    Assembling observer data
+    '''
+    def assemble_observers(self):
+        '''
+        IN THIS REGION, WE NEED TO SOMEHOW ACCESS THE OBSERVER INFORMATION
+        THE CODE BELOW ASSUMES WE HAVE IT ALREADY
+        
+        VECTORIZATION APPROACH:
+        - convert the observers in each mission segment to one single vector
+        - len is (sum of observers per segment, )
+        '''
+
+        # self.observer_list = []
+        self.observer_name_list = []
+        self.observer_x_location = []
+        self.observer_y_location = []
+        self.observer_z_location = []
+        self.observer_count = []
+        self.observer_time = []
+
+        self.num_observers = 0
+
+        observer_groups = self.observer_group_dictionaries
+        for observer_group in observer_groups: # loop over list
+            observer_group_name = observer_group['name']
+            observer_group_position = observer_group['init_position']
+            observer_group_time = observer_group['time_vec']
+            
+            for i in range(len(observer_group_time)):
+                self.observer_x_location.extend(observer_group_position[:, 0])
+                self.observer_y_location.extend(observer_group_position[:, 1])
+                self.observer_z_location.extend(observer_group_position[:, 2])
+
+            observer_count = observer_group_position.shape[0]
+            self.observer_name_list.extend(
+                [observer_group_name] * observer_count
+            )
+
+            if len(observer_group_time) == 1:
+                self.observer_time.extend(
+                    # [observer_group_time] * observer_count
+                    list(observer_group_time) * observer_count
+                )
+            else:
+                self.observer_time.extend(
+                    # [observer_group_time] * observer_count
+                    list(observer_group_time) * observer_count
+                )
+
+            self.num_observers += (len(observer_group_time) * observer_group_position.shape[0])
+        
+        self.num_observer_groups = len(self.observer_name_list)
+
+        self.observer_data = {
+            'name': self.observer_name_list,
+            'aircraft_position': np.resize(self.aircraft_position, (3,self.num_observers)),
+            # 'aircraft_position': self.aircraft_position,
+            'x': np.array(self.observer_x_location),
+            'y': np.array(self.observer_y_location),
+            'z': np.array(self.observer_z_location),
+            'time': np.array(self.observer_time),
+            'num_observers': self.num_observers # this accounts for the additional observers from time segments
+        }
+            
+        return self.observer_data
+
+    '''
     VISUALIZATION FUNCTIONS:
     NOTE: framework can be designed to automatically generate plots after running
         - automatically produces all directivity plots
