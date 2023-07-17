@@ -106,9 +106,10 @@ class KvurtStalnovModel(ModuleCSDL):
                 num_observers=observer_data['num_observers'],
                 num_blades=num_blades,
                 num_radial=num_radial,
-                num_azim = num_azim,
+                num_azim=num_azim,
                 modes=modes,
-                load_harmonics=load_harmonics
+                load_harmonics=load_harmonics,
+                test=test
             ),
             'ks_spl_model'
         )

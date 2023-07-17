@@ -16,7 +16,7 @@ class DummyMesh(object):
         }
 
 num_radial = 40
-mode = 'Lowson'
+mode = 'KS'
 
 # region inputs
 if mode == 'Lowson':
@@ -82,42 +82,40 @@ m = model(
     mesh=mesh,
     observer_data=observer_data,
     num_blades=inputs['num_blades'],
-    modes=[1]
+    modes=[1],
+    debug=True
 )
 sim = Simulator(m)
 
 sim['rpm'] = inputs['RPM']
 sim['propeller_radius'] = inputs['radius']
 sim['altitude'] = 0.
-sim['mach_number'] = inputs['mach']
-
 
 if mode == 'Lowson':
-    sim['_D'] = np.reshape(
+    sim['_dD'] = np.reshape(
         data['fx'],
         newshape=(1, data['fx'].shape[0], data['fx'].shape[1])
     )
-    sim['_T'] = np.reshape(
+    sim['_dT'] = np.reshape(
         data['fz'],
         newshape=(1, data['fz'].shape[0], data['fz'].shape[1])
     )
+    sim['mach_number'] = inputs['mach']
 
 elif mode == 'KS': # all of shape (num_nodes, num_radial)
     sim['chord_profile'] = 0.03176 * np.ones((num_radial,))
-    sim['lambda_i'] = data['lambda_i']
-    sim['nondim_sectional_radius'] = data['non_dim_rad']
+    sim['lambda_i'] = np.array(data['lambda_i'])
+    sim['nondim_sectional_radius'] = np.array(data['non_dim_rad'])
     rho = 1.225
     R = inputs['radius']
     A = np.pi*R**2
     omega = inputs['RPM']*2.*np.pi/60.
 
-    sim['dTdR_real'] = rho*A*R*(omega**2)*data['dCTdr']
+    sim['dTdR_real'] = rho*A*R*(omega**2)*np.array(data['dCTdr'])
     sigma = 0.03176*R*inputs['num_blades'] / (np.pi*R**2)
-    dCQdr = 0.5*sigma*data['Cl']*data['lambda_i']*data['non_dim_rad']
+    dCQdr = 0.5*sigma*np.array(data['Cl'])*np.array(data['lambda_i'])*np.array(data['non_dim_rad'])
     dQdr = rho*A*R*(omega**2*R**2)*dCQdr
-    sim['dDdR_real'] = dQdr / (data['non_dim_rad']*R)
+    sim['dDdR_real'] = dQdr / (np.array(data['non_dim_rad'])*R)
 
 
-
-# data.keys()
-# dict_keys(['fx', 'fz', 'c', 'time', 'angle'])
+sim.run()

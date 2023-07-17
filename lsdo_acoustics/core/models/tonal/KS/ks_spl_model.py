@@ -104,6 +104,7 @@ class KSSPLModel(csdl.Model):
             lambda_i = self.declare_variable('lambda_i', shape=(num_nodes, num_radial))
             lambda_i_exp = csdl.expand(lambda_i, target_shape, 'ij->iabjc')
             phi_exp = lambda_i_exp / r_exp
+            self.register_output('phi_exp', phi_exp)
         else: # inputs are phi and r, get lambda
             phi = csdl.reshape(self.declare_variable('phi', shape=(num_nodes, num_radial, num_azim))[:,:,0], (num_nodes, num_radial))
             phi_exp = csdl.expand(phi, target_shape, 'ij->iabjc')
@@ -117,7 +118,8 @@ class KSSPLModel(csdl.Model):
 
         for i in range(num_modes):
             m = modes[i] # mode
-            for j in harmonics: # (in Hyunjune's code, this is lam)
+            # for j in harmonics: # (in Hyunjune's code, this is lam)
+            for j in range(m+1):
                 j = int(j)
 
                 if j == 0: # steady loads 
@@ -130,6 +132,8 @@ class KSSPLModel(csdl.Model):
 
                 else: # "unsteady" loads
                     S_real, S_imag = self.sears_function(j, omega_exp, r_exp, R_exp, c_exp)
+                    self.print_var(S_real)
+                    self.print_var(S_imag)
                     w_lam = q*lambda_i_exp*omega_exp*R_exp/(j*B)
                     Vt = 0.
                     dLdR = np.pi*rho_exp*(omega_exp*r_exp*R_exp-Vt) * c_exp * w_lam
@@ -228,7 +232,7 @@ class KSSPLModel(csdl.Model):
             # print(i)
             # print(C_real.shape)
             # print(C_imag.shape)
-            tonal_SPL_per_mode[:,:,i] = 10.*csdl.log10((C_real**2 + C_imag**2)/P_ref) 
+            tonal_SPL_per_mode[:,:,i] = 10.*csdl.log10((C_real**2 + C_imag**2)/P_ref**2 / 2.) 
             # SHAPE OF (num_nodes, num_observers, 1) corresponding to 1 mode
             # tonal_SPL_per_model overall has shape (num_nodes, num_observers, num_modes)
 
