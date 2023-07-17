@@ -58,6 +58,7 @@ class KSSPLModel(csdl.Model):
         RPM = self.declare_variable('rpm') # NOTE: UPDATE/FIX LATER
         # BPF = m*RPM*B/60.
         theta = csdl.arccos(x/S)
+        self.register_output('theta_dummy', theta)
         
 
         omega = RPM*2*np.pi/60
@@ -85,8 +86,8 @@ class KSSPLModel(csdl.Model):
             dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
             dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
 
-        dTdR_imag_loads = self.declare_variable('dTdR_imag', val=0., shape=(num_nodes, num_radial)) # FIX SHAPE
-        dDdR_imag_loads = self.declare_variable('dDdR_imag', val=0., shape=(num_nodes, num_radial)) # FIX SHAPE
+        dTdR_imag_loads = self.declare_variable('dTdR_imag', val=0., shape=(num_nodes, num_radial)) 
+        dDdR_imag_loads = self.declare_variable('dDdR_imag', val=0., shape=(num_nodes, num_radial)) 
 
         # ======================== VARIABLE EXPANSION ========================
         target_shape = (num_nodes, num_observers, 1, num_radial, 1)
@@ -114,8 +115,8 @@ class KSSPLModel(csdl.Model):
             self.register_output('lambda_test', lambda_i_exp)
 
         # ======================== CREATING OUTPUTS ========================
-        An = self.create_output('An', shape=(num_nodes, num_observers, num_modes, num_radial, num_harmonics))
-        Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_modes, num_radial, num_harmonics))
+        An = self.create_output('An', shape=(num_nodes, num_observers, num_modes, num_radial, num_modes + 1))
+        Bn = self.create_output('Bn', shape=(num_nodes, num_observers, num_modes, num_radial, num_modes + 1))
         tonal_SPL_per_mode = self.create_output('tonal_SPL_per_mode', shape=(num_nodes, num_observers, num_modes))
 
         for i in range(num_modes):
@@ -134,8 +135,6 @@ class KSSPLModel(csdl.Model):
 
                 else: # "unsteady" loads
                     S_real, S_imag = self.sears_function(j, omega_exp, r_exp, R_exp, c_exp)
-                    self.print_var(S_real)
-                    self.print_var(S_imag)
                     w_lam = q*lambda_i_exp*omega_exp*R_exp/(j*B)
                     Vt = 0.
                     dLdR = np.pi*rho_exp*(omega_exp*r_exp*R_exp-Vt) * c_exp * w_lam
@@ -199,8 +198,8 @@ class KSSPLModel(csdl.Model):
                     Bn[:,:,i,:,j] = (dTdR_real*csdl.cos(theta_exp) - dDdR_real*ind*a_exp/(m*B*omega_exp*r_exp*R_exp)) * \
                     csdl.bessel(m*B*omega_exp*r_exp*R_exp/a_exp*csdl.sin(theta_exp), order=ind)*coeff
 
-            self.register_output(f'An_{m}', csdl.sum(An[:,:,i,:,:], axes=(4,))) # REMOVES LAST DIMENSION FOR num_harmonics
-            self.register_output(f'Bn_{m}', csdl.sum(Bn[:,:,i,:,:], axes=(4,))) # REMOVES LAST DIMENSION FOR num_harmonics
+            self.register_output(f'An_{m}', csdl.sum(An[:,:,i,:,:], axes=(4,))) # REMOVES LAST DIMENSION FOR num_modes + 1
+            self.register_output(f'Bn_{m}', csdl.sum(Bn[:,:,i,:,:], axes=(4,))) # REMOVES LAST DIMENSION FOR num_modes + 1
             # ======================== INTEGRATING COEFFICIENTS ========================
             integrand_inputs = [f'An_{m}', f'Bn_{m}'] 
             output_names = [f'C_real_integrand_{m}', f'C_imag_integrand_{m}']
