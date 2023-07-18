@@ -18,7 +18,7 @@ class SKMSPLModel(ModuleCSDL):
         B = self.parameters['num_blades'] 
         num_radial = self.parameters['num_radial']
 
-        rpm = self.declare_variable('rpm', shape=(num_nodes,))
+        rpm = csdl.reshape(self.declare_variable('rpm', shape=(num_nodes,1)), (num_nodes,))
         Omega_2 = csdl.expand(rpm * 2*np.pi/60. + 1.e-7, (num_nodes, num_observers), 'i->ia')
 
         # Omega_2 = csdl.expand(
@@ -59,6 +59,7 @@ class SKMSPLModel(ModuleCSDL):
             (num_radial,1), 'i->ji'
         )
         Ab_skm = csdl.expand(B * csdl.sum(chord_skm * dr_skm, axes=(0,)),(num_nodes,num_observers),'i->ia')
+        self.register_output('Ab', Ab_skm)
         sigma_skm = Ab_skm / np.pi / R_skm**2
         CT_skm = csdl.expand(
             self.declare_variable('CT', shape=(num_nodes,)),

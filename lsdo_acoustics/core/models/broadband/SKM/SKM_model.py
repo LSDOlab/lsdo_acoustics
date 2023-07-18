@@ -13,6 +13,7 @@ class SKMBroadbandModel(ModuleCSDL):
         self.parameters.declare('observer_data')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
+        self.parameters.declare('debug', default=False)
 
     def define(self):
         component_name = self.parameters['component_name']
@@ -20,34 +21,40 @@ class SKMBroadbandModel(ModuleCSDL):
         observer_data = self.parameters['observer_data']
         num_blades = self.parameters['num_blades'] 
         num_nodes = self.parameters['num_nodes']
+        test = self.parameters['debug']
 
         num_radial = mesh.parameters['num_radial']
+
 
         self.register_module_input(f'{component_name}_origin', shape=(3,), promotes=True) * 0.3048
         self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
 
-        # Thrust vector and origin
-        units = 'ft'
-        if units == 'ft':
-            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
-            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
-            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+        if test:
+            rotor_radius = self.declare_variable('propeller_radius')
+            chord_profile = self.declare_variable('chord_profile', shape=(num_radial,1))
         else:
-            in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
-            # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
-            # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
-                        
-        R = csdl.pnorm(in_plane_y, 2) / 2
-        rotor_radius = self.register_module_output('propeller_radius', R)
+            # Thrust vector and origin
+            units = 'ft'
+            if units == 'ft':
+                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
+            else:
+                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
+                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
+                            
+            R = csdl.pnorm(in_plane_y, 2) / 2
+            rotor_radius = self.register_module_output('propeller_radius', R)
 
-        # Chord 
-        # chord = self.register_module_input(f'{component_name}_chord_length', shape=(num_radial, 3), promotes=True)
-        chord = self.register_module_input('rotor_blade_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
-        chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
-        if units == 'ft':
-            chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
-        else:
-            chord_profile = self.register_output('chord_profile', chord_length)
+            # Chord 
+            # chord = self.register_module_input(f'{component_name}_chord_length', shape=(num_radial, 3), promotes=True)
+            chord = self.register_module_input('rotor_blade_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
+            chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
+            if units == 'ft':
+                chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
+            else:
+                chord_profile = self.register_output('chord_profile', chord_length)
 
 
         self.add(

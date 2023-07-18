@@ -7,6 +7,16 @@ from lsdo_acoustics import Acoustics, ROOT
 from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
 from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
 
+'''
+This file is a validation test for the Lowson and KS tonal noise models.
+
+The input files currently supported for Lowson are:
+    - loading_Jamaluddin
+
+The input files currently supported for KS are:
+    - idealtwist_out
+'''
+
 # dummy mesh object
 class DummyMesh(object):
     def __init__(self, num_radial, num_tangential):

@@ -36,9 +36,13 @@ class GLSPLModel(csdl.Model):
         chord_profile = self.declare_variable('chord_profile', shape=(num_radial, 1))
         dr = self.declare_variable('dr')
 
-        A_b = csdl.expand(csdl.sum((chord_profile[:-1,:] + chord_profile[1:,:])/2) * dr, CT.shape)
+        # A_b = B*csdl.expand(csdl.sum((chord_profile[:-1,:] + chord_profile[1:,:])/2) * dr, CT.shape)
+        A_b = B*csdl.expand(csdl.sum(chord_profile)*dr, CT.shape)
+        self.register_output('Ab', A_b)
 
-        sigma = B*A_b/(np.pi*csdl.expand(R, A_b.shape)**2)
+        sigma = A_b/(np.pi*csdl.expand(R, A_b.shape)**2)
+        self.print_var(sigma)
+        self.register_output('sigma', sigma)
         
         OASPL_low = 10.*csdl.log10(V_tip**3.68*A_b**0.9*(CT/sigma)**1.6) + 27.076
         OASPL_high = 10.*csdl.log10(V_tip**7.44*A_b**0.9*(CT/sigma)**1.6) -75.921
@@ -62,7 +66,7 @@ class GLSPLModel(csdl.Model):
         )
 
         OASPL = OASPL_ref * csdl.sin((theta_0**2.)**0.5)**beta_1 - \
-                csdl.log(s_0/D) * (beta_2 + beta_3*(1-csdl.sin((theta_0**2)**0.5)))
+                csdl.log10(s_0/D) * (beta_2 + beta_3*(1-csdl.sin((theta_0**2)**0.5)))
         
         self.register_output(f'{component_name}_broadband_spl', OASPL) # shape is (num_nodes, num_observers)
         
