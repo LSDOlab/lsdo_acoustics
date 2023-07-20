@@ -41,7 +41,6 @@ class GLSPLModel(csdl.Model):
         self.register_output('Ab', A_b)
 
         sigma = A_b/(np.pi*csdl.expand(R, A_b.shape)**2)
-        self.print_var(sigma)
         self.register_output('sigma', sigma)
         
         OASPL_low = 10.*csdl.log10(V_tip**3.68*A_b**0.9*(CT/sigma)**1.6) + 27.076

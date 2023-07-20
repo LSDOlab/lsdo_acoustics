@@ -25,7 +25,7 @@ class DummyMesh(object):
         }
 
 # region input file + data
-file_name = 'IdealTwist4PitchInput.csv'
+file_name = 'BO105ForwardInput.csv'
 file_path = ROOT / 'core' / 'validation' / 'data_files' / file_name
 with open(file_path, 'r') as file:
     reader = csv.reader(file)
@@ -68,6 +68,8 @@ observer_data = broadband_acoustics.assemble_observers()
 
 skm = SKMBroadbandModel(
     component_name='verif',
+    disk_prefix='rotor_disk',
+    blade_prefix='rotor_blade',
     mesh=mesh,
     observer_data=observer_data,
     num_blades=input_data['num_blades'],
@@ -78,6 +80,8 @@ sim_skm = Simulator(skm)
 
 gl = GLModel(
     component_name='verif',
+    disk_prefix='rotor_disk',
+    blade_prefix='rotor_blade',
     mesh=mesh,
     observer_data=observer_data,
     num_blades=input_data['num_blades'],

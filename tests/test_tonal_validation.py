@@ -89,10 +89,13 @@ observer_data = a.assemble_observers()
 
 m = model(
     component_name='verif',
+    disk_prefix='rotor_disk',
+    blade_prefix='rotor_blade',
     mesh=mesh,
     observer_data=observer_data,
     num_blades=inputs['num_blades'],
-    modes=[1],
+    # modes=[1],
+    # load_harmonics=[0,1],
     debug=True
 )
 sim = Simulator(m)

@@ -3,7 +3,10 @@ import numpy as np
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 from lsdo_acoustics.core.models.tonal.Lowson.load_integration_model import LoadIntegrationModel
 # from load_integration_model import LoadIntegrationModel
+# from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model_old import LowsonSPLModel
 from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model import LowsonSPLModel
+
+from lsdo_acoustics.utils.a_weighting import A_weighting_func
 
 
 from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
@@ -11,6 +14,7 @@ from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 class LowsonModel(ModuleCSDL):
     def initialize(self):
         self.parameters.declare('component_name')
+        self.parameters.declare('disk_prefix')
         self.parameters.declare('mesh')
         self.parameters.declare('num_blades')
         self.parameters.declare('observer_data')
@@ -21,9 +25,12 @@ class LowsonModel(ModuleCSDL):
 
     def define(self):
         component_name = self.parameters['component_name']
+        disk_prefix = self.parameters['disk_prefix']
         num_nodes = self.parameters['num_nodes']
         num_blades = self.parameters['num_blades']
         observer_data = self.parameters['observer_data']
+        num_observers = observer_data['num_observers']
+
         modes = self.parameters['modes']
         load_harmonics = self.parameters['load_harmonics']
 
@@ -44,8 +51,8 @@ class LowsonModel(ModuleCSDL):
         )
 
         # self.declare_variable(f'{component_name}_thrust_origin', shape=(3,))
-        self.register_module_input(f'{component_name}_origin', shape=(3,), promotes=True) * 0.3048
-        self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
+        rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
         self.register_module_input('altitude', shape=(num_nodes,), promotes=True)
 
         # Thrust vector and origin
@@ -54,11 +61,11 @@ class LowsonModel(ModuleCSDL):
         else:
             units = 'ft'
             if units == 'ft':
-                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
             else:
-                in_plane_y = self.register_module_input(f'{component_name}_in_plane_1', shape=(3, ), promotes=True)
+                in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
                             
@@ -93,13 +100,13 @@ class LowsonModel(ModuleCSDL):
         # region observer position model
         self.add(
             SteadyObserverLocationModel(
-                component_name=component_name,
+                component_name=disk_prefix,
                 aircraft_location=observer_data['aircraft_position'],
                 init_obs_x_loc=observer_data['x'],
                 init_obs_y_loc=observer_data['y'],
                 init_obs_z_loc=observer_data['z'],
                 time_vectors=observer_data['time'],
-                total_num_observers=observer_data['num_observers'],
+                total_num_observers=num_observers,
             ),
             'observer_location_model'
         )
@@ -123,7 +130,7 @@ class LowsonModel(ModuleCSDL):
                 component_name=component_name, # FROM ROTOR
                 num_nodes=num_nodes,
                 num_blades=num_blades,
-                num_observers=observer_data['num_observers'],
+                num_observers=num_observers,
                 modes=modes,
                 load_harmonics=load_harmonics,
             ), 
@@ -131,3 +138,8 @@ class LowsonModel(ModuleCSDL):
         )
         # endregion
 
+        # A-WEIGHTING
+        rotor_tonal_spl = self.declare_variable(f'{component_name}_tonal_spl', shape=(num_nodes, num_observers))
+        BPF = 1. * rpm * num_blades/ 60.
+        rotor_tonal_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_tonal_spl, f=BPF)
+        self.register_output(f'{component_name}_tonal_spl_A_weighted', rotor_tonal_spl_A)

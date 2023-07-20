@@ -138,3 +138,8 @@ top_level_req.in
 top_level_req.txt
 _autosummary
 _conf_master.py
+
+# Additional file types
+.html 
+.svg 
+.prof 

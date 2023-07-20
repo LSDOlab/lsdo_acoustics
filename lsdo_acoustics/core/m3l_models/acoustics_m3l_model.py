@@ -4,11 +4,13 @@ import numpy as np
 class AcousticsModelTemplate(m3l.ExplicitOperation):
 
     def initialize(self, kwargs):
-        self.parameters.declare('component', default=None)
+        self.parameters.declare('component')
+        self.parameters.declare('disk_prefix', types=str)
+        self.parameters.declare('blade_prefix', types=str)
         self.parameters.declare('mesh', default=None)
-        self.parameters.declare('model_name', types=str, default='SHO-TIME')
         self.parameters.declare('custom_model', default=None)
         self.parameters.declare('acoustics_data', default=None)
+        self.parameters.declare('model_name', types=str, default='SHO-TIME') # SOLVER
 
         self.num_nodes = 1
 
@@ -30,6 +32,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
             model = KvurtStalnovModel(
                 component_name=self.rotor_name,
+                disk_prefix=self.disk_prefix,
+                blade_prefix=self.blade_prefix,
                 mesh=self.mesh,
                 num_blades=self.mesh.parameters['num_blades'],
                 observer_data=self.observer_data,
@@ -39,6 +43,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
             model = LowsonModel(
                 component_name=self.rotor_name,
+                disk_prefix=self.disk_prefix,
+                # blade_prefix=self.blade_prefix,
                 mesh=self.mesh,
                 num_blades=self.mesh.parameters['num_blades'],
                 observer_data=self.observer_data,
@@ -73,6 +79,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             model = SKMBroadbandModel(
                 num_nodes=self.num_nodes,
                 component_name=self.rotor_name,
+                disk_prefix=self.disk_prefix,
+                blade_prefix=self.blade_prefix,
                 observer_data=self.observer_data,
                 mesh=self.mesh,
                 num_blades=self.mesh.parameters['num_blades']
@@ -82,6 +90,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             model = GLModel(
                 num_nodes=self.num_nodes,
                 component_name=self.rotor_name,
+                disk_prefix=self.disk_prefix,
+                blade_prefix=self.blade_prefix,
                 observer_data=self.observer_data,
                 mesh=self.mesh,
                 num_blades=self.mesh.parameters['num_blades']
@@ -168,8 +178,10 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.observer_group_dictionaries = acoustics_data.observer_group_dictionaries
         self.aircraft_position = acoustics_data.aircraft_position
 
-        self.component_name = self.parameters['component'].name
-        print(self.component_name)
+        self.component_name = self.parameters['component'].parameters['name']
+
+        self.disk_prefix = self.parameters['disk_prefix']
+        self.blade_prefix = self.parameters['blade_prefix']
 
         self.model_name = self.parameters['model_name']
         self.custom_model = self.parameters['custom_model']
