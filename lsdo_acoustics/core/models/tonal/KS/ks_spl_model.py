@@ -39,7 +39,7 @@ class KSSPLModel(csdl.Model):
         num_observers = self.parameters['num_observers']
         modes = self.parameters['modes']
         num_modes = len(modes) # the mode harmonics of the blades that we want to consider
-        if self.parameters['load_harmonics'] == None:
+        if self.parameters['load_harmonics'] is None:
             harmonics = np.arange(0, modes[-1], 1)
         else:
             harmonics = self.parameters['load_harmonics']
@@ -218,8 +218,8 @@ class KSSPLModel(csdl.Model):
         # REAL-IMAG (RI) weighting based on lambda and mode
         RI_weighting_A_T = (real_weighting*dTdR_real + imag_weighting*dTdR_imag)
         RI_weighting_A_D = (real_weighting*dDdR_real + imag_weighting*dDdR_imag)
-        RI_weighting_B_T = (real_weighting*dTdR_imag + imag_weighting*dTdR_real) # NOTE THESE TWO ARE SWAPPED; IF A USES REAL, B USES IMAG (AND VICE-VERSA)
-        RI_weighting_B_D = (real_weighting*dDdR_imag + imag_weighting*dDdR_real) # NOTE THESE TWO ARE SWAPPED; IF A USES REAL, B USES IMAG (AND VICE-VERSA)
+        RI_weighting_B_T = (real_weighting*dTdR_imag + imag_weighting*dTdR_real) # NOTE THESE TWO ARE INTENTIONALLY SWAPPED; IF A USES REAL, B USES IMAG (AND VICE-VERSA)
+        RI_weighting_B_D = (real_weighting*dDdR_imag + imag_weighting*dDdR_real) # NOTE THESE TWO ARE INTENTIONALLY SWAPPED; IF A USES REAL, B USES IMAG (AND VICE-VERSA)
 
         bessel_input = n_var*B*omega_exp*r_exp*R_exp/a_exp*csdl.sin(theta_exp)
 
@@ -263,8 +263,11 @@ class KSSPLModel(csdl.Model):
         a_int_exp = csdl.expand(a, target_int_shape)
 
 
-        C_real = n_var_int_exp*B**2*omega_int_exp/(4*np.pi*S_int_exp*a_int_exp)*C_real_integrand # SHAPE OF (num_nodes, num_observers, num_modes)
-        C_imag = n_var_int_exp*B**2*omega_int_exp/(4*np.pi*S_int_exp*a_int_exp)*C_imag_integrand # SHAPE OF (num_nodes, num_observers, num_modes)
+        C_real = n_var_int_exp*B**2*omega_int_exp/(2*np.pi*S_int_exp*a_int_exp)*C_real_integrand # SHAPE OF (num_nodes, num_observers, num_modes) WITH CORRECTED FACTOR 
+        C_imag = n_var_int_exp*B**2*omega_int_exp/(2*np.pi*S_int_exp*a_int_exp)*C_imag_integrand # SHAPE OF (num_nodes, num_observers, num_modes) WITH CORRECTED FACTOR 
+
+        # C_real = n_var_int_exp*B**2*omega_int_exp/(4*np.pi*S_int_exp*a_int_exp)*C_real_integrand # SHAPE OF (num_nodes, num_observers, num_modes)
+        # C_imag = n_var_int_exp*B**2*omega_int_exp/(4*np.pi*S_int_exp*a_int_exp)*C_imag_integrand # SHAPE OF (num_nodes, num_observers, num_modes)
             
 
         tonal_SPL_per_mode = 10.*csdl.log10((C_real**2 + C_imag**2)/P_ref**2 / 2.) # (num_nodes, num_observers, num_modes)

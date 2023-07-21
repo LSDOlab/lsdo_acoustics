@@ -140,7 +140,13 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             operation=self
         )
 
-        return tonal_spl
+        A_weighted_tonal_spl = m3l.Variable(
+            name=f'{self.rotor_name}_tonal_spl_A_weighted', 
+            shape=(self.num_nodes, self.num_observers), 
+            operation=self
+        )
+
+        return tonal_spl, A_weighted_tonal_spl
     
     def evaluate_broadband_noise(self, 
                                  ac_states: m3l.Variable=None,
@@ -171,7 +177,13 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             operation=self
         )
 
-        return broadband_spl
+        A_weighted_broadband_spl = m3l.Variable(
+            name=f'{self.rotor_name}_broadband_spl_A_weighted', 
+            shape=(self.num_nodes, self.num_observers), 
+            operation=self
+        )
+
+        return broadband_spl, A_weighted_broadband_spl
 
     def _setup_acoustics_data(self):
         acoustics_data = self.parameters['acoustics_data']

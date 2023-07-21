@@ -158,7 +158,7 @@ cruise_acoustics = Acoustics(
 cruise_acoustics.add_observer(
     name='obs1',
     obs_position=np.array([1.85947514, 0., -1.30201851]),
-    time_vector=np.array([0.]),
+    time_vector=np.array([0., 1.]),
 )
 
 lowson_model = Lowson(
@@ -170,8 +170,9 @@ lowson_model = Lowson(
     blade_prefix='rotor_blade'
 )
 
-cruise_tonal_SPL = lowson_model.evaluate_tonal_noise(dT, dD, ac_states)
+cruise_tonal_SPL, cruise_tonal_SPL_A_weighted  = lowson_model.evaluate_tonal_noise(dT, dD, ac_states)
 cruise_model.register_output(cruise_tonal_SPL)
+cruise_model.register_output(cruise_tonal_SPL_A_weighted)
 
 skm_model = SKM(
     component=rotor_disk,
@@ -180,8 +181,9 @@ skm_model = SKM(
     disk_prefix='rotor_disk',
     blade_prefix='rotor_blade'
 )
-cruise_broadband_SPL = skm_model.evaluate_broadband_noise(ac_states, CT)
+cruise_broadband_SPL, cruise_broadband_SPL_A_weighted = skm_model.evaluate_broadband_noise(ac_states, CT)
 cruise_model.register_output(cruise_broadband_SPL)
+cruise_model.register_output(cruise_broadband_SPL_A_weighted)
 
 total_noise_model = TotalAircraftNoise(
     acoustics_data=cruise_acoustics,
@@ -239,9 +241,9 @@ hover_acoustics = Acoustics(
 hover_acoustics.add_observer(
     name='obs1',
     # obs_position=np.array([1.85947514, 0., -1.30201851]),
-    obs_position=np.array([0., 0., 7.13232]),
+    obs_position=np.array([0., 0., -76.2]),
     # obs_position=np.array([1.91, 0., 0.]),
-    time_vector=np.array([0.]),
+    time_vector=np.array([0., 1.]),
 )
 
 
@@ -252,8 +254,9 @@ ks_model = KS(
     disk_prefix='rotor_disk',
     blade_prefix='rotor_blade'
 )
-hover_tonal_SPL = ks_model.evaluate_tonal_noise(dT, dD, ac_states)
+hover_tonal_SPL, hover_tonal_SPL_A_weighted = ks_model.evaluate_tonal_noise(dT, dD, ac_states)
 hover_model.register_output(hover_tonal_SPL)
+hover_model.register_output(hover_tonal_SPL_A_weighted)
 
 gl_model = GL(
     component=rotor_disk,
@@ -262,8 +265,9 @@ gl_model = GL(
     disk_prefix='rotor_disk',
     blade_prefix='rotor_blade'
 )
-hover_broadband_SPL = gl_model.evaluate_broadband_noise(ac_states, CT)
+hover_broadband_SPL, hover_broadband_SPL_A_weighted = gl_model.evaluate_broadband_noise(ac_states, CT)
 hover_model.register_output(hover_broadband_SPL)
+hover_model.register_output(hover_broadband_SPL_A_weighted)
 
 # skm_model = SKM(
 #     component=rotor_disk,
@@ -278,9 +282,11 @@ total_noise_model = TotalAircraftNoise(
     component_list=[rotor_disk],
 )
 noise_components = [hover_tonal_SPL, hover_broadband_SPL]
+A_weighted_noise_components = [hover_tonal_SPL_A_weighted, hover_broadband_SPL_A_weighted]
 
-hover_total_SPL = total_noise_model.evaluate(noise_components)
+hover_total_SPL, hover_total_SPL_A_weighted = total_noise_model.evaluate(noise_components, A_weighted_noise_components)
 hover_model.register_output(hover_total_SPL)
+hover_model.register_output(hover_total_SPL_A_weighted)
 # endregion
 
 hover_condition.add_m3l_model('hover_model', hover_model)
@@ -331,4 +337,5 @@ if memory_debug:
 else:
     sim = Simulator(caddee_csdl_model, analytics=True, display_scripts=True, name='single_rotor')
     sim.run()
+    # sim.check_totals()
     # print(sim['system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.thrust_vector'])

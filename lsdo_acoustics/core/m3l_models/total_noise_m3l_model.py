@@ -17,13 +17,13 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
             num_nodes = self.num_nodes,
             num_observers=self.observer_data['num_observers'],
             component_names=self.component_names,
-            var_names = self.var_names
+            var_names = self.var_names,
+            var_names_A_weighted = self.var_names_A_weighted
         )
 
         return model
 
-    def evaluate(self, *noise_components) -> m3l.Variable:
-        noise_components=noise_components[0]
+    def evaluate(self, noise_components=None, A_weighted_noise_components=None) -> m3l.Variable:
         '''
         This method computes the total aircraft noise at the observer locations.
         Inputs:
@@ -33,6 +33,13 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
         Outputs:
         - total spl from aircraft at each observer location
         '''
+        noise, noise_A = False, False
+
+        if noise_components is not None:
+            noise = True
+        if A_weighted_noise_components is not None:
+            noise_A = True
+
         self.observer_data = self._assemble_observers() # organizing observer data
         self.num_observers = self.observer_data['num_observers']
         self.component_list = self.parameters['component_list']
@@ -40,16 +47,26 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
         self.component_names = []
         for component in self.component_list:
             self.component_names.append(component.name)
-            print(component.name)
+            # print(component.name)
 
         self.name = 'total_noise_model'
         self.arguments = {}
-        self.var_names = []
-        for i, comp in enumerate(noise_components):
-            print(i, comp.name, type(comp.name))
-            # exit()
-            self.var_names.append(comp.name)
-            self.arguments[comp.name] = noise_components[i]
+        
+        self.var_names = None
+        if noise:
+            self.var_names = []
+            for i, comp in enumerate(noise_components):
+                print(i, comp.name, type(comp.name))
+                # exit()
+                self.var_names.append(comp.name)
+                self.arguments[comp.name] = noise_components[i]
+        
+        self.var_names_A_weighted = None
+        if noise_A:
+            self.var_names_A_weighted = []
+            for i, comp in enumerate(A_weighted_noise_components):
+                self.var_names_A_weighted.append(comp.name)
+                self.arguments[comp.name] = A_weighted_noise_components[i]
 
         # NOTE: NEED TO FIGURE OUT HOW TO DEAL WITH NAMING CONVENTION
         # var_names = ...
@@ -61,14 +78,29 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
         #     for i, name in enumerate(var_names):
         #         arguments[name] = noise_components[i]
 
+        if noise:
+            total_spl = m3l.Variable(
+                name='total_spl', 
+                shape=(self.num_nodes, self.num_observers), 
+                operation=self
+            )
+        
+        if noise_A:
+            A_weighted_total_spl = m3l.Variable(
+                name='A_weighted_total_spl', 
+                shape=(self.num_nodes, self.num_observers), 
+                operation=self
+            )
+        
+        if noise and noise_A:
+            return total_spl, A_weighted_total_spl
+        elif noise:
+            return total_spl
+        elif noise_A:
+            return A_weighted_total_spl
+        else:
+            raise ValueError('No output defined for the total noise acoustics M3L model.')
 
-        total_spl = m3l.Variable(
-            name='total_spl', 
-            shape=(self.num_nodes, self.num_observers), 
-            operation=self
-        )
-
-        return total_spl
     
     def _setup_acoustics_data(self):
         acoustics_data = self.parameters['acoustics_data']

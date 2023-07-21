@@ -6,6 +6,18 @@ from python_csdl_backend import Simulator
 import array_mapper as am 
 from lsdo_acoustics import GEOMETRY_PATH, IMPORTS_PATH
 
+from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
+
+from lsdo_acoustics import Acoustics
+from lsdo_acoustics.core.m3l_models import Lowson, KS, SKM, GL, TotalAircraftNoise
+
+'''
+This test script sets up two side-by-side rotors of 0.5 feet diameter, separated by 4 feet.
+We consider 2 flight segments: steady hover and cruise.
+
+We use this test case to assess cumulative noise from multiple rotors.
+'''
+
 caddee = cd.CADDEE()
 caddee.system_representation = system_rep = cd.SystemRepresentation()
 caddee.system_parameterization = system_param = cd.SystemParameterization(system_representation=system_rep)
@@ -16,19 +28,35 @@ spatial_rep.import_file(file_name=file_name, file_path=str(IMPORTS_PATH))
 spatial_rep.refit_geometry(file_name=file_name, file_path=str(IMPORTS_PATH))
 
 '''
-FWD EVAL TEST CASE:
-- 2 3-blade side-by-side hover rotors (to test individual rotor + total noise models)
+======================================== GEOMETRY ========================================
+Rotor 1: + Y direction
+Rotor 2: - Y direction
 '''
-
-rotor_1_primitive_names = list(
+# ================================ ROTOR 1 DISK ================================
+rotor_1_disk_primitive_names = list(
     spatial_rep.get_primitives(search_names=['Rotor_1_disk']).keys()
 )
-rotor_1 = cd.Rotor(
-    name='rotor_1',
+rotor_1_disk = cd.Rotor(
+    name='rotor_1_disk',
     spatial_representation=spatial_rep,
-    primitive_names=rotor_1_primitive_names
+    primitive_names=rotor_1_disk_primitive_names
 )
+system_rep.add_component(rotor_1_disk)
 
+p11 = rotor_1_disk.project(np.array([0.25, 1. , 0.]), direction=np.array([]), plot=True)
+p12 = rotor_1_disk.project(np.array([-0.25, 1., 0.]), direction=np.array([]), plot=True)
+p21 = rotor_1_disk.project(np.array([0., 1.25, 0.]), direction=np.array([]), plot=True)
+p22 = rotor_1_disk.project(np.array([0., -0.75, 0.]), direction=np.array([]), plot=True)
+rotor_1_origin = rotor_1_disk.project(np.array([0., 1., 0.]), direction=np.array([0., 0., 1.]))
+rotor_1_in_plane_x = am.subtract(p11, p12)
+rotor_1_in_plane_y = am.subtract(p21, p22)
+system_rep.add_output('rotor_1_disk_in_plane_1', quantity=rotor_1_in_plane_x)
+system_rep.add_output('rotor_1_disk_in_plane_2', quantity=rotor_1_in_plane_y)
+system_rep.add_output('rotor_1_disk_origin', quantity=rotor_1_origin)
+
+
+
+exit()
 rotor_2_primitive_names = list(
     spatial_rep.get_primitives(search_names=['Rotor_2_disk']).keys()
 )

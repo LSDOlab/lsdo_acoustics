@@ -6,8 +6,7 @@ from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLoc
 
 from lsdo_acoustics.core.dummy_component import DummyComponent
 
-a = Acoustics(design_condition=1, 
-              aircraft_position=np.array([0,0,0])
+a = Acoustics(aircraft_position=np.array([0,0,0])
               )
 
 a.add_observer(name='obs',

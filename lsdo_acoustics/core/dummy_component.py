@@ -1,3 +1,4 @@
 class DummyComponent(object):
     def __init__(self, name) -> None:
-        self.name = name
+        self.parameters = {}
+        self.parameters['name'] = name
