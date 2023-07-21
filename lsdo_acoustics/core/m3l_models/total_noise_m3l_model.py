@@ -179,10 +179,14 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
         
         self.num_observer_groups = len(self.observer_name_list)
 
+        aircraft_positions = np.zeros((3, self.num_observers))
+        for i in range(self.num_observers):
+            aircraft_positions[:,i] = self.aircraft_position
+
         self.observer_data = {
             'name': self.observer_name_list,
-            'aircraft_position': np.resize(self.aircraft_position, (3,self.num_observers)),
-            # 'aircraft_position': self.aircraft_position,
+            # 'aircraft_position': np.resize(self.aircraft_position, (3,self.num_observers)),
+            'aircraft_position': aircraft_positions,
             'x': np.array(self.observer_x_location),
             'y': np.array(self.observer_y_location),
             'z': np.array(self.observer_z_location),

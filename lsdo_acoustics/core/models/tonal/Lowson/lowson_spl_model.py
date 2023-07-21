@@ -181,24 +181,19 @@ class LowsonSPLModel(ModuleCSDL):
         term_2_constant = 1. / (R_exp*r1_exp)
         bessel_input = n_var*omega_exp*R_exp*x_exp/(a_exp*r1_exp)
 
-        self.register_output('bessel_dummy', csdl.bessel(bessel_input, order=n-lam))
-        # TERM A
 
+        # TERM A
         term_1_A_fc = (coeff_sign_matrix_even * b_T_exp + coeff_sign_matrix_odd * a_T_exp) # weighting based on sign of n-lambda
         term_2_A_fc = (coeff_sign_matrix_even * b_D_exp + coeff_sign_matrix_odd * a_D_exp) # weighting based on sign of n-lambda
 
-        self.register_output('asdf', term_1_A_fc)
         term_1_A = term_1_constant*term_1_A_fc*(csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) * csdl.bessel(bessel_input, order=n+lam))
-        self.print_var(term_1_A)
         term_2_A = term_2_constant * term_2_A_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
-        self.print_var(term_2_A)
 
         An = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) 
 
         # TERM B
-
         term_1_B_fc = (coeff_sign_matrix_even * a_T_exp + coeff_sign_matrix_odd * b_T_exp) # weighting based on sign of n-lambda
         term_2_B_fc = (coeff_sign_matrix_even * a_D_exp + coeff_sign_matrix_odd * b_D_exp) # weighting based on sign of n-lambda
 

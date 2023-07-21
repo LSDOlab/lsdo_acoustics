@@ -55,6 +55,7 @@ class KSSPLModel(csdl.Model):
 
         rho = self.declare_variable('density')
         x = csdl.reshape(self.declare_variable('rel_obs_x_pos', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
+        z = csdl.reshape(self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
         S = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
 
         RPM = self.declare_variable('rpm') # NOTE: UPDATE/FIX LATER
@@ -169,9 +170,9 @@ class KSSPLModel(csdl.Model):
                 elif np.mod(ind,2) == 1:
                     imag_weighting_matrix[:,:,i,:,j] = 1.
                     # REAL VALUES
-                    if np.mod(ind,4) == 2:
+                    if np.mod(ind+1,4) == 2:
                         coeff_A = -1.
-                    elif np.mod(ind,4) == 0:
+                    elif np.mod(ind+1,4) == 0:
                         coeff_A = 1.
 
                     # IMAG VALUES

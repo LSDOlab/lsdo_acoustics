@@ -86,18 +86,32 @@ a.add_observer(
 
 observer_data = a.assemble_observers()
 # endregion
+if mode == 'Lowson':
+    m = model(
+        component_name='verif',
+        disk_prefix='rotor_disk',
+        # blade_prefix='rotor_blade',
+        mesh=mesh,
+        observer_data=observer_data,
+        num_blades=inputs['num_blades'],
+        # modes=[1],
+        # load_harmonics=[0,1],
+        debug=True
+    )
 
-m = model(
-    component_name='verif',
-    disk_prefix='rotor_disk',
-    blade_prefix='rotor_blade',
-    mesh=mesh,
-    observer_data=observer_data,
-    num_blades=inputs['num_blades'],
-    # modes=[1],
-    # load_harmonics=[0,1],
-    debug=True
-)
+elif mode == 'KS':
+    m = model(
+        component_name='verif',
+        disk_prefix='rotor_disk',
+        blade_prefix='rotor_blade',
+        mesh=mesh,
+        observer_data=observer_data,
+        num_blades=inputs['num_blades'],
+        modes=[1],
+        load_harmonics=[0,1],
+        debug=True
+    )
+
 sim = Simulator(m)
 
 sim['rpm'] = inputs['RPM']

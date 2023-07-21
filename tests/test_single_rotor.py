@@ -152,7 +152,7 @@ cruise_model.register_output(CT)
 
 # region acoustics
 cruise_acoustics = Acoustics(
-    aircraft_position = np.array([0.,0.,0])
+    aircraft_position = np.array([0.,0.,4.])
 )
 
 cruise_acoustics.add_observer(
@@ -235,14 +235,14 @@ hover_model.register_output(CT)
 
 # region acoustics
 hover_acoustics = Acoustics(
-    aircraft_position = np.array([0.,0.,0])
+    aircraft_position = np.array([0.,0.,5])
 )
 
 hover_acoustics.add_observer(
     name='obs1',
     # obs_position=np.array([1.85947514, 0., -1.30201851]),
-    obs_position=np.array([0., 0., -76.2]),
-    # obs_position=np.array([1.91, 0., 0.]),
+    # obs_position=np.array([0., 0., 0.]),
+    obs_position=np.array([1.91, 0., 0.]),
     time_vector=np.array([0., 1.]),
 )
 
@@ -300,15 +300,15 @@ caddee_csdl_model.connect(
     'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
     'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.lowson_spl_model.rpm'
 )
-# caddee_csdl_model.connect(
-#     'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
-#     'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.ks_spl_model.rpm'
-# )
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.ks_spl_model.rpm'
+)
 
-# caddee_csdl_model.connect(
-#     'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
-#     'system_model.single_rotor_test.hover.hover.rotor_disk_GL_broadband_model.gl_spl_model.rpm'
-# )
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.hover.hover.rotor_disk_GL_broadband_model.gl_spl_model.rpm'
+)
 
 caddee_csdl_model.connect(
     'system_model.single_rotor_test.cruise.cruise.cruise_ac_states_operation.cruise_altitude',

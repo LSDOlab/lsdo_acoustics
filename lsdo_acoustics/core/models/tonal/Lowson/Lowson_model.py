@@ -51,7 +51,7 @@ class LowsonModel(ModuleCSDL):
         )
 
         # self.declare_variable(f'{component_name}_thrust_origin', shape=(3,))
-        self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
+        # self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
         rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
         self.register_module_input('altitude', shape=(num_nodes,), promotes=True)
 
@@ -62,12 +62,14 @@ class LowsonModel(ModuleCSDL):
             units = 'ft'
             if units == 'ft':
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3, ), promotes=True) * 0.3048
+                self.register_output('origin', to)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
-                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
             else:
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
+                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3, ), promotes=True)
+                self.register_output('origin', to*1.)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
-                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
                             
             R = csdl.pnorm(in_plane_y, 2) / 2
             self.register_module_output('propeller_radius', R)

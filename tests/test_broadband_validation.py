@@ -25,7 +25,7 @@ class DummyMesh(object):
         }
 
 # region input file + data
-file_name = 'BO105ForwardInput.csv'
+file_name = 'IdealTwist4PitchInput.csv'
 file_path = ROOT / 'core' / 'validation' / 'data_files' / file_name
 with open(file_path, 'r') as file:
     reader = csv.reader(file)
