@@ -110,7 +110,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
     def evaluate_tonal_noise(self, 
                              thrust_input: m3l.Variable=None, 
                              drag_input: m3l.Variable=None, 
-                             ac_states: m3l.Variable=None) -> m3l.Variable:
+                             ac_states: m3l.Variable=None,
+                             design_condition=None) -> m3l.Variable:
         '''
         This method computes the tonal noise for one rotor.
 
@@ -123,7 +124,11 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.mesh = self.parameters['mesh']
 
         # NEEDED BY M3L
-        self.name = f'{self.component_name}_{self.model_name}_tonal_model'
+        if design_condition:
+            dc_name = design_condition.parameters['name']
+            self.name = f'{dc_name}_{self.component_name}_{self.model_name}_tonal_model'
+        else:
+            self.name = f'{self.component_name}_{self.model_name}_tonal_model'
         self.arguments = {}
         self.arguments['_dT'] = thrust_input
         self.arguments['_dD'] = drag_input
@@ -150,7 +155,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
     
     def evaluate_broadband_noise(self, 
                                  ac_states: m3l.Variable=None,
-                                 CT: m3l.Variable=None) -> m3l.Variable:
+                                 CT: m3l.Variable=None,
+                                 design_condition=None) -> m3l.Variable:
         '''
         This method computes the broadband noise for one rotor.
 
@@ -163,7 +169,11 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.mesh = self.parameters['mesh']
 
         # NEEDED BY M3L
-        self.name = f'{self.component_name}_{self.model_name}_broadband_model'
+        if design_condition:
+            dc_name = design_condition.parameters['name']
+            self.name = f'{dc_name}_{self.component_name}_{self.model_name}_broadband_model'
+        else:
+            self.name = f'{self.component_name}_{self.model_name}_broadband_model'
         self.arguments = {}
         self.arguments['Vx'] = ac_states['u']
         self.arguments['Vy'] = ac_states['v']
