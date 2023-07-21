@@ -31,19 +31,6 @@ class GLModel(ModuleCSDL):
 
         num_radial = mesh.parameters['num_radial']
 
-        self.add(
-            SteadyObserverLocationModel(
-                component_name=disk_prefix,
-                num_nodes=num_nodes,
-                aircraft_location=observer_data['aircraft_position'],
-                init_obs_x_loc=observer_data['x'],
-                init_obs_y_loc=observer_data['y'],
-                init_obs_z_loc=observer_data['z'],
-                time_vectors=observer_data['time'],
-                total_num_observers=observer_data['num_observers'],
-            ),
-            'steady_observer_location_model'
-        )
 
         if test:
             rotor_radius = self.declare_variable('propeller_radius')
@@ -52,10 +39,14 @@ class GLModel(ModuleCSDL):
             # Thrust vector and origin
             units = 'ft'
             if units == 'ft':
+                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                self.register_output('origin', to)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
             else:
+                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) 
+                self.register_output('origin', to * 1)
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
@@ -70,7 +61,22 @@ class GLModel(ModuleCSDL):
             else:
                 chord_profile = self.register_output('chord_profile', chord_length)
 
-        rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        self.add(
+            SteadyObserverLocationModel(
+                component_name=disk_prefix,
+                num_nodes=num_nodes,
+                aircraft_location=observer_data['aircraft_position'],
+                init_obs_x_loc=observer_data['x'],
+                init_obs_y_loc=observer_data['y'],
+                init_obs_z_loc=observer_data['z'],
+                time_vectors=observer_data['time'],
+                total_num_observers=observer_data['num_observers'],
+            ),
+            'steady_observer_location_model'
+        )
+
+        rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
+        # rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
 
         norm_hub_rad = 0.2
         dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)

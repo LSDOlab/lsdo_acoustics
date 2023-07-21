@@ -39,7 +39,6 @@ class KvurtStalnovModel(ModuleCSDL):
 
         test = self.parameters['debug']
 
-        self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
         # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
         if test:
             rotor_radius = self.declare_variable('propeller_radius')
@@ -50,10 +49,14 @@ class KvurtStalnovModel(ModuleCSDL):
             units = 'ft'
             if units == 'ft':
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
+                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
+                self.register_output('origin', to)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
             else:
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
+                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) 
+                self.register_output('origin', to * 1)
                 # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
                             
@@ -73,7 +76,8 @@ class KvurtStalnovModel(ModuleCSDL):
         Vx = self.declare_variable('Vx', shape=(num_nodes,))
         Vy = self.declare_variable('Vy', shape=(num_nodes,))
         Vz = self.declare_variable('Vz', shape=(num_nodes,))
-        rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        # rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
         # region atmospheric model (to get density)
         from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
