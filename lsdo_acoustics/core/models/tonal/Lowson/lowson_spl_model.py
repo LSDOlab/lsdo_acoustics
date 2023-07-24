@@ -190,10 +190,10 @@ class LowsonSPLModel(ModuleCSDL):
         self.register_output('asdf', term_1_A_fc)
         term_1_A = term_1_constant*term_1_A_fc*(csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) * csdl.bessel(bessel_input, order=n+lam))
-        self.print_var(term_1_A)
+        # self.print_var(term_1_A)
         term_2_A = term_2_constant * term_2_A_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
-        self.print_var(term_2_A)
+        # self.print_var(term_2_A)
 
         An = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) 
 

@@ -23,7 +23,7 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
 
         return model
 
-    def evaluate(self, noise_components=None, A_weighted_noise_components=None) -> m3l.Variable:
+    def evaluate(self, noise_components=None, A_weighted_noise_components=None, design_condition=None) -> m3l.Variable:
         '''
         This method computes the total aircraft noise at the observer locations.
         Inputs:
@@ -49,7 +49,11 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
             self.component_names.append(component.name)
             # print(component.name)
 
-        self.name = 'total_noise_model'
+        if design_condition:
+            dc_name = design_condition.parameters['name']
+            self.name = f'{dc_name}_total_noise_model'
+        else:
+            self.name = 'total_noise_model'
         self.arguments = {}
         
         self.var_names = None
