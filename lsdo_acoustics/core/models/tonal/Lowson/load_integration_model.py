@@ -98,11 +98,13 @@ class TrapezoidMethod(csdl.Model):
         output_name = self.parameters['output_name']
         dim = self.parameters['dim']
         num_azim = self.parameters['num_azim']
-
+        
         h = self.declare_variable('dtheta', val=2.*np.pi/num_azim) # FIX TO USE THE AZIMUTHAL SEPARATIONS
         f = self.declare_variable(input_name, shape=input_shape)
-        out_pre_integration = 1/(2*np.pi)*(f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
-        out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
+        # out_pre_integration = 1/(2*np.pi)*(f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
+        # out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
+        out_pre_integration = 1/(2*np.pi)*(csdl.sum(f, axes=(3,))) * csdl.expand(h, input_shape[:3])
+        self.register_output(output_name, out_pre_integration)
         # print(out.shape)
 
 '''

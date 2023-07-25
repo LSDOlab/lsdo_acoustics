@@ -139,7 +139,7 @@ rotor_bem_mesh = BEMMesh(
     chord_b_spline_rep=True,
     twist_b_spline_rep=True,
     num_radial=num_radial,
-    num_tangential=100,
+    num_tangential=30,
     use_airfoil_ml=False
 )
 bem_model = BEM(component=rotor_disk, mesh=rotor_bem_mesh, disk_prefix='rotor_disk', blade_prefix='rotor_blade')

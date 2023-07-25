@@ -301,8 +301,10 @@ class TrapezoidMethod(csdl.Model):
         # h = self.parameters['step_size']
 
         f = self.declare_variable(input_name, shape=input_shape)
-        out_pre_integration = (f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
-        out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
+        # out_pre_integration = (f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
+        # out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
+        out_pre_integration = 1/(2*np.pi)*(csdl.sum(f, axes=(3,))) * csdl.expand(h, input_shape[:3])
+        self.register_output(output_name, out_pre_integration)
 
 if __name__ == '__main__':
     model = KSSPLModel(
