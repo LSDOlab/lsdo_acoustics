@@ -135,9 +135,10 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.arguments['Vx'] = ac_states['u']
         self.arguments['Vy'] = ac_states['v']
         self.arguments['Vz'] = ac_states['w']
+        self.arguments['theta'] = ac_states['theta']
             # self.arguments['z'] = ac_states['z']
-        if self.model_name == 'KS':
-            pass
+        # if self.model_name == 'KS':
+        #     pass
 
         tonal_spl = m3l.Variable(
             name=f'{self.rotor_name}_tonal_spl', 

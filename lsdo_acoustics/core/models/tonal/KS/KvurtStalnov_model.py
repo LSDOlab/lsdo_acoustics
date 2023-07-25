@@ -43,6 +43,7 @@ class KvurtStalnovModel(ModuleCSDL):
         if test:
             rotor_radius = self.declare_variable('propeller_radius')
             chord_profile = self.declare_variable('chord_profile', shape=(num_radial,))
+            self.declare_variable('thrust_dir', shape=(3,))
             # self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
         else:
             # Thrust vector and origin
@@ -51,13 +52,13 @@ class KvurtStalnovModel(ModuleCSDL):
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
                 to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
                 self.register_output('origin', to)
-                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
             else:
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
                 to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) 
                 self.register_output('origin', to * 1)
-                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True)
                 # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
                             
             R = csdl.pnorm(in_plane_y, 2) / 2
@@ -70,7 +71,20 @@ class KvurtStalnovModel(ModuleCSDL):
             else:
                 chord_profile = self.register_output('chord_profile', chord_length)
             
-            # self.register_module_input('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial), promotes=True) # NOTE: ADJUST LATER 
+            # FINDING THRUST VECTOR DIRECTION
+            theta = self.register_module_input(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
+            rotation_matrix = self.create_output('rot_mat', shape=(3,3), val=0.)
+            # ONLY CONSIDERING PITCH CHANGES (X-Z), NO YAW OR ROLL FOR NOW
+            rotation_matrix[1, 1] = (theta + 10)/(theta + 10)
+            rotation_matrix[0, 0] = csdl.cos(theta)
+            rotation_matrix[0, 2] = -1 * csdl.sin(theta)
+            rotation_matrix[2, 0] = -1 * csdl.sin(theta)
+            rotation_matrix[2, 2] = -1 * csdl.cos(theta)
+            thrust_vec = csdl.cross(in_plane_x, in_plane_y, axis=0)
+            thrust_dir = csdl.matvec(rotation_matrix, thrust_vec/csdl.expand(csdl.pnorm(thrust_vec), shape=(3,)))
+            self.register_output('thrust_dir', thrust_dir)
+
+
 
         self.register_module_input('altitude', shape=(num_nodes,))
         Vx = self.declare_variable('Vx', shape=(num_nodes,))

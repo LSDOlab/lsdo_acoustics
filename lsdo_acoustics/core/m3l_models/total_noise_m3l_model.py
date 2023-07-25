@@ -56,7 +56,7 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
         if noise:
             self.var_names = []
             for i, comp in enumerate(noise_components):
-                print(i, comp.name, type(comp.name))
+                # print(i, comp.name, type(comp.name))
                 # exit()
                 self.var_names.append(comp.name)
                 self.arguments[comp.name] = noise_components[i]
@@ -134,11 +134,11 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
             observer_group_name = observer_group['name']
             observer_group_position = observer_group['init_position']
             observer_group_time = observer_group['time_vec']
-            print(observer_group_name)
-            print(observer_group_position)
-            print(observer_group_position.shape)
-            print(list(observer_group_time))
-            print(observer_group_time[:])
+            # print(observer_group_name)
+            # print(observer_group_position)
+            # print(observer_group_position.shape)
+            # print(list(observer_group_time))
+            # print(observer_group_time[:])
             
             for i in range(len(observer_group_time)):
                 self.observer_x_location.extend(observer_group_position[:, 0])
@@ -174,7 +174,7 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
 
 
             # self.observer_time.extend(observer_group_time)
-            print(len(observer_group_time), observer_group_position.shape[0])
+            # print(len(observer_group_time), observer_group_position.shape[0])
             self.num_observers += (len(observer_group_time) * observer_group_position.shape[0])
         
         self.num_observer_groups = len(self.observer_name_list)

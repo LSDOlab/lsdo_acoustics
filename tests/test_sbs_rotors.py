@@ -174,7 +174,7 @@ TWO FLIGHT CASES: HOVER AND CRUISE
 # ================================ HOVER ================================
 caddee.system_model = system_model = cd.SystemModel()
 
-design_scenario = cd.DesignScenario(name='hover_test')
+design_scenario = cd.DesignScenario(name='side_by_side_hc')
 hover_model = m3l.Model()
 hover_condition = cd.HoverCondition(name="hover")
 hover_condition.atmosphere_model = cd.SimpleAtmosphereModel()
@@ -235,16 +235,16 @@ hover_acoustics = Acoustics(
 )
 
 hover_acoustics.add_observer(
-    name='obs1',
+    name='obs1_hover',
     obs_position=np.array([0., 0., 0.]),
     time_vector=np.array([0., 1.])
 )
 
-hover_acoustics.setup_directivity_plot(
-    name='ground_dir',
-    center_point=np.array([0.,0.,0.]),
-    radius=10.,
-)
+# hover_acoustics.setup_directivity_plot(
+#     name='ground_dir',
+#     center_point=np.array([0.,0.,0.]),
+#     radius=10.,
+# )
 
 ks_model_rotor_1 = KS(
     component=rotor_1_disk,
@@ -303,7 +303,7 @@ hover_total_SPL, hover_total_SPL_A_weighted = hover_total_noise_model.evaluate(
     A_weighted_noise_components=A_weighted_noise_components
 )
 
-hover_acoustics.visualize(hover_total_SPL)
+# hover_acoustics.visualize(hover_total_SPL)
 
 hover_model.register_output(hover_total_SPL)
 hover_model.register_output(hover_total_SPL_A_weighted)
@@ -315,65 +315,183 @@ system_model.add_design_scenario(design_scenario=design_scenario)
 
 
 # ================================ CRUISE ================================
+cruise_model = m3l.Model()
+cruise_condition = cd.CruiseCondition(name='cruise')
+cruise_condition.atmosphere_model = cd.SimpleAtmosphereModel()
 
+cruise_condition.set_module_input(name='mach_number', val=0.17)
+cruise_condition.set_module_input(name='range', val=0.17)
+cruise_condition.set_module_input(name='altitude', val=500, units='m')
+cruise_condition.set_module_input(name='wing_incidence_angle', val=0.)
+cruise_condition.set_module_input(name='pitch_angle', val=0.)
+cruise_condition.set_module_input(name='observer_location', val=np.array([0., 0., 0.]))
 
+ac_states = cruise_condition.evaluate_ac_states()
+cruise_model.register_output(ac_states)
 
+'''
+================================ BEM MODELS ================================
+'''
+rotor_1_bem_mesh = BEMMesh(
+    meshes=dict(
+        rotor_1_in_plane_x=rotor_1_in_plane_x,
+        rotor_1_in_plane_y=rotor_1_in_plane_y,
+        rotor_1_origin=rotor_1_origin
+    ),
+    airfoil='NACA_4412',
+    num_blades=3,
+    chord_b_spline_rep=True,
+    twist_b_spline_rep=True,
+    num_radial=num_radial,
+    num_tangential=30
+)
+bem_model_1 = BEM(component=rotor_1_disk, mesh=rotor_1_bem_mesh, disk_prefix='rotor_1_disk', blade_prefix='rotor_1_blade')
+bem_model_1.set_module_input('rpm', val=1350.)
+_, _, dT_1, _, dD_1, CT_1 = bem_model_1.evaluate(ac_states=ac_states)
 
+cruise_model.register_output(dT_1)
+cruise_model.register_output(dD_1)
 
+rotor_2_bem_mesh = BEMMesh(
+    meshes=dict(
+        rotor_2_in_plane_x=rotor_1_in_plane_x,
+        rotor_2_in_plane_y=rotor_1_in_plane_y,
+        rotor_2_origin=rotor_1_origin
+    ),
+    airfoil='NACA_4412',
+    num_blades=3,
+    chord_b_spline_rep=True,
+    twist_b_spline_rep=True,
+    num_radial=num_radial,
+    num_tangential=30
+)
+bem_model_2 = BEM(component=rotor_2_disk, mesh=rotor_2_bem_mesh, disk_prefix='rotor_2_disk', blade_prefix='rotor_2_blade')
+bem_model_2.set_module_input('rpm', val=1350.)
+_, _, dT_2, _, dD_2, CT_2 = bem_model_2.evaluate(ac_states=ac_states)
 
+cruise_model.register_output(dT_2)
+cruise_model.register_output(dD_2)
 
+cruise_acoustics = Acoustics(
+    aircraft_position=np.array([0., 0., 250*0.3048])
+)
 
+cruise_acoustics.add_observer(
+    name='obs1_cruise',
+    obs_position=np.array([0., 0., 0.]),
+    time_vector=np.array([0., 1.])
+)
 
+# Acoustics solvers for rotor 1 in cruise
+lowson_model_rotor_1 = Lowson(
+    component=rotor_1_disk,
+    mesh=rotor_1_bem_mesh,
+    acoustics_data=cruise_acoustics,
+    disk_prefix='rotor_1_disk',
+    blade_prefix='rotor_1_blade'
+)
+cruise_tonal_SPL_1, cruise_tonal_SPL_A_weighted_1 = lowson_model_rotor_1.evaluate_tonal_noise(dT_1, dD_1, ac_states)
+cruise_model.register_output(cruise_tonal_SPL_1)
+cruise_model.register_output(cruise_tonal_SPL_A_weighted_1)
 
+skm_model_rotor_1 = GL(
+    component=rotor_1_disk,
+    mesh=rotor_1_bem_mesh,
+    acoustics_data=cruise_acoustics,
+    disk_prefix='rotor_1_disk',
+    blade_prefix='rotor_1_blade'
+)
+cruise_broadband_SPL_1, cruise_broadband_SPL_A_weighted_1 = skm_model_rotor_1.evaluate_broadband_noise(ac_states, CT_1)
+cruise_model.register_output(cruise_broadband_SPL_1)
+cruise_model.register_output(cruise_broadband_SPL_A_weighted_1)
 
+# Acoustics solvers for rotor 2 in cruise
+lowson_model_rotor_2 = Lowson(
+    component=rotor_2_disk,
+    mesh=rotor_2_bem_mesh,
+    acoustics_data=cruise_acoustics,
+    disk_prefix='rotor_2_disk',
+    blade_prefix='rotor_2_blade'
+)
+cruise_tonal_SPL_2, cruise_tonal_SPL_A_weighted_2 = lowson_model_rotor_2.evaluate_tonal_noise(dT_2, dD_2, ac_states)
+cruise_model.register_output(cruise_tonal_SPL_2)
+cruise_model.register_output(cruise_tonal_SPL_A_weighted_2)
 
+skm_model_rotor_2 = GL(
+    component=rotor_2_disk,
+    mesh=rotor_2_bem_mesh,
+    acoustics_data=cruise_acoustics,
+    disk_prefix='rotor_2_disk',
+    blade_prefix='rotor_2_blade'
+)
+cruise_broadband_SPL_2, cruise_broadband_SPL_A_weighted_2 = skm_model_rotor_2.evaluate_broadband_noise(ac_states, CT_2)
+cruise_model.register_output(cruise_broadband_SPL_2)
+cruise_model.register_output(cruise_broadband_SPL_A_weighted_2)
 
+cruise_total_noise_model = TotalAircraftNoise(
+    acoustics_data=cruise_acoustics,
+    component_list=[rotor_1_disk, rotor_2_disk]
+)
 
+noise_components=[cruise_tonal_SPL_1, cruise_broadband_SPL_1, cruise_tonal_SPL_2, cruise_broadband_SPL_2]
+A_weighted_noise_components=[
+    cruise_tonal_SPL_A_weighted_1, cruise_broadband_SPL_A_weighted_1, cruise_tonal_SPL_A_weighted_2, cruise_broadband_SPL_A_weighted_2
+]
 
+cruise_total_SPL, cruise_total_SPL_A_weighted = cruise_total_noise_model.evaluate(
+    noise_components=noise_components,
+    A_weighted_noise_components=A_weighted_noise_components
+)
 
+cruise_model.register_output(cruise_total_SPL)
+cruise_model.register_output(cruise_total_SPL_A_weighted)
 
+cruise_condition.add_m3l_model('cruise_model', cruise_model)
+design_scenario.add_design_condition(cruise_condition)
+system_model.add_design_scenario(design_scenario=design_scenario)
 
 caddee_csdl_model = caddee.assemble_csdl()
 
 caddee_csdl_model.connect(
-    'system_model.hover_test.hover.hover.rotor_1_disk_bem_model.rpm',
-    'system_model.hover_test.hover.hover.rotor_1_disk_KS_tonal_model.rpm'
+    'system_model.side_by_side_hc.hover.hover.rotor_1_disk_bem_model.rpm',
+    'system_model.side_by_side_hc.hover.hover.rotor_1_disk_KS_tonal_model.rpm'
 )
 caddee_csdl_model.connect(
-    'system_model.hover_test.hover.hover.rotor_1_disk_bem_model.rpm',
-    'system_model.hover_test.hover.hover.rotor_1_disk_GL_broadband_model.rpm'
-)
-
-caddee_csdl_model.connect(
-    'system_model.hover_test.hover.hover.rotor_2_disk_bem_model.rpm',
-    'system_model.hover_test.hover.hover.rotor_2_disk_KS_tonal_model.rpm'
-)
-caddee_csdl_model.connect(
-    'system_model.hover_test.hover.hover.rotor_2_disk_bem_model.rpm',
-    'system_model.hover_test.hover.hover.rotor_2_disk_GL_broadband_model.rpm'
+    'system_model.side_by_side_hc.hover.hover.rotor_1_disk_bem_model.rpm',
+    'system_model.side_by_side_hc.hover.hover.rotor_1_disk_GL_broadband_model.rpm'
 )
 
 caddee_csdl_model.connect(
-    'system_model.hover_test.hover.hover.rotor_1_disk_bem_model.phi_bracketed_search_group.phi_distribution',
-    'system_model.hover_test.hover.hover.rotor_1_disk_KS_tonal_model.ks_spl_model.phi'
+    'system_model.side_by_side_hc.hover.hover.rotor_2_disk_bem_model.rpm',
+    'system_model.side_by_side_hc.hover.hover.rotor_2_disk_KS_tonal_model.rpm'
+)
+caddee_csdl_model.connect(
+    'system_model.side_by_side_hc.hover.hover.rotor_2_disk_bem_model.rpm',
+    'system_model.side_by_side_hc.hover.hover.rotor_2_disk_GL_broadband_model.rpm'
 )
 
 caddee_csdl_model.connect(
-    'system_model.hover_test.hover.hover.rotor_2_disk_bem_model.phi_bracketed_search_group.phi_distribution',
-    'system_model.hover_test.hover.hover.rotor_2_disk_KS_tonal_model.ks_spl_model.phi'
+    'system_model.side_by_side_hc.hover.hover.rotor_1_disk_bem_model.phi_bracketed_search_group.phi_distribution',
+    'system_model.side_by_side_hc.hover.hover.rotor_1_disk_KS_tonal_model.ks_spl_model.phi'
+)
+
+caddee_csdl_model.connect(
+    'system_model.side_by_side_hc.hover.hover.rotor_2_disk_bem_model.phi_bracketed_search_group.phi_distribution',
+    'system_model.side_by_side_hc.hover.hover.rotor_2_disk_KS_tonal_model.ks_spl_model.phi'
 )
 
 '''
 LIST OF CONNECTIONS THAT ARE MISSING:
-- system_model.hover_test.hover.hover.rotor_1_disk_KS_tonal_model.rpm
-- system_model.hover_test.hover.hover.rotor_1_disk_KS_tonal_model.atmosphere_model.altitude
-- system_model.hover_test.hover.hover.rotor_1_disk_KS_tonal_model.ks_spl_model.phi
-- system_model.hover_test.hover.hover.rotor_1_disk_GL_broadband_model.rpm
-- system_model.hover_test.hover.hover.rotor_2_disk_KS_tonal_model.rpm
-- system_model.hover_test.hover.hover.rotor_2_disk_KS_tonal_model.atmosphere_model.altitude
-- system_model.hover_test.hover.hover.rotor_2_disk_KS_tonal_model.ks_spl_model.phi
-- system_model.hover_test.hover.hover.rotor_2_disk_GL_broadband_model.rpm
+- system_model.side_by_side_hc.hover.hover.rotor_1_disk_KS_tonal_model.rpm
+- system_model.side_by_side_hc.hover.hover.rotor_1_disk_KS_tonal_model.atmosphere_model.altitude
+- system_model.side_by_side_hc.hover.hover.rotor_1_disk_KS_tonal_model.ks_spl_model.phi
+- system_model.side_by_side_hc.hover.hover.rotor_1_disk_GL_broadband_model.rpm
+- system_model.side_by_side_hc.hover.hover.rotor_2_disk_KS_tonal_model.rpm
+- system_model.side_by_side_hc.hover.hover.rotor_2_disk_KS_tonal_model.atmosphere_model.altitude
+- system_model.side_by_side_hc.hover.hover.rotor_2_disk_KS_tonal_model.ks_spl_model.phi
+- system_model.side_by_side_hc.hover.hover.rotor_2_disk_GL_broadband_model.rpm
 '''
 
 sim = Simulator(caddee_csdl_model, analytics=True, display_scripts=True, name='sbs_rotors')
+
 sim.run()

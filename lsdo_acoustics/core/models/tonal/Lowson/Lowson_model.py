@@ -58,21 +58,35 @@ class LowsonModel(ModuleCSDL):
         # Thrust vector and origin
         if test:
             self.declare_variable('propeller_radius')
+            self.declare_variable('thrust_dir', shape=(3,))
         else:
             units = 'ft'
             if units == 'ft':
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
                 to = self.register_module_input(f'{disk_prefix}_origin', shape=(3, ), promotes=True) * 0.3048
                 self.register_output('origin', to)
-                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
             else:
                 in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
                 to = self.register_module_input(f'{disk_prefix}_origin', shape=(3, ), promotes=True)
                 self.register_output('origin', to*1.)
-                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True)
                             
             R = csdl.pnorm(in_plane_y, 2) / 2
             self.register_module_output('propeller_radius', R)
+
+            # FINDING THRUST VECTOR DIRECTION
+            theta = self.register_module_input(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
+            rotation_matrix = self.create_output('rot_mat', shape=(3,3), val=0.)
+            # ONLY CONSIDERING PITCH CHANGES (X-Z), NO YAW OR ROLL FOR NOW
+            rotation_matrix[1, 1] = (theta + 10)/(theta + 10)
+            rotation_matrix[0, 0] = csdl.cos(theta)
+            rotation_matrix[0, 2] = -1 * csdl.sin(theta)
+            rotation_matrix[2, 0] = -1 * csdl.sin(theta)
+            rotation_matrix[2, 2] = -1 * csdl.cos(theta)
+            thrust_vec = csdl.cross(in_plane_x, in_plane_y, axis=0)
+            thrust_dir = csdl.matvec(rotation_matrix, thrust_vec/csdl.expand(csdl.pnorm(thrust_vec), shape=(3,)))
+            self.register_output('thrust_dir', thrust_dir)
 
         # region atmospheric model (to get speed of sound)
         from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
@@ -87,7 +101,13 @@ class LowsonModel(ModuleCSDL):
         # endregion
 
         if test:
+            # Vx = self.declare_variable('Vx', shape=(num_nodes,))
+            # Vy = self.declare_variable('Vy', shape=(num_nodes,))
+            # Vz = self.declare_variable('Vz', shape=(num_nodes,))
+            # M = self.register_output( 'mach_number', (Vx**2 + Vy**2 + Vz**2)**0.5/a)
+
             M  = self.declare_variable('mach_number')
+            Vx = self.register_output('Vx', csdl.expand(M, (num_nodes, ))*a)
         else:
             Vx = self.declare_variable('Vx', shape=(num_nodes,))
             Vy = self.declare_variable('Vy', shape=(num_nodes,))

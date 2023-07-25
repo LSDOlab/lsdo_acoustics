@@ -59,10 +59,13 @@ class GLSPLModel(csdl.Model):
         s_0 =   csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), (num_nodes, num_observers))
         z =     csdl.reshape(self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers)), (num_nodes, num_observers))
 
-        theta_0 = csdl.reshape(
-            csdl.arcsin(z/s_0),
-            (num_nodes, num_observers)
-        )
+        # theta_0 = csdl.reshape(
+        #     csdl.arcsin(z/s_0),
+        #     (num_nodes, num_observers)
+        # )
+        # self.register_output('gl_dummy_theta', theta_0)
+
+        theta_0 = self.declare_variable('rel_angle_plane', shape=(num_nodes, num_observers))
 
         OASPL = OASPL_ref * csdl.sin((theta_0**2.)**0.5)**beta_1 - \
                 csdl.log10(s_0/D) * (beta_2 + beta_3*(1-csdl.sin((theta_0**2)**0.5)))

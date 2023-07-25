@@ -42,10 +42,29 @@ class LowsonSPLModel(ModuleCSDL):
         z = csdl.reshape(self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
         S = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
 
-        theta = csdl.arctan(z/(x**2+y**2 + 1e-6)**0.5)
-        self.register_output('dummy', theta)
-        # beta = (1 - M**2)**0.5
-        r1 = S*(1.-csdl.expand(M,(num_nodes, num_observers))*csdl.cos(theta))
+        Vx = csdl.expand(self.declare_variable('Vx', shape=(num_nodes, )), (num_nodes, num_observers), 'i->ia')
+        Vy = csdl.expand(self.declare_variable('Vy', shape=(num_nodes, )), (num_nodes, num_observers), 'i->ia')
+        Vz = csdl.expand(self.declare_variable('Vz', shape=(num_nodes, )), (num_nodes, num_observers), 'i->ia')
+
+        # theta = csdl.arctan(z/(x**2+y**2 + 1e-6)**0.5)
+        # self.register_output('dummy', theta)
+        # # beta = (1 - M**2)**0.5
+        # r1 = S*(1.-csdl.expand(M,(num_nodes, num_observers))*csdl.cos(theta))
+
+        r1 = self.convection_adjustment(S, x, y, z, Vx, Vy, Vz, a)
+        # self.register_output('r1_dummy', r1)
+
+        # PROJECT THE OBSERVER X-LOCATION ALONG THE X-DIRECTION OF THE AERO COORDINATE SYSTEM VECTOR
+
+        x_dir_aero = self.declare_variable('in_plane_ex', shape=(num_nodes, 3))
+        thrust_dir = csdl.expand(self.declare_variable('thrust_dir', shape=(3,)), (num_nodes, 3, num_observers), 'i->aib')
+        rel_obs_position = self.declare_variable('rel_obs_position', shape=(num_nodes,3,num_observers)) # coming from observer location model
+
+        x_in_frame = csdl.dot(rel_obs_position, csdl.expand(x_dir_aero, (num_nodes,3,num_observers), 'ij->ija'), axis=1)
+        z_in_frame = csdl.dot(rel_obs_position, thrust_dir, axis=1)
+
+        # self.register_output('x_in_frame_dummy', x_in_frame)
+        # self.register_output('z_in_frame_dummy', z_in_frame)
 
         # FOURIER COEFFICIENTS FOR THRUST AND DRAG
         a_T = self.declare_variable('aT', shape=(num_nodes, B, num_harmonics))
@@ -58,8 +77,10 @@ class LowsonSPLModel(ModuleCSDL):
         # ====================================== VARIABLE EXPANSION ======================================
         target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics)
         omega_exp = csdl.expand(omega, target_shape, 'i->iabcd')
-        z_exp = csdl.expand(z, target_shape, 'ij->ijabc')
-        x_exp = csdl.expand(x, target_shape, 'ij->ijabc')
+        # z_exp = csdl.expand(z, target_shape, 'ij->ijabc')
+        # x_exp = csdl.expand(x, target_shape, 'ij->ijabc')
+        z_exp = csdl.expand(z_in_frame, target_shape, 'ij->ijabc')
+        x_exp = csdl.expand(x_in_frame, target_shape, 'ij->ijabc')
         a_exp = csdl.expand(a, target_shape)
         r1_exp = csdl.expand(r1, target_shape, 'ij->ijabc')
         R_exp = csdl.expand(R, target_shape)
@@ -190,6 +211,7 @@ class LowsonSPLModel(ModuleCSDL):
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) * csdl.bessel(bessel_input, order=n+lam))
         term_2_A = term_2_constant * term_2_A_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
+        self.register_output('asdf', term_2_A)
 
         An = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) 
 
@@ -220,6 +242,29 @@ class LowsonSPLModel(ModuleCSDL):
 
         rotor_tonal_spl = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
         self.register_output(f'{component_name}_tonal_spl', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
+
+    def convection_adjustment(self, S, x, y, z, Vx, Vy, Vz, a):
+        '''
+        Need to calculate the component of the Mach number in the direction of the observer
+        '''
+        num_nodes, num_observers = x.shape[0], x.shape[1]
+        position = self.declare_variable('rel_obs_position', shape=(num_nodes, 3, num_observers))
+        # position = self.create_output('obs_pos', shape=(num_nodes, num_observers, 3))
+        velocity = self.create_output('aircraft_vel', shape=(num_nodes, 3, num_observers))
+
+        # position[:,:,0] = csdl.reshape(x, (num_nodes, num_observers, 1))
+        # position[:,:,1] = csdl.reshape(y, (num_nodes, num_observers, 1))
+        # position[:,:,2] = csdl.reshape(z, (num_nodes, num_observers, 1))
+
+        velocity[:,0,:] = csdl.reshape(Vx, (num_nodes, 1, num_observers))
+        velocity[:,1,:] = csdl.reshape(Vy, (num_nodes, 1, num_observers))
+        velocity[:,2,:] = csdl.reshape(Vz, (num_nodes, 1, num_observers))
+
+        v_comp_obs = csdl.dot(velocity, position, axis=1) / S
+
+        r1 = S*(1-v_comp_obs/csdl.expand(a, v_comp_obs.shape))
+        return r1 # shape is (num_nodes, num_observers)
+
 
 if __name__ == '__main__':
     from python_csdl_backend import Simulator

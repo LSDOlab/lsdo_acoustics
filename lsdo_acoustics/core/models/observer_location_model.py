@@ -33,8 +33,8 @@ class SteadyObserverLocationModel(csdl.Model):
         init_obs_y_loc = self.declare_variable('init_obs_y_loc', init_obs_y_loc)
         init_obs_z_loc = self.declare_variable('init_obs_z_loc', init_obs_z_loc)
 
-        Vx = self.declare_variable('Vx', shape=(num_nodes,), val=1.)
-        Vy = self.declare_variable('Vy', shape=(num_nodes,), val=-1.)
+        Vx = self.declare_variable('Vx', shape=(num_nodes,), val=0.)
+        Vy = self.declare_variable('Vy', shape=(num_nodes,), val=0.)
         Vz = self.declare_variable('Vz', shape=(num_nodes,), val=0.)
 
         # aircraft_location = self.declare_variable('aircraft_location', aircraft_location)
@@ -95,10 +95,41 @@ class SteadyObserverLocationModel(csdl.Model):
         rel_obs_y_pos = self.register_output('rel_obs_y_pos', init_obs_y_loc - (aircraft_y_pos + rotor_position[:,1,:]))
         rel_obs_z_pos = self.register_output('rel_obs_z_pos', init_obs_z_loc - (aircraft_z_pos + rotor_position[:,2,:]))
 
+        rel_obs_position = self.create_output('rel_obs_position', shape=(num_nodes, 3, num_observers))
+        rel_obs_position[:,0,:] = rel_obs_x_pos
+        rel_obs_position[:,1,:] = rel_obs_y_pos
+        rel_obs_position[:,2,:] = rel_obs_z_pos
+
         rel_obs_dist = self.register_output(
             'rel_obs_dist',
             (rel_obs_x_pos**2 + rel_obs_y_pos**2 + rel_obs_z_pos**2)**(0.5),
         )
+
+        thrust_dir = csdl.expand(self.declare_variable('thrust_dir', shape=(3,)), (num_nodes, 3, num_observers), 'i->aib')
+
+        normal_proj = csdl.dot(rel_obs_position, thrust_dir, axis=1)
+        self.register_output('normal_proj', normal_proj)
+
+        asdf = csdl.expand(normal_proj, (num_nodes, 3, num_observers), 'ij->iaj') * thrust_dir
+        # self.register_output('asdf', asdf)
+
+        '''
+        STEPS TO FIND ANGLE:
+        1. take dot product between thrust direction and relative observer distance
+        2. multiply by the thrust direction to get the vector direction
+        3. compute angle from plane (arcsin(proj_dir, rel_obs_dist))
+        4. compute angle from axis parallel to thrust direction (arccos(proj_dir, rel_obs_dist))
+        '''
+
+        rel_angle_plane = csdl.arcsin(csdl.expand(normal_proj, (num_nodes, 1, num_observers), 'ij->iaj')/rel_obs_dist)
+        rel_angle_normal = csdl.arccos(csdl.expand(normal_proj, (num_nodes, 1, num_observers), 'ij->iaj')/rel_obs_dist)
+
+        rel_angle_plane = self.register_output('rel_angle_plane', csdl.reshape(rel_angle_plane, (num_nodes, num_observers)))
+        rel_angle_normal = self.register_output('rel_angle_normal', csdl.reshape(rel_angle_normal, (num_nodes, num_observers)))
+
+
+
+
 
         rel_obs_angle = self.register_output(
             'rel_obs_angle',

@@ -26,7 +26,7 @@ class DummyMesh(object):
         }
 
 num_radial = 40
-mode = 'KS'
+mode = 'Lowson'
 
 # region inputs
 if mode == 'Lowson':
@@ -41,8 +41,8 @@ if mode == 'Lowson':
         'num_blades': 2,
         'radius': 0.1524, # m
         # 'radius': 0.1904, # m
-        # 'obs_loc': np.array([0., 0., 1.75]),
-        'obs_loc': np.array([1.75, 0., 0.]),
+        'obs_loc': np.array([0., 0., 1.75]),
+        # 'obs_loc': np.array([1.75, 0., 0.]),
         'mach': 0.0705,
         # 'mach': 0.0 + 1e-6,
         # 'obs_loc': np.array([0., 2.2755, -2.7118]),
@@ -66,12 +66,12 @@ elif mode == 'KS':
     inputs = {
         'num_blades': 4,
         'radius': 0.1588, # m
+        # 'obs_loc': np.array([1.91, 0., 0.]),
         'obs_loc': np.array([0., 0., 1.91]),
         'mach': 0 + 1.e-7,
         'RPM': 5500.,
         'num_radial': 40,
         'num_tangential': 1
-        
     }
     model = KvurtStalnovModel
 
@@ -83,11 +83,12 @@ mesh = DummyMesh(
 # endregion 
 
 # region assemble observer info
-a = Acoustics(np.array([0.,0.,0.]))
-a.add_observer(
-    name='observer',
-    obs_position=inputs['obs_loc'],
-    time_vector=np.array([0.])
+a = Acoustics(inputs['obs_loc'])
+a.setup_directivity_plot(
+    name='dir_plot',
+    center_point=[0., 0., 0.,],
+    radius=4.,
+    num_azim=50
 )
 
 observer_data = a.assemble_observers()
@@ -134,8 +135,8 @@ if mode == 'Lowson':
         newshape=(1, data['fz'].shape[0], data['fz'].shape[1])
     )
     sim['mach_number'] = inputs['mach']
-    sim['thrust_dir'] = np.array([-1., 0., 0.])
-    sim['in_plane_ex'] = np.array([[0., 0., 1.,]])
+    sim['thrust_dir'] = np.array([0., 0., 1.])
+    sim['in_plane_ex'] = np.array([[1., 0., 0.,]])
 
 elif mode == 'KS': # all of shape (num_nodes, num_radial)
     sim['chord_profile'] = 0.03176 * np.ones((num_radial,))
@@ -153,6 +154,26 @@ elif mode == 'KS': # all of shape (num_nodes, num_radial)
     sim['dDdR_real'] = dQdr / (np.array(data['non_dim_rad'])*R)
 
     sim['thrust_dir'] = np.array([0., 0., 1.])
-
+    # sim['in_plane_ex'] = np.array([[1., 0., 0.,]])
 
 sim.run()
+
+obs_data = sim['verif_tonal_spl']
+import matplotlib.pyplot as plt
+# import seaborn as sns
+
+x = sim['init_obs_x_loc']
+y = sim['init_obs_y_loc']
+
+r = np.sqrt(x**2 + y**2)
+theta = np.arctan2(y,x)
+
+fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+ax.plot(theta, np.reshape(obs_data, theta.shape))
+# ax.set_rmax(2)
+# ax.set_rticks([0.5, 1, 1.5, 2])  # Less radial ticks
+# ax.set_rlabel_position(-22.5)  # Move radial labels away from plotted line
+ax.grid(True)
+
+ax.set_title("It's SHO-TIME", va='bottom')
+plt.show()

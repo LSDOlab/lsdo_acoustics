@@ -96,7 +96,7 @@ fx = np.zeros((num_radial, num_tan))
 for i in range(num_tan):
     for j in range(num_radial):
         fz[j,i] = data_r1[i][j][6]
-        fx[j,i] = data_r1[i][j][0]
+        fx[j,i] = data_r1[i][j][4]
 
 data_dict = {'fx': fx, 'fz': fz, 'c': c, 'time': time, 'angle': angle}
 

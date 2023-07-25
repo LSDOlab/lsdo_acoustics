@@ -46,7 +46,9 @@ class SKMSPLModel(ModuleCSDL):
             self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers)),
             (num_nodes, num_observers)
         )
-        theta0_skm = csdl.arcsin((z_skm**2)**0.5 / S0_skm)
+        # theta0_skm = csdl.arcsin((z_skm**2)**0.5 / S0_skm)
+        # self.register_output('theta_dummy', theta0_skm)
+        theta0_skm = self.declare_variable('rel_angle_plane', shape=(num_nodes, num_observers))
 
         Omega_skm = Omega_2 + 1.e-6
 

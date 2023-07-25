@@ -60,9 +60,11 @@ class KSSPLModel(csdl.Model):
 
         RPM = self.declare_variable('rpm') # NOTE: UPDATE/FIX LATER
         # BPF = m*RPM*B/60.
-        theta = csdl.arccos(x/S)
-        self.register_output('theta_dummy', theta)
-        
+        # theta = csdl.arccos(z/S)
+        # self.register_output('theta_dummy', theta)
+
+        theta = self.declare_variable('rel_angle_normal', shape=(num_nodes, num_observers))
+    
 
         omega = RPM*2*np.pi/60
         # R = self.declare_variable(f'{component_name}_radius')

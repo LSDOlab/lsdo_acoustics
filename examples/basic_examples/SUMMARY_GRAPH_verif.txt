@@ -1,0 +1,4308 @@
+node name, 	 node object
+
+mach_number, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f74a60>, .mach_number
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_0009
+
+_0009, <csdl.operations.expand.expand object at 0x7fc233f74a90>
+	PREDECESSORS
+		mach_number,(1,) 
+	SUCCESSORS
+		_000a,(1,) 
+
+_000a, <csdl.lang.output.Output object at 0x7fc233f74af0>, ._000a
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0009
+	SUCCESSORS
+		_000b
+
+_000b, <csdl.operations.power_combination.power_combination object at 0x7fc233f74be0>
+	PREDECESSORS
+		_000a,(1,) 
+		speed_of_sound,(1,) 
+	SUCCESSORS
+		Vx,(1,) 
+
+Vx, <csdl.lang.output.Output object at 0x7fc233f74c10>, .Vx
+	CONNECTED TO: False
+	PROMOTED TO: True
+		Vx, observer_location_model.Vx
+		Vx, lowson_spl_model.Vx
+	PREDECESSORS
+		_000b
+	SUCCESSORS
+		_001V
+		_005Y
+
+_0015, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f889a0>
+	PREDECESSORS
+		_0014,(1, 50) 
+		verif_tonal_spl,(1, 50) 
+	SUCCESSORS
+		_0016,(1, 50) 
+
+rpm, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f74700>, .rpm
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: True
+		rpm, lowson_spl_model.rpm
+	PREDECESSORS
+	SUCCESSORS
+		_000h
+		_005D
+
+_000h, <csdl.operations.power_combination.power_combination object at 0x7fc233f74eb0>
+	PREDECESSORS
+		rpm,(1, 1) 
+	SUCCESSORS
+		_000i,(1, 1) 
+
+_000i, <csdl.lang.output.Output object at 0x7fc233f74ee0>, ._000i
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000h
+	SUCCESSORS
+		_000j
+
+_000j, <csdl.operations.power_combination.power_combination object at 0x7fc233f74f40>
+	PREDECESSORS
+		_000i,(1, 1) 
+	SUCCESSORS
+		_000k,(1, 1) 
+
+_000k, <csdl.lang.output.Output object at 0x7fc233f74f70>, ._000k
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000j
+	SUCCESSORS
+		_000l
+
+_000l, <csdl.operations.power_combination.power_combination object at 0x7fc233f88070>
+	PREDECESSORS
+		_000k,(1, 1) 
+	SUCCESSORS
+		_000m,(1, 1) 
+
+_000m, <csdl.lang.output.Output object at 0x7fc233f880a0>, ._000m
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000l
+	SUCCESSORS
+		_000o
+		_000s
+		_000w
+		_000A
+		_000K
+
+_000o, <csdl.operations.power_combination.power_combination object at 0x7fc233f88100>
+	PREDECESSORS
+		_000m,(1, 1) 
+	SUCCESSORS
+		_000p,(1, 1) 
+
+_000p, <csdl.lang.output.Output object at 0x7fc233f88130>, ._000p
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000o
+	SUCCESSORS
+		_000q
+
+_000q, <csdl.operations.power_combination.power_combination object at 0x7fc233f88160>
+	PREDECESSORS
+		_000p,(1, 1) 
+	SUCCESSORS
+		_000r,(1, 1) 
+
+_000r, <csdl.lang.output.Output object at 0x7fc233f88190>, ._000r
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000q
+	SUCCESSORS
+		_000Q
+
+_000Q, <csdl.operations.power_combination.power_combination object at 0x7fc233f88640>
+	PREDECESSORS
+		_000r,(1, 1) 
+		_000P,(1, 1) 
+	SUCCESSORS
+		_000R,(1, 1) 
+
+_000s, <csdl.operations.power_combination.power_combination object at 0x7fc233f881c0>
+	PREDECESSORS
+		_000m,(1, 1) 
+	SUCCESSORS
+		_000t,(1, 1) 
+
+_000t, <csdl.lang.output.Output object at 0x7fc233f881f0>, ._000t
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000s
+	SUCCESSORS
+		_000u
+
+_000u, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f88220>
+	PREDECESSORS
+		_000t,(1, 1) 
+	SUCCESSORS
+		_000v,(1, 1) 
+
+_000v, <csdl.lang.output.Output object at 0x7fc233f88250>, ._000v
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000u
+	SUCCESSORS
+		_000I
+
+_000I, <csdl.operations.power_combination.power_combination object at 0x7fc233f884c0>
+	PREDECESSORS
+		_000v,(1, 1) 
+		_000H,(1, 1) 
+	SUCCESSORS
+		_000J,(1, 1) 
+
+_000w, <csdl.operations.power_combination.power_combination object at 0x7fc233f88280>
+	PREDECESSORS
+		_000m,(1, 1) 
+	SUCCESSORS
+		_000x,(1, 1) 
+
+_000x, <csdl.lang.output.Output object at 0x7fc233f882b0>, ._000x
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000w
+	SUCCESSORS
+		_000y
+
+_000y, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f882e0>
+	PREDECESSORS
+		_000x,(1, 1) 
+	SUCCESSORS
+		_000z,(1, 1) 
+
+_000z, <csdl.lang.output.Output object at 0x7fc233f88310>, ._000z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000y
+	SUCCESSORS
+		_000E
+
+_000E, <csdl.operations.power_combination.power_combination object at 0x7fc233f88400>
+	PREDECESSORS
+		_000z,(1, 1) 
+		_000D,(1, 1) 
+	SUCCESSORS
+		_000F,(1, 1) 
+
+_000A, <csdl.operations.power_combination.power_combination object at 0x7fc233f88340>
+	PREDECESSORS
+		_000m,(1, 1) 
+	SUCCESSORS
+		_000B,(1, 1) 
+
+_000B, <csdl.lang.output.Output object at 0x7fc233f88370>, ._000B
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000A
+	SUCCESSORS
+		_000C
+
+_000C, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f883a0>
+	PREDECESSORS
+		_000B,(1, 1) 
+	SUCCESSORS
+		_000D,(1, 1) 
+
+_000D, <csdl.lang.output.Output object at 0x7fc233f883d0>, ._000D
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000C
+	SUCCESSORS
+		_000E
+
+_000F, <csdl.lang.output.Output object at 0x7fc233f88430>, ._000F
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000E
+	SUCCESSORS
+		_000G
+
+_000G, <csdl.operations.power_combination.power_combination object at 0x7fc233f88460>
+	PREDECESSORS
+		_000F,(1, 1) 
+	SUCCESSORS
+		_000H,(1, 1) 
+
+_000H, <csdl.lang.output.Output object at 0x7fc233f88490>, ._000H
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000G
+	SUCCESSORS
+		_000I
+
+_000J, <csdl.lang.output.Output object at 0x7fc233f884f0>, ._000J
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000I
+	SUCCESSORS
+		_000O
+
+_000O, <csdl.operations.power_combination.power_combination object at 0x7fc233f885e0>
+	PREDECESSORS
+		_000J,(1, 1) 
+		_000N,(1, 1) 
+	SUCCESSORS
+		_000P,(1, 1) 
+
+_000K, <csdl.operations.power_combination.power_combination object at 0x7fc233f88520>
+	PREDECESSORS
+		_000m,(1, 1) 
+	SUCCESSORS
+		_000L,(1, 1) 
+
+_000L, <csdl.lang.output.Output object at 0x7fc233f88550>, ._000L
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000K
+	SUCCESSORS
+		_000M
+
+_000M, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f88580>
+	PREDECESSORS
+		_000L,(1, 1) 
+	SUCCESSORS
+		_000N,(1, 1) 
+
+_000N, <csdl.lang.output.Output object at 0x7fc233f885b0>, ._000N
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000M
+	SUCCESSORS
+		_000O
+
+_000P, <csdl.lang.output.Output object at 0x7fc233f88610>, ._000P
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000O
+	SUCCESSORS
+		_000Q
+
+_000R, <csdl.lang.output.Output object at 0x7fc233f88670>, ._000R
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000Q
+	SUCCESSORS
+		_000S
+
+_000S, <csdl.operations.log10.log10 object at 0x7fc233f886a0>
+	PREDECESSORS
+		_000R,(1, 1) 
+	SUCCESSORS
+		_000T,(1, 1) 
+
+_000T, <csdl.lang.output.Output object at 0x7fc233f886d0>, ._000T
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000S
+	SUCCESSORS
+		_000U
+
+_000U, <csdl.operations.power_combination.power_combination object at 0x7fc233f88700>
+	PREDECESSORS
+		_000T,(1, 1) 
+	SUCCESSORS
+		_000V,(1, 1) 
+
+_000V, <csdl.lang.output.Output object at 0x7fc233f88730>, ._000V
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000U
+	SUCCESSORS
+		_000_
+
+_000_, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f88820>
+	PREDECESSORS
+		_000V,(1, 1) 
+		_000Z,(1, 1) 
+	SUCCESSORS
+		_0010,(1, 1) 
+
+RA_1000, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f880d0>, .RA_1000
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_000W
+
+_000W, <csdl.operations.log10.log10 object at 0x7fc233f88760>
+	PREDECESSORS
+		RA_1000,(1, 1) 
+	SUCCESSORS
+		_000X,(1, 1) 
+
+_000X, <csdl.lang.output.Output object at 0x7fc233f88790>, ._000X
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000W
+	SUCCESSORS
+		_000Y
+
+_000Y, <csdl.operations.power_combination.power_combination object at 0x7fc233f887c0>
+	PREDECESSORS
+		_000X,(1, 1) 
+	SUCCESSORS
+		_000Z,(1, 1) 
+
+_000Z, <csdl.lang.output.Output object at 0x7fc233f887f0>, ._000Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000Y
+	SUCCESSORS
+		_000_
+
+_0010, <csdl.lang.output.Output object at 0x7fc233f88850>, ._0010
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_000_
+	SUCCESSORS
+		_0011
+
+_0011, <csdl.operations.reshape.reshape object at 0x7fc233f88880>
+	PREDECESSORS
+		_0010,(1, 1) 
+	SUCCESSORS
+		_0012,(1,) 
+
+_0012, <csdl.lang.output.Output object at 0x7fc233f888b0>, ._0012
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0011
+	SUCCESSORS
+		_0013
+
+_0013, <csdl.operations.expand.expand object at 0x7fc233f88910>
+	PREDECESSORS
+		_0012,(1,) 
+	SUCCESSORS
+		_0014,(1, 50) 
+
+_0014, <csdl.lang.output.Output object at 0x7fc233f88970>, ._0014
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0013
+	SUCCESSORS
+		_0015
+
+_0016, <csdl.lang.output.Output object at 0x7fc233f889d0>, ._0016
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0015
+	SUCCESSORS
+		_0017
+
+_0017, <csdl.operations.power_combination.power_combination object at 0x7fc233f88a00>
+	PREDECESSORS
+		_0016,(1, 50) 
+	SUCCESSORS
+		_0018,(1, 50) 
+
+_0018, <csdl.lang.output.Output object at 0x7fc233f88a30>, ._0018
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0017
+	SUCCESSORS
+		_0019
+
+_0019, <csdl.operations.exp_a.exp_a object at 0x7fc233f88a60>
+	PREDECESSORS
+		_0018,(1, 50) 
+	SUCCESSORS
+		_001a,(1, 50) 
+
+_001a, <csdl.lang.output.Output object at 0x7fc233f88a90>, ._001a
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0019
+	SUCCESSORS
+		_001b
+
+_001b, <csdl.operations.log10.log10 object at 0x7fc233f88af0>
+	PREDECESSORS
+		_001a,(1, 50) 
+	SUCCESSORS
+		_001c,(1, 50) 
+
+_001c, <csdl.lang.output.Output object at 0x7fc233f88b20>, ._001c
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001b
+	SUCCESSORS
+		_001d
+
+_001d, <csdl.operations.power_combination.power_combination object at 0x7fc233f88b50>
+	PREDECESSORS
+		_001c,(1, 50) 
+	SUCCESSORS
+		verif_tonal_spl_A_weighted,(1, 50) 
+
+verif_tonal_spl_A_weighted, <csdl.lang.output.Output object at 0x7fc233f88b80>, .verif_tonal_spl_A_weighted
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001d
+	SUCCESSORS
+
+altitude, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f88c10>, atmosphere_model.altitude
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_001g
+
+_001g, <csdl.operations.power_combination.power_combination object at 0x7fc233f88c40>
+	PREDECESSORS
+		altitude,(1,) 
+	SUCCESSORS
+		_001h,(1,) 
+
+_001h, <csdl.lang.output.Output object at 0x7fc233f88c70>, atmosphere_model._001h
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001g
+	SUCCESSORS
+		_001i
+
+_001i, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f88d60>
+	PREDECESSORS
+		_001h,(1,) 
+	SUCCESSORS
+		_001j,(1,) 
+
+_001j, <csdl.lang.output.Output object at 0x7fc233f88d90>, atmosphere_model._001j
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001i
+	SUCCESSORS
+		_001k
+
+_001k, <csdl.operations.power_combination.power_combination object at 0x7fc233f88dc0>
+	PREDECESSORS
+		_001j,(1,) 
+	SUCCESSORS
+		_001l,(1,) 
+
+_001l, <csdl.lang.output.Output object at 0x7fc233f88df0>, atmosphere_model._001l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001k
+	SUCCESSORS
+		_001m
+
+_001m, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f88e80>
+	PREDECESSORS
+		_001l,(1,) 
+	SUCCESSORS
+		temperature,(1,) 
+
+temperature, <csdl.lang.output.Output object at 0x7fc233f88eb0>, atmosphere_model.temperature
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001m
+	SUCCESSORS
+		_001o
+		_001w
+		_001y
+		_001G
+		_001K
+
+_001o, <csdl.operations.power_combination.power_combination object at 0x7fc233f88ee0>
+	PREDECESSORS
+		temperature,(1,) 
+	SUCCESSORS
+		_001p,(1,) 
+
+_001w, <csdl.operations.power_combination.power_combination object at 0x7fc233f95100>
+	PREDECESSORS
+		temperature,(1,) 
+		_001v,(1,) 
+	SUCCESSORS
+		density,(1,) 
+
+_001y, <csdl.operations.power_combination.power_combination object at 0x7fc233f95160>
+	PREDECESSORS
+		temperature,(1,) 
+	SUCCESSORS
+		_001z,(1,) 
+
+_001G, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f95460>
+	PREDECESSORS
+		temperature,(1,) 
+	SUCCESSORS
+		_001H,(1,) 
+
+_001K, <csdl.operations.power_combination.power_combination object at 0x7fc233f95520>
+	PREDECESSORS
+		temperature,(1,) 
+	SUCCESSORS
+		_001L,(1,) 
+
+_001p, <csdl.lang.output.Output object at 0x7fc233f88f10>, atmosphere_model._001p
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001o
+	SUCCESSORS
+		_001q
+
+_001q, <csdl.operations.power_combination.power_combination object at 0x7fc233f88f40>
+	PREDECESSORS
+		_001p,(1,) 
+	SUCCESSORS
+		_001r,(1,) 
+
+_001r, <csdl.lang.output.Output object at 0x7fc233f88f70>, atmosphere_model._001r
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001q
+	SUCCESSORS
+		_001s
+
+_001s, <csdl.operations.power_combination.power_combination object at 0x7fc233f88fa0>
+	PREDECESSORS
+		_001r,(1,) 
+	SUCCESSORS
+		pressure,(1,) 
+
+pressure, <csdl.lang.output.Output object at 0x7fc233f88fd0>, atmosphere_model.pressure
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001s
+	SUCCESSORS
+		_001u
+
+_001u, <csdl.operations.power_combination.power_combination object at 0x7fc233f95070>
+	PREDECESSORS
+		pressure,(1,) 
+	SUCCESSORS
+		_001v,(1,) 
+
+_001v, <csdl.lang.output.Output object at 0x7fc233f950a0>, atmosphere_model._001v
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001u
+	SUCCESSORS
+		_001w
+
+density, <csdl.lang.output.Output object at 0x7fc233f95130>, atmosphere_model.density
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001w
+	SUCCESSORS
+
+_001z, <csdl.lang.output.Output object at 0x7fc233f95190>, atmosphere_model._001z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001y
+	SUCCESSORS
+		_001A
+
+_001A, <csdl.operations.power_combination.power_combination object at 0x7fc233f95220>
+	PREDECESSORS
+		_001z,(1,) 
+	SUCCESSORS
+		_001B,(1,) 
+
+_001B, <csdl.lang.output.Output object at 0x7fc233f95250>, atmosphere_model._001B
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001A
+	SUCCESSORS
+		_001C
+
+_001C, <csdl.operations.power_combination.power_combination object at 0x7fc233f952b0>
+	PREDECESSORS
+		_001B,(1,) 
+	SUCCESSORS
+		_001D,(1,) 
+
+_001D, <csdl.lang.output.Output object at 0x7fc233f952e0>, atmosphere_model._001D
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001C
+	SUCCESSORS
+		_001E
+
+_001E, <csdl.operations.power_combination.power_combination object at 0x7fc233f95340>
+	PREDECESSORS
+		_001D,(1,) 
+	SUCCESSORS
+		_001F,(1,) 
+
+_001F, <csdl.lang.output.Output object at 0x7fc233f95370>, atmosphere_model._001F
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001E
+	SUCCESSORS
+		_001I
+
+_001I, <csdl.operations.power_combination.power_combination object at 0x7fc233f954c0>
+	PREDECESSORS
+		_001F,(1,) 
+		_001H,(1,) 
+	SUCCESSORS
+		dynamic_viscosity,(1,) 
+
+dynamic_viscosity, <csdl.lang.output.Output object at 0x7fc233f954f0>, atmosphere_model.dynamic_viscosity
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001I
+	SUCCESSORS
+
+_001H, <csdl.lang.output.Output object at 0x7fc233f95490>, atmosphere_model._001H
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001G
+	SUCCESSORS
+		_001I
+
+_001L, <csdl.lang.output.Output object at 0x7fc233f95550>, atmosphere_model._001L
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001K
+	SUCCESSORS
+		_001M
+
+_001M, <csdl.operations.power_combination.power_combination object at 0x7fc233f95580>
+	PREDECESSORS
+		_001L,(1,) 
+	SUCCESSORS
+		speed_of_sound,(1,) 
+
+speed_of_sound, <csdl.lang.output.Output object at 0x7fc233f955b0>, atmosphere_model.speed_of_sound
+	CONNECTED TO: False
+	PROMOTED TO: True
+		speed_of_sound, .speed_of_sound
+		speed_of_sound, lowson_spl_model.speed_of_sound
+	PREDECESSORS
+		_001M
+	SUCCESSORS
+		_000b
+		_006i
+		_006P
+
+_001V, <csdl.operations.expand.expand object at 0x7fc233f958b0>
+	PREDECESSORS
+		Vx,(1,) 
+	SUCCESSORS
+		_001W,(1, 1) 
+
+_001W, <csdl.lang.output.Output object at 0x7fc233f95910>, observer_location_model._001W
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001V
+	SUCCESSORS
+		_001X
+
+_001X, <csdl.operations.indexed_passthrough.indexed_passthrough object at 0x7fc233f95970>
+	PREDECESSORS
+		_001W,(1, 1) 
+		_001Z,(1, 1) 
+		_0020,(1, 1) 
+	SUCCESSORS
+		V_aircraft,(1, 3) 
+
+V_aircraft, <csdl.lang.concatenation.Concatenation object at 0x7fc233f95820>, observer_location_model.V_aircraft
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001X
+	SUCCESSORS
+		_0021
+
+Vy, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f95760>, observer_location_model.Vy
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: True
+		Vy, lowson_spl_model.Vy
+	PREDECESSORS
+	SUCCESSORS
+		_001Y
+		_0060
+
+_001Y, <csdl.operations.expand.expand object at 0x7fc233f959d0>
+	PREDECESSORS
+		Vy,(1,) 
+	SUCCESSORS
+		_001Z,(1, 1) 
+
+_001Z, <csdl.lang.output.Output object at 0x7fc233f95a30>, observer_location_model._001Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001Y
+	SUCCESSORS
+		_001X
+
+Vz, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f957c0>, observer_location_model.Vz
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: True
+		Vz, lowson_spl_model.Vz
+	PREDECESSORS
+	SUCCESSORS
+		_001_
+		_0063
+
+_001_, <csdl.operations.expand.expand object at 0x7fc233f95a60>
+	PREDECESSORS
+		Vz,(1,) 
+	SUCCESSORS
+		_0020,(1, 1) 
+
+_0020, <csdl.lang.output.Output object at 0x7fc233f95ac0>, observer_location_model._0020
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_001_
+	SUCCESSORS
+		_001X
+
+_0021, <csdl.operations.expand.expand object at 0x7fc233f95b20>
+	PREDECESSORS
+		V_aircraft,(1, 3) 
+	SUCCESSORS
+		_0022,(1, 3, 50) 
+
+aircraft_location, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f95bb0>, observer_location_model.aircraft_location
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_0024
+
+_0024, <csdl.operations.expand.expand object at 0x7fc233f95b80>
+	PREDECESSORS
+		aircraft_location,(3, 50) 
+	SUCCESSORS
+		_0025,(1, 3, 50) 
+
+_0025, <csdl.lang.output.Output object at 0x7fc233f95be0>, observer_location_model._0025
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0024
+	SUCCESSORS
+		_0029
+
+_0029, <csdl.operations.decompose.decompose object at 0x7fc233f95d00>
+	PREDECESSORS
+		_0025,(1, 3, 50) 
+	SUCCESSORS
+		_002a,(1, 1, 50) 
+		_002j,(1, 1, 50) 
+		_002q,(1, 1, 50) 
+
+_002a, <csdl.lang.output.Output object at 0x7fc233f95d90>, observer_location_model._002a
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0029
+	SUCCESSORS
+		_002h
+
+_002j, <csdl.lang.output.Output object at 0x7fc233f95f40>, observer_location_model._002j
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0029
+	SUCCESSORS
+		_002o
+
+_002q, <csdl.lang.output.Output object at 0x7fc233fa20a0>, observer_location_model._002q
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0029
+	SUCCESSORS
+		_002v
+
+_002h, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f95f10>
+	PREDECESSORS
+		_002a,(1, 1, 50) 
+		_002g,(1, 1, 50) 
+	SUCCESSORS
+		aircraft_x_pos,(1, 1, 50) 
+
+_002o, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2070>
+	PREDECESSORS
+		_002j,(1, 1, 50) 
+		_002n,(1, 1, 50) 
+	SUCCESSORS
+		aircraft_y_pos,(1, 1, 50) 
+
+_002v, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa21f0>
+	PREDECESSORS
+		_002q,(1, 1, 50) 
+		_002u,(1, 1, 50) 
+	SUCCESSORS
+		aircraft_z_pos,(1, 1, 50) 
+
+aircraft_x_pos, <csdl.lang.output.Output object at 0x7fc233f95eb0>, observer_location_model.aircraft_x_pos
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002h
+	SUCCESSORS
+		_002I
+
+_0022, <csdl.lang.output.Output object at 0x7fc233f95b50>, observer_location_model._0022
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0021
+	SUCCESSORS
+		_002b
+
+_002b, <csdl.operations.decompose.decompose object at 0x7fc233f95d60>
+	PREDECESSORS
+		_0022,(1, 3, 50) 
+	SUCCESSORS
+		_002c,(1, 1, 50) 
+		_002k,(1, 1, 50) 
+		_002r,(1, 1, 50) 
+
+_002c, <csdl.lang.output.Output object at 0x7fc233f95e20>, observer_location_model._002c
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002b
+	SUCCESSORS
+		_002f
+
+_002k, <csdl.lang.output.Output object at 0x7fc233f95fd0>, observer_location_model._002k
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002b
+	SUCCESSORS
+		_002m
+
+_002r, <csdl.lang.output.Output object at 0x7fc233fa21c0>, observer_location_model._002r
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002b
+	SUCCESSORS
+		_002t
+
+_002f, <csdl.operations.power_combination.power_combination object at 0x7fc233f95d30>
+	PREDECESSORS
+		_002c,(1, 1, 50) 
+		_002e,(1, 1, 50) 
+	SUCCESSORS
+		_002g,(1, 1, 50) 
+
+_002m, <csdl.operations.power_combination.power_combination object at 0x7fc233f95f70>
+	PREDECESSORS
+		_002k,(1, 1, 50) 
+		_002l,(1, 1, 50) 
+	SUCCESSORS
+		_002n,(1, 1, 50) 
+
+_002t, <csdl.operations.power_combination.power_combination object at 0x7fc233fa2130>
+	PREDECESSORS
+		_002r,(1, 1, 50) 
+		_002s,(1, 1, 50) 
+	SUCCESSORS
+		_002u,(1, 1, 50) 
+
+_002g, <csdl.lang.output.Output object at 0x7fc233f95e50>, observer_location_model._002g
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002f
+	SUCCESSORS
+		_002h
+
+time_vectors, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f95c40>, observer_location_model.time_vectors
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_0027
+
+_0027, <csdl.operations.expand.expand object at 0x7fc233f95c70>
+	PREDECESSORS
+		time_vectors,(50,) 
+	SUCCESSORS
+		_0028,(1, 3, 50) 
+
+_0028, <csdl.lang.output.Output object at 0x7fc233f95cd0>, observer_location_model._0028
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0027
+	SUCCESSORS
+		_002d
+
+_002d, <csdl.operations.decompose.decompose object at 0x7fc233f95df0>
+	PREDECESSORS
+		_0028,(1, 3, 50) 
+	SUCCESSORS
+		_002e,(1, 1, 50) 
+		_002l,(1, 1, 50) 
+		_002s,(1, 1, 50) 
+
+_002e, <csdl.lang.output.Output object at 0x7fc233f95ee0>, observer_location_model._002e
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002d
+	SUCCESSORS
+		_002f
+
+_002l, <csdl.lang.output.Output object at 0x7fc233f95fa0>, observer_location_model._002l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002d
+	SUCCESSORS
+		_002m
+
+_002s, <csdl.lang.output.Output object at 0x7fc233fa2160>, observer_location_model._002s
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002d
+	SUCCESSORS
+		_002t
+
+_002I, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2460>
+	PREDECESSORS
+		aircraft_x_pos,(1, 1, 50) 
+		_002H,(1, 1, 50) 
+	SUCCESSORS
+		_002J,(1, 1, 50) 
+
+aircraft_y_pos, <csdl.lang.output.Output object at 0x7fc233fa20d0>, observer_location_model.aircraft_y_pos
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002o
+	SUCCESSORS
+		_002N
+
+_002n, <csdl.lang.output.Output object at 0x7fc233fa2040>, observer_location_model._002n
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002m
+	SUCCESSORS
+		_002o
+
+_002N, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2550>
+	PREDECESSORS
+		aircraft_y_pos,(1, 1, 50) 
+		_002M,(1, 1, 50) 
+	SUCCESSORS
+		_002O,(1, 1, 50) 
+
+aircraft_z_pos, <csdl.lang.output.Output object at 0x7fc233fa2250>, observer_location_model.aircraft_z_pos
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002v
+	SUCCESSORS
+		_002S
+
+_002u, <csdl.lang.output.Output object at 0x7fc233fa2190>, observer_location_model._002u
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002t
+	SUCCESSORS
+		_002v
+
+_002S, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2640>
+	PREDECESSORS
+		aircraft_z_pos,(1, 1, 50) 
+		_002R,(1, 1, 50) 
+	SUCCESSORS
+		_002T,(1, 1, 50) 
+
+init_obs_x_loc, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f95610>, observer_location_model.init_obs_x_loc
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_002x
+
+_002x, <csdl.operations.expand.expand object at 0x7fc233fa22e0>
+	PREDECESSORS
+		init_obs_x_loc,(50,) 
+	SUCCESSORS
+		_002y,(1, 1, 50) 
+
+_002y, <csdl.lang.output.Output object at 0x7fc233fa22b0>, observer_location_model._002y
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002x
+	SUCCESSORS
+		_002K
+
+_002K, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa24f0>
+	PREDECESSORS
+		_002y,(1, 1, 50) 
+		_002J,(1, 1, 50) 
+	SUCCESSORS
+		rel_obs_x_pos,(1, 1, 50) 
+
+rel_obs_x_pos, <csdl.lang.output.Output object at 0x7fc233fa2520>, observer_location_model.rel_obs_x_pos
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002K
+	SUCCESSORS
+		_002X
+		_002Y
+
+_002J, <csdl.lang.output.Output object at 0x7fc233fa2490>, observer_location_model._002J
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002I
+	SUCCESSORS
+		_002K
+
+origin, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233fa23a0>, observer_location_model.origin
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_002E
+
+_002E, <csdl.operations.expand.expand object at 0x7fc233fa23d0>
+	PREDECESSORS
+		origin,(3,) 
+	SUCCESSORS
+		_002F,(1, 3, 50) 
+
+_002F, <csdl.lang.output.Output object at 0x7fc233fa2400>, observer_location_model._002F
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002E
+	SUCCESSORS
+		_002G
+
+_002G, <csdl.operations.decompose.decompose object at 0x7fc233fa2430>
+	PREDECESSORS
+		_002F,(1, 3, 50) 
+	SUCCESSORS
+		_002H,(1, 1, 50) 
+		_002M,(1, 1, 50) 
+		_002R,(1, 1, 50) 
+
+_002H, <csdl.lang.output.Output object at 0x7fc233fa24c0>, observer_location_model._002H
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002G
+	SUCCESSORS
+		_002I
+
+_002M, <csdl.lang.output.Output object at 0x7fc233fa2580>, observer_location_model._002M
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002G
+	SUCCESSORS
+		_002N
+
+_002R, <csdl.lang.output.Output object at 0x7fc233fa2670>, observer_location_model._002R
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002G
+	SUCCESSORS
+		_002S
+
+_002X, <csdl.operations.indexed_passthrough.indexed_passthrough object at 0x7fc233fa2790>
+	PREDECESSORS
+		rel_obs_x_pos,(1, 1, 50) 
+		rel_obs_y_pos,(1, 1, 50) 
+		rel_obs_z_pos,(1, 1, 50) 
+	SUCCESSORS
+		rel_obs_position,(1, 3, 50) 
+
+_002Y, <csdl.operations.power_combination.power_combination object at 0x7fc233fa27c0>
+	PREDECESSORS
+		rel_obs_x_pos,(1, 1, 50) 
+	SUCCESSORS
+		_002Z,(1, 1, 50) 
+
+init_obs_y_loc, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f95640>, observer_location_model.init_obs_y_loc
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_002z
+
+_002z, <csdl.operations.expand.expand object at 0x7fc233fa2220>
+	PREDECESSORS
+		init_obs_y_loc,(50,) 
+	SUCCESSORS
+		_002A,(1, 1, 50) 
+
+_002A, <csdl.lang.output.Output object at 0x7fc233fa2310>, observer_location_model._002A
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002z
+	SUCCESSORS
+		_002P
+
+_002P, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2610>
+	PREDECESSORS
+		_002A,(1, 1, 50) 
+		_002O,(1, 1, 50) 
+	SUCCESSORS
+		rel_obs_y_pos,(1, 1, 50) 
+
+rel_obs_y_pos, <csdl.lang.output.Output object at 0x7fc233fa25e0>, observer_location_model.rel_obs_y_pos
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002P
+	SUCCESSORS
+		_002X
+		_002_
+
+_002O, <csdl.lang.output.Output object at 0x7fc233fa25b0>, observer_location_model._002O
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002N
+	SUCCESSORS
+		_002P
+
+_002_, <csdl.operations.power_combination.power_combination object at 0x7fc233fa27f0>
+	PREDECESSORS
+		rel_obs_y_pos,(1, 1, 50) 
+	SUCCESSORS
+		_0030,(1, 1, 50) 
+
+init_obs_z_loc, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f95670>, observer_location_model.init_obs_z_loc
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_002B
+
+_002B, <csdl.operations.expand.expand object at 0x7fc233fa2280>
+	PREDECESSORS
+		init_obs_z_loc,(50,) 
+	SUCCESSORS
+		_002C,(1, 1, 50) 
+
+_002C, <csdl.lang.output.Output object at 0x7fc233fa2340>, observer_location_model._002C
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002B
+	SUCCESSORS
+		_002U
+
+_002U, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2700>
+	PREDECESSORS
+		_002C,(1, 1, 50) 
+		_002T,(1, 1, 50) 
+	SUCCESSORS
+		rel_obs_z_pos,(1, 1, 50) 
+
+rel_obs_z_pos, <csdl.lang.output.Output object at 0x7fc233fa2730>, observer_location_model.rel_obs_z_pos
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002U
+	SUCCESSORS
+		_002X
+		_0033
+		_003y
+		_003C
+		_003G
+
+_002T, <csdl.lang.output.Output object at 0x7fc233fa26a0>, observer_location_model._002T
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002S
+	SUCCESSORS
+		_002U
+
+_0033, <csdl.operations.power_combination.power_combination object at 0x7fc233fa28b0>
+	PREDECESSORS
+		rel_obs_z_pos,(1, 1, 50) 
+	SUCCESSORS
+		_0034,(1, 1, 50) 
+
+_003y, <csdl.operations.power_combination.power_combination object at 0x7fc233f35070>
+	PREDECESSORS
+		rel_obs_z_pos,(1, 1, 50) 
+		rel_obs_dist,(1, 1, 50) 
+	SUCCESSORS
+		_003z,(1, 1, 50) 
+
+_003C, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f35160>
+	PREDECESSORS
+		rel_obs_z_pos,(1, 1, 50) 
+	SUCCESSORS
+		_003D,(1, 1, 50) 
+
+_003G, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f35250>
+	PREDECESSORS
+		rel_obs_z_pos,(1, 1, 50) 
+	SUCCESSORS
+		_003H,(1, 1, 50) 
+
+rel_obs_position, <csdl.lang.concatenation.Concatenation object at 0x7fc233fa2760>, observer_location_model.rel_obs_position
+	CONNECTED TO: False
+	PROMOTED TO: True
+		rel_obs_position, lowson_spl_model.rel_obs_position
+	PREDECESSORS
+		_002X
+	SUCCESSORS
+		_003c
+		_006e
+		_006x
+		_006z
+
+_003c, <csdl.operations.dot.dot object at 0x7fc233fa2af0>
+	PREDECESSORS
+		rel_obs_position,(1, 3, 50) 
+		_003b,(1, 3, 50) 
+	SUCCESSORS
+		normal_proj,(1, 50) 
+
+_002Z, <csdl.lang.output.Output object at 0x7fc233fa2820>, observer_location_model._002Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002Y
+	SUCCESSORS
+		_0031
+
+_0031, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2880>
+	PREDECESSORS
+		_002Z,(1, 1, 50) 
+		_0030,(1, 1, 50) 
+	SUCCESSORS
+		_0032,(1, 1, 50) 
+
+_0032, <csdl.lang.output.Output object at 0x7fc233fa28e0>, observer_location_model._0032
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0031
+	SUCCESSORS
+		_0035
+
+_0030, <csdl.lang.output.Output object at 0x7fc233fa2850>, observer_location_model._0030
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_002_
+	SUCCESSORS
+		_0031
+
+_0035, <csdl.operations.linear_combination.linear_combination object at 0x7fc233fa2910>
+	PREDECESSORS
+		_0032,(1, 1, 50) 
+		_0034,(1, 1, 50) 
+	SUCCESSORS
+		_0036,(1, 1, 50) 
+
+_0036, <csdl.lang.output.Output object at 0x7fc233fa2970>, observer_location_model._0036
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0035
+	SUCCESSORS
+		_0037
+
+_0034, <csdl.lang.output.Output object at 0x7fc233fa2940>, observer_location_model._0034
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0033
+	SUCCESSORS
+		_0035
+
+_0037, <csdl.operations.power_combination.power_combination object at 0x7fc233fa29a0>
+	PREDECESSORS
+		_0036,(1, 1, 50) 
+	SUCCESSORS
+		rel_obs_dist,(1, 1, 50) 
+
+rel_obs_dist, <csdl.lang.output.Output object at 0x7fc233fa29d0>, observer_location_model.rel_obs_dist
+	CONNECTED TO: False
+	PROMOTED TO: True
+		rel_obs_dist, lowson_spl_model.rel_obs_dist
+	PREDECESSORS
+		_0037
+	SUCCESSORS
+		_003k
+		_003q
+		_003y
+		_005V
+
+_003k, <csdl.operations.power_combination.power_combination object at 0x7fc233fa2d00>
+	PREDECESSORS
+		rel_obs_dist,(1, 1, 50) 
+		_003j,(1, 1, 50) 
+	SUCCESSORS
+		_003l,(1, 1, 50) 
+
+_003q, <csdl.operations.power_combination.power_combination object at 0x7fc233fa2e80>
+	PREDECESSORS
+		rel_obs_dist,(1, 1, 50) 
+		_003p,(1, 1, 50) 
+	SUCCESSORS
+		_003r,(1, 1, 50) 
+
+normal_proj, <csdl.lang.output.Output object at 0x7fc233fa2ac0>, observer_location_model.normal_proj
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003c
+	SUCCESSORS
+		_003i
+		_003o
+
+thrust_dir, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233fa2a00>, observer_location_model.thrust_dir
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: True
+		thrust_dir, lowson_spl_model.thrust_dir
+	PREDECESSORS
+	SUCCESSORS
+		_003a
+		_006s
+
+_003a, <csdl.operations.expand.expand object at 0x7fc233fa2a60>
+	PREDECESSORS
+		thrust_dir,(3,) 
+	SUCCESSORS
+		_003b,(1, 3, 50) 
+
+_003b, <csdl.lang.output.Output object at 0x7fc233fa2a90>, observer_location_model._003b
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003a
+	SUCCESSORS
+		_003c
+
+_003i, <csdl.operations.expand.expand object at 0x7fc233fa2c70>
+	PREDECESSORS
+		normal_proj,(1, 50) 
+	SUCCESSORS
+		_003j,(1, 1, 50) 
+
+_003o, <csdl.operations.expand.expand object at 0x7fc233fa2dc0>
+	PREDECESSORS
+		normal_proj,(1, 50) 
+	SUCCESSORS
+		_003p,(1, 1, 50) 
+
+_003j, <csdl.lang.output.Output object at 0x7fc233fa2ca0>, observer_location_model._003j
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003i
+	SUCCESSORS
+		_003k
+
+_003l, <csdl.lang.output.Output object at 0x7fc233fa2cd0>, observer_location_model._003l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003k
+	SUCCESSORS
+		_003m
+
+_003m, <csdl.operations.arcsin.arcsin object at 0x7fc233fa2d30>
+	PREDECESSORS
+		_003l,(1, 1, 50) 
+	SUCCESSORS
+		_003n,(1, 1, 50) 
+
+_003n, <csdl.lang.output.Output object at 0x7fc233fa2d60>, observer_location_model._003n
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003m
+	SUCCESSORS
+		_003u
+
+_003u, <csdl.operations.reshape.reshape object at 0x7fc233fa2f10>
+	PREDECESSORS
+		_003n,(1, 1, 50) 
+	SUCCESSORS
+		rel_angle_plane,(1, 50) 
+
+rel_angle_plane, <csdl.lang.output.Output object at 0x7fc233fa2f70>, observer_location_model.rel_angle_plane
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003u
+	SUCCESSORS
+
+_003p, <csdl.lang.output.Output object at 0x7fc233fa2e20>, observer_location_model._003p
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003o
+	SUCCESSORS
+		_003q
+
+_003r, <csdl.lang.output.Output object at 0x7fc233fa2e50>, observer_location_model._003r
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003q
+	SUCCESSORS
+		_003s
+
+_003s, <csdl.operations.arccos.arccos object at 0x7fc233fa2eb0>
+	PREDECESSORS
+		_003r,(1, 1, 50) 
+	SUCCESSORS
+		_003t,(1, 1, 50) 
+
+_003t, <csdl.lang.output.Output object at 0x7fc233fa2ee0>, observer_location_model._003t
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003s
+	SUCCESSORS
+		_003w
+
+_003w, <csdl.operations.reshape.reshape object at 0x7fc233fa2fa0>
+	PREDECESSORS
+		_003t,(1, 1, 50) 
+	SUCCESSORS
+		rel_angle_normal,(1, 50) 
+
+rel_angle_normal, <csdl.lang.output.Output object at 0x7fc233f35040>, observer_location_model.rel_angle_normal
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003w
+	SUCCESSORS
+
+_003z, <csdl.lang.output.Output object at 0x7fc233f350a0>, observer_location_model._003z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003y
+	SUCCESSORS
+		_003A
+
+_003A, <csdl.operations.arccos.arccos object at 0x7fc233f350d0>
+	PREDECESSORS
+		_003z,(1, 1, 50) 
+	SUCCESSORS
+		_003B,(1, 1, 50) 
+
+_003B, <csdl.lang.output.Output object at 0x7fc233f35130>, observer_location_model._003B
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003A
+	SUCCESSORS
+		_003E
+
+_003E, <csdl.operations.power_combination.power_combination object at 0x7fc233f351f0>
+	PREDECESSORS
+		_003B,(1, 1, 50) 
+		_003D,(1, 1, 50) 
+	SUCCESSORS
+		_003F,(1, 1, 50) 
+
+_003F, <csdl.lang.output.Output object at 0x7fc233f35220>, observer_location_model._003F
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003E
+	SUCCESSORS
+		_003M
+
+_003D, <csdl.lang.output.Output object at 0x7fc233f35190>, observer_location_model._003D
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003C
+	SUCCESSORS
+		_003E
+
+_003M, <csdl.operations.power_combination.power_combination object at 0x7fc233f35370>
+	PREDECESSORS
+		_003F,(1, 1, 50) 
+		_003L,(1, 1, 50) 
+	SUCCESSORS
+		rel_obs_angle,(1, 1, 50) 
+
+rel_obs_angle, <csdl.lang.output.Output object at 0x7fc233f353a0>, observer_location_model.rel_obs_angle
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003M
+	SUCCESSORS
+
+_003H, <csdl.lang.output.Output object at 0x7fc233f35280>, observer_location_model._003H
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003G
+	SUCCESSORS
+		_003I
+
+_003I, <csdl.operations.power_combination.power_combination object at 0x7fc233f352b0>
+	PREDECESSORS
+		_003H,(1, 1, 50) 
+	SUCCESSORS
+		_003J,(1, 1, 50) 
+
+_003J, <csdl.lang.output.Output object at 0x7fc233f352e0>, observer_location_model._003J
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003I
+	SUCCESSORS
+		_003K
+
+_003K, <csdl.operations.power_combination.power_combination object at 0x7fc233f35310>
+	PREDECESSORS
+		_003J,(1, 1, 50) 
+	SUCCESSORS
+		_003L,(1, 1, 50) 
+
+_003L, <csdl.lang.output.Output object at 0x7fc233f35340>, observer_location_model._003L
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003K
+	SUCCESSORS
+		_003M
+
+_dD, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f353d0>, load_integration_model._dD
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_003P
+
+_003P, <csdl.operations.expand.expand object at 0x7fc233f35430>
+	PREDECESSORS
+		_dD,(1, 40, 700) 
+	SUCCESSORS
+		_003Q,(1, 2, 40, 700) 
+
+_003Q, <csdl.lang.output.Output object at 0x7fc233f35460>, load_integration_model._003Q
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003P
+	SUCCESSORS
+		_003U
+
+_003U, <csdl.operations.sum.sum object at 0x7fc233f35580>
+	PREDECESSORS
+		_003Q,(1, 2, 40, 700) 
+	SUCCESSORS
+		aaa,(1, 2, 700) 
+
+aaa, <csdl.lang.output.Output object at 0x7fc233f35550>, load_integration_model.aaa
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003U
+	SUCCESSORS
+		_004a
+		_004k
+
+_004a, <csdl.operations.expand.expand object at 0x7fc233f35a00>
+	PREDECESSORS
+		aaa,(1, 2, 700) 
+	SUCCESSORS
+		_004b,(1, 2, 11, 700) 
+
+_004k, <csdl.operations.expand.expand object at 0x7fc233f35cd0>
+	PREDECESSORS
+		aaa,(1, 2, 700) 
+	SUCCESSORS
+		_004l,(1, 2, 11, 700) 
+
+_dT, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f354c0>, load_integration_model._dT
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_003S
+
+_003S, <csdl.operations.expand.expand object at 0x7fc233f354f0>
+	PREDECESSORS
+		_dT,(1, 40, 700) 
+	SUCCESSORS
+		_003T,(1, 2, 40, 700) 
+
+_003T, <csdl.lang.output.Output object at 0x7fc233f35520>, load_integration_model._003T
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003S
+	SUCCESSORS
+		_003W
+
+_003W, <csdl.operations.sum.sum object at 0x7fc233f355e0>
+	PREDECESSORS
+		_003T,(1, 2, 40, 700) 
+	SUCCESSORS
+		bbb,(1, 2, 700) 
+
+bbb, <csdl.lang.output.Output object at 0x7fc233f35640>, load_integration_model.bbb
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003W
+	SUCCESSORS
+		_0046
+		_004e
+
+_0046, <csdl.operations.expand.expand object at 0x7fc233f358e0>
+	PREDECESSORS
+		bbb,(1, 2, 700) 
+	SUCCESSORS
+		_0047,(1, 2, 11, 700) 
+
+_004e, <csdl.operations.expand.expand object at 0x7fc233f35af0>
+	PREDECESSORS
+		bbb,(1, 2, 700) 
+	SUCCESSORS
+		_004f,(1, 2, 11, 700) 
+
+_0047, <csdl.lang.output.Output object at 0x7fc233f35940>, load_integration_model._0047
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0046
+	SUCCESSORS
+		_0048
+
+_0048, <csdl.operations.power_combination.power_combination object at 0x7fc233f359a0>
+	PREDECESSORS
+		_0047,(1, 2, 11, 700) 
+		_0041,(1, 2, 11, 700) 
+	SUCCESSORS
+		aT_integrand,(1, 2, 11, 700) 
+
+aT_integrand, <csdl.lang.output.Output object at 0x7fc233f35970>, load_integration_model.aT_integrand
+	CONNECTED TO: False
+	PROMOTED TO: True
+		aT_integrand, load_integration_model.aT_load_integration_model.aT_integrand
+	PREDECESSORS
+		_0048
+	SUCCESSORS
+		_004w
+
+n_theta_prod, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f35670>, load_integration_model.n_theta_prod
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_003Z
+		_0042
+
+_003Z, <csdl.operations.cos.cos object at 0x7fc233f356a0>
+	PREDECESSORS
+		n_theta_prod,(11, 700) 
+	SUCCESSORS
+		_003_,(11, 700) 
+
+_0042, <csdl.operations.sin.sin object at 0x7fc233f357f0>
+	PREDECESSORS
+		n_theta_prod,(11, 700) 
+	SUCCESSORS
+		_0043,(11, 700) 
+
+_003_, <csdl.lang.output.Output object at 0x7fc233f356d0>, load_integration_model._003_
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_003Z
+	SUCCESSORS
+		_0040
+
+_0040, <csdl.operations.expand.expand object at 0x7fc233f35730>
+	PREDECESSORS
+		_003_,(11, 700) 
+	SUCCESSORS
+		_0041,(1, 2, 11, 700) 
+
+_0041, <csdl.lang.output.Output object at 0x7fc233f35790>, load_integration_model._0041
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0040
+	SUCCESSORS
+		_0048
+		_004c
+
+_004c, <csdl.operations.power_combination.power_combination object at 0x7fc233f35a90>
+	PREDECESSORS
+		_0041,(1, 2, 11, 700) 
+		_004b,(1, 2, 11, 700) 
+	SUCCESSORS
+		aD_integrand,(1, 2, 11, 700) 
+
+_004b, <csdl.lang.output.Output object at 0x7fc233f35a30>, load_integration_model._004b
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004a
+	SUCCESSORS
+		_004c
+
+aD_integrand, <csdl.lang.output.Output object at 0x7fc233f35a60>, load_integration_model.aD_integrand
+	CONNECTED TO: False
+	PROMOTED TO: True
+		aD_integrand, load_integration_model.aD_load_integration_model.aD_integrand
+	PREDECESSORS
+		_004c
+	SUCCESSORS
+		_004N
+
+_004f, <csdl.lang.output.Output object at 0x7fc233f35b20>, load_integration_model._004f
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004e
+	SUCCESSORS
+		_004g
+
+_004g, <csdl.operations.power_combination.power_combination object at 0x7fc233f35b80>
+	PREDECESSORS
+		_004f,(1, 2, 11, 700) 
+		_0045,(1, 2, 11, 700) 
+	SUCCESSORS
+		_004h,(1, 2, 11, 700) 
+
+_004h, <csdl.lang.output.Output object at 0x7fc233f35b50>, load_integration_model._004h
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004g
+	SUCCESSORS
+		_004i
+
+_0043, <csdl.lang.output.Output object at 0x7fc233f357c0>, load_integration_model._0043
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0042
+	SUCCESSORS
+		_0044
+
+_0044, <csdl.operations.expand.expand object at 0x7fc233f35850>
+	PREDECESSORS
+		_0043,(11, 700) 
+	SUCCESSORS
+		_0045,(1, 2, 11, 700) 
+
+_0045, <csdl.lang.output.Output object at 0x7fc233f358b0>, load_integration_model._0045
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0044
+	SUCCESSORS
+		_004g
+		_004m
+
+_004m, <csdl.operations.power_combination.power_combination object at 0x7fc233f35d30>
+	PREDECESSORS
+		_0045,(1, 2, 11, 700) 
+		_004l,(1, 2, 11, 700) 
+	SUCCESSORS
+		_004n,(1, 2, 11, 700) 
+
+_004i, <csdl.operations.power_combination.power_combination object at 0x7fc233f35bb0>
+	PREDECESSORS
+		_004h,(1, 2, 11, 700) 
+	SUCCESSORS
+		bT_integrand,(1, 2, 11, 700) 
+
+bT_integrand, <csdl.lang.output.Output object at 0x7fc233f35be0>, load_integration_model.bT_integrand
+	CONNECTED TO: False
+	PROMOTED TO: True
+		bT_integrand, load_integration_model.bT_load_integration_model.bT_integrand
+	PREDECESSORS
+		_004i
+	SUCCESSORS
+		_0053
+
+_004l, <csdl.lang.output.Output object at 0x7fc233f35ca0>, load_integration_model._004l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004k
+	SUCCESSORS
+		_004m
+
+_004n, <csdl.lang.output.Output object at 0x7fc233f35d00>, load_integration_model._004n
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004m
+	SUCCESSORS
+		_004o
+
+_004o, <csdl.operations.power_combination.power_combination object at 0x7fc233f35d60>
+	PREDECESSORS
+		_004n,(1, 2, 11, 700) 
+	SUCCESSORS
+		bD_integrand,(1, 2, 11, 700) 
+
+bD_integrand, <csdl.lang.output.Output object at 0x7fc233f35d90>, load_integration_model.bD_integrand
+	CONNECTED TO: False
+	PROMOTED TO: True
+		bD_integrand, load_integration_model.bD_load_integration_model.bD_integrand
+	PREDECESSORS
+		_004o
+	SUCCESSORS
+		_005k
+
+_004w, <csdl.operations.decompose.decompose object at 0x7fc233f451f0>
+	PREDECESSORS
+		aT_integrand,(1, 2, 11, 700) 
+	SUCCESSORS
+		_004x,(1, 2, 11, 699) 
+		_004y,(1, 2, 11, 699) 
+
+_004x, <csdl.lang.output.Output object at 0x7fc233f45250>, load_integration_model.aT_load_integration_model._004x
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004w
+	SUCCESSORS
+		_004z
+
+_004y, <csdl.lang.output.Output object at 0x7fc233f45280>, load_integration_model.aT_load_integration_model._004y
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004w
+	SUCCESSORS
+		_004z
+
+_004z, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f451c0>
+	PREDECESSORS
+		_004x,(1, 2, 11, 699) 
+		_004y,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004A,(1, 2, 11, 699) 
+
+_004A, <csdl.lang.output.Output object at 0x7fc233f45220>, load_integration_model.aT_load_integration_model._004A
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004z
+	SUCCESSORS
+		_004B
+
+_004B, <csdl.operations.power_combination.power_combination object at 0x7fc233f452b0>
+	PREDECESSORS
+		_004A,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004C,(1, 2, 11, 699) 
+
+_004C, <csdl.lang.output.Output object at 0x7fc233f452e0>, load_integration_model.aT_load_integration_model._004C
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004B
+	SUCCESSORS
+		_004F
+
+_004F, <csdl.operations.power_combination.power_combination object at 0x7fc233f453a0>
+	PREDECESSORS
+		_004C,(1, 2, 11, 699) 
+		_004E,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004G,(1, 2, 11, 699) 
+
+_004G, <csdl.lang.output.Output object at 0x7fc233f453d0>, load_integration_model.aT_load_integration_model._004G
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004F
+	SUCCESSORS
+		_004H
+
+dtheta, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f45160>, load_integration_model.aT_load_integration_model.dtheta
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: True
+		dtheta, load_integration_model.bD_load_integration_model.dtheta
+		dtheta, load_integration_model.aD_load_integration_model.dtheta
+		dtheta, load_integration_model.bT_load_integration_model.dtheta
+	PREDECESSORS
+	SUCCESSORS
+		_004D
+		_005r
+		_004U
+		_005a
+
+_004D, <csdl.operations.expand.expand object at 0x7fc233f45340>
+	PREDECESSORS
+		dtheta,(1,) 
+	SUCCESSORS
+		_004E,(1, 2, 11, 699) 
+
+_004E, <csdl.lang.output.Output object at 0x7fc233f45310>, load_integration_model.aT_load_integration_model._004E
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004D
+	SUCCESSORS
+		_004F
+
+_004H, <csdl.operations.power_combination.power_combination object at 0x7fc233f45370>
+	PREDECESSORS
+		_004G,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004I,(1, 2, 11, 699) 
+
+_004I, <csdl.lang.output.Output object at 0x7fc233f45400>, load_integration_model.aT_load_integration_model._004I
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004H
+	SUCCESSORS
+		_004J
+
+_004J, <csdl.operations.sum.sum object at 0x7fc233f45430>
+	PREDECESSORS
+		_004I,(1, 2, 11, 699) 
+	SUCCESSORS
+		aT,(1, 2, 11) 
+
+aT, <csdl.lang.output.Output object at 0x7fc233f45490>, load_integration_model.aT_load_integration_model.aT
+	CONNECTED TO: False
+	PROMOTED TO: True
+		aT, lowson_spl_model.aT
+	PREDECESSORS
+		_004J
+	SUCCESSORS
+		_006V
+
+_004N, <csdl.operations.decompose.decompose object at 0x7fc233f45550>
+	PREDECESSORS
+		aD_integrand,(1, 2, 11, 700) 
+	SUCCESSORS
+		_004O,(1, 2, 11, 699) 
+		_004P,(1, 2, 11, 699) 
+
+_004O, <csdl.lang.output.Output object at 0x7fc233f455e0>, load_integration_model.aD_load_integration_model._004O
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004N
+	SUCCESSORS
+		_004Q
+
+_004P, <csdl.lang.output.Output object at 0x7fc233f45610>, load_integration_model.aD_load_integration_model._004P
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004N
+	SUCCESSORS
+		_004Q
+
+_004Q, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f45520>
+	PREDECESSORS
+		_004O,(1, 2, 11, 699) 
+		_004P,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004R,(1, 2, 11, 699) 
+
+_004R, <csdl.lang.output.Output object at 0x7fc233f455b0>, load_integration_model.aD_load_integration_model._004R
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004Q
+	SUCCESSORS
+		_004S
+
+_004S, <csdl.operations.power_combination.power_combination object at 0x7fc233f45640>
+	PREDECESSORS
+		_004R,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004T,(1, 2, 11, 699) 
+
+_004T, <csdl.lang.output.Output object at 0x7fc233f45670>, load_integration_model.aD_load_integration_model._004T
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004S
+	SUCCESSORS
+		_004W
+
+_004W, <csdl.operations.power_combination.power_combination object at 0x7fc233f45730>
+	PREDECESSORS
+		_004T,(1, 2, 11, 699) 
+		_004V,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004X,(1, 2, 11, 699) 
+
+_004X, <csdl.lang.output.Output object at 0x7fc233f45760>, load_integration_model.aD_load_integration_model._004X
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004W
+	SUCCESSORS
+		_004Y
+
+_004U, <csdl.operations.expand.expand object at 0x7fc233f456d0>
+	PREDECESSORS
+		dtheta,(1,) 
+	SUCCESSORS
+		_004V,(1, 2, 11, 699) 
+
+_004V, <csdl.lang.output.Output object at 0x7fc233f456a0>, load_integration_model.aD_load_integration_model._004V
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004U
+	SUCCESSORS
+		_004W
+
+_004Y, <csdl.operations.power_combination.power_combination object at 0x7fc233f45790>
+	PREDECESSORS
+		_004X,(1, 2, 11, 699) 
+	SUCCESSORS
+		_004Z,(1, 2, 11, 699) 
+
+_004Z, <csdl.lang.output.Output object at 0x7fc233f457c0>, load_integration_model.aD_load_integration_model._004Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_004Y
+	SUCCESSORS
+		_004_
+
+_004_, <csdl.operations.sum.sum object at 0x7fc233f457f0>
+	PREDECESSORS
+		_004Z,(1, 2, 11, 699) 
+	SUCCESSORS
+		aD,(1, 2, 11) 
+
+aD, <csdl.lang.output.Output object at 0x7fc233f45880>, load_integration_model.aD_load_integration_model.aD
+	CONNECTED TO: False
+	PROMOTED TO: True
+		aD, lowson_spl_model.aD
+	PREDECESSORS
+		_004_
+	SUCCESSORS
+		_006Z
+
+_0053, <csdl.operations.decompose.decompose object at 0x7fc233f45940>
+	PREDECESSORS
+		bT_integrand,(1, 2, 11, 700) 
+	SUCCESSORS
+		_0054,(1, 2, 11, 699) 
+		_0055,(1, 2, 11, 699) 
+
+_0054, <csdl.lang.output.Output object at 0x7fc233f459d0>, load_integration_model.bT_load_integration_model._0054
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0053
+	SUCCESSORS
+		_0056
+
+_0055, <csdl.lang.output.Output object at 0x7fc233f45a00>, load_integration_model.bT_load_integration_model._0055
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0053
+	SUCCESSORS
+		_0056
+
+_0056, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f45910>
+	PREDECESSORS
+		_0054,(1, 2, 11, 699) 
+		_0055,(1, 2, 11, 699) 
+	SUCCESSORS
+		_0057,(1, 2, 11, 699) 
+
+_0057, <csdl.lang.output.Output object at 0x7fc233f459a0>, load_integration_model.bT_load_integration_model._0057
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0056
+	SUCCESSORS
+		_0058
+
+_0058, <csdl.operations.power_combination.power_combination object at 0x7fc233f45a30>
+	PREDECESSORS
+		_0057,(1, 2, 11, 699) 
+	SUCCESSORS
+		_0059,(1, 2, 11, 699) 
+
+_0059, <csdl.lang.output.Output object at 0x7fc233f45a60>, load_integration_model.bT_load_integration_model._0059
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0058
+	SUCCESSORS
+		_005c
+
+_005c, <csdl.operations.power_combination.power_combination object at 0x7fc233f45b20>
+	PREDECESSORS
+		_0059,(1, 2, 11, 699) 
+		_005b,(1, 2, 11, 699) 
+	SUCCESSORS
+		_005d,(1, 2, 11, 699) 
+
+_005d, <csdl.lang.output.Output object at 0x7fc233f45b50>, load_integration_model.bT_load_integration_model._005d
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005c
+	SUCCESSORS
+		_005e
+
+_005a, <csdl.operations.expand.expand object at 0x7fc233f45ac0>
+	PREDECESSORS
+		dtheta,(1,) 
+	SUCCESSORS
+		_005b,(1, 2, 11, 699) 
+
+_005b, <csdl.lang.output.Output object at 0x7fc233f45a90>, load_integration_model.bT_load_integration_model._005b
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005a
+	SUCCESSORS
+		_005c
+
+_005e, <csdl.operations.power_combination.power_combination object at 0x7fc233f45b80>
+	PREDECESSORS
+		_005d,(1, 2, 11, 699) 
+	SUCCESSORS
+		_005f,(1, 2, 11, 699) 
+
+_005f, <csdl.lang.output.Output object at 0x7fc233f45bb0>, load_integration_model.bT_load_integration_model._005f
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005e
+	SUCCESSORS
+		_005g
+
+_005g, <csdl.operations.sum.sum object at 0x7fc233f45be0>
+	PREDECESSORS
+		_005f,(1, 2, 11, 699) 
+	SUCCESSORS
+		bT,(1, 2, 11) 
+
+bT, <csdl.lang.output.Output object at 0x7fc233f45c70>, load_integration_model.bT_load_integration_model.bT
+	CONNECTED TO: False
+	PROMOTED TO: True
+		bT, lowson_spl_model.bT
+	PREDECESSORS
+		_005g
+	SUCCESSORS
+		_006X
+
+_005k, <csdl.operations.decompose.decompose object at 0x7fc233f45d30>
+	PREDECESSORS
+		bD_integrand,(1, 2, 11, 700) 
+	SUCCESSORS
+		_005l,(1, 2, 11, 699) 
+		_005m,(1, 2, 11, 699) 
+
+_005l, <csdl.lang.output.Output object at 0x7fc233f45dc0>, load_integration_model.bD_load_integration_model._005l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005k
+	SUCCESSORS
+		_005n
+
+_005m, <csdl.lang.output.Output object at 0x7fc233f45df0>, load_integration_model.bD_load_integration_model._005m
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005k
+	SUCCESSORS
+		_005n
+
+_005n, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f45d00>
+	PREDECESSORS
+		_005l,(1, 2, 11, 699) 
+		_005m,(1, 2, 11, 699) 
+	SUCCESSORS
+		_005o,(1, 2, 11, 699) 
+
+_005o, <csdl.lang.output.Output object at 0x7fc233f45d90>, load_integration_model.bD_load_integration_model._005o
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005n
+	SUCCESSORS
+		_005p
+
+_005p, <csdl.operations.power_combination.power_combination object at 0x7fc233f45e20>
+	PREDECESSORS
+		_005o,(1, 2, 11, 699) 
+	SUCCESSORS
+		_005q,(1, 2, 11, 699) 
+
+_005q, <csdl.lang.output.Output object at 0x7fc233f45e50>, load_integration_model.bD_load_integration_model._005q
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005p
+	SUCCESSORS
+		_005t
+
+_005t, <csdl.operations.power_combination.power_combination object at 0x7fc233f45f10>
+	PREDECESSORS
+		_005q,(1, 2, 11, 699) 
+		_005s,(1, 2, 11, 699) 
+	SUCCESSORS
+		_005u,(1, 2, 11, 699) 
+
+_005u, <csdl.lang.output.Output object at 0x7fc233f45f40>, load_integration_model.bD_load_integration_model._005u
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005t
+	SUCCESSORS
+		_005v
+
+_005r, <csdl.operations.expand.expand object at 0x7fc233f45eb0>
+	PREDECESSORS
+		dtheta,(1,) 
+	SUCCESSORS
+		_005s,(1, 2, 11, 699) 
+
+_005s, <csdl.lang.output.Output object at 0x7fc233f45e80>, load_integration_model.bD_load_integration_model._005s
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005r
+	SUCCESSORS
+		_005t
+
+_005v, <csdl.operations.power_combination.power_combination object at 0x7fc233f45f70>
+	PREDECESSORS
+		_005u,(1, 2, 11, 699) 
+	SUCCESSORS
+		_005w,(1, 2, 11, 699) 
+
+_005w, <csdl.lang.output.Output object at 0x7fc233f45fa0>, load_integration_model.bD_load_integration_model._005w
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005v
+	SUCCESSORS
+		_005x
+
+_005x, <csdl.operations.sum.sum object at 0x7fc233f45fd0>
+	PREDECESSORS
+		_005w,(1, 2, 11, 699) 
+	SUCCESSORS
+		bD,(1, 2, 11) 
+
+bD, <csdl.lang.output.Output object at 0x7fc233f570a0>, load_integration_model.bD_load_integration_model.bD
+	CONNECTED TO: False
+	PROMOTED TO: True
+		bD, lowson_spl_model.bD
+	PREDECESSORS
+		_005x
+	SUCCESSORS
+		_0070
+
+_005Y, <csdl.operations.expand.expand object at 0x7fc233f57790>
+	PREDECESSORS
+		Vx,(1,) 
+	SUCCESSORS
+		_005Z,(1, 50) 
+
+_005Z, <csdl.lang.output.Output object at 0x7fc233f57820>, lowson_spl_model._005Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005Y
+	SUCCESSORS
+		_0067
+
+_0067, <csdl.operations.reshape.reshape object at 0x7fc233f57a90>
+	PREDECESSORS
+		_005Z,(1, 50) 
+	SUCCESSORS
+		_0068,(1, 1, 50) 
+
+_0068, <csdl.lang.output.Output object at 0x7fc233f57ac0>, lowson_spl_model._0068
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0067
+	SUCCESSORS
+		_0069
+
+_0069, <csdl.operations.indexed_passthrough.indexed_passthrough object at 0x7fc233f57b20>
+	PREDECESSORS
+		_0068,(1, 1, 50) 
+		_006b,(1, 1, 50) 
+		_006d,(1, 1, 50) 
+	SUCCESSORS
+		aircraft_vel,(1, 3, 50) 
+
+aircraft_vel, <csdl.lang.concatenation.Concatenation object at 0x7fc233f57a60>, lowson_spl_model.aircraft_vel
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0069
+	SUCCESSORS
+		_006e
+
+_0060, <csdl.operations.expand.expand object at 0x7fc233f578b0>
+	PREDECESSORS
+		Vy,(1,) 
+	SUCCESSORS
+		_0061,(1, 50) 
+
+_0061, <csdl.lang.output.Output object at 0x7fc233f57910>, lowson_spl_model._0061
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0060
+	SUCCESSORS
+		_006a
+
+_006a, <csdl.operations.reshape.reshape object at 0x7fc233f57af0>
+	PREDECESSORS
+		_0061,(1, 50) 
+	SUCCESSORS
+		_006b,(1, 1, 50) 
+
+_006b, <csdl.lang.output.Output object at 0x7fc233f57b80>, lowson_spl_model._006b
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006a
+	SUCCESSORS
+		_0069
+
+_0063, <csdl.operations.expand.expand object at 0x7fc233f579a0>
+	PREDECESSORS
+		Vz,(1,) 
+	SUCCESSORS
+		_0064,(1, 50) 
+
+_0064, <csdl.lang.output.Output object at 0x7fc233f57a00>, lowson_spl_model._0064
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0063
+	SUCCESSORS
+		_006c
+
+_006c, <csdl.operations.reshape.reshape object at 0x7fc233f57bb0>
+	PREDECESSORS
+		_0064,(1, 50) 
+	SUCCESSORS
+		_006d,(1, 1, 50) 
+
+_006d, <csdl.lang.output.Output object at 0x7fc233f57be0>, lowson_spl_model._006d
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006c
+	SUCCESSORS
+		_0069
+
+_006e, <csdl.operations.dot.dot object at 0x7fc233f57c40>
+	PREDECESSORS
+		aircraft_vel,(1, 3, 50) 
+		rel_obs_position,(1, 3, 50) 
+	SUCCESSORS
+		_006f,(1, 50) 
+
+_005V, <csdl.operations.reshape.reshape object at 0x7fc233f576a0>
+	PREDECESSORS
+		rel_obs_dist,(1, 1, 50) 
+	SUCCESSORS
+		_005W,(1, 50) 
+
+_005W, <csdl.lang.output.Output object at 0x7fc233f57700>, lowson_spl_model._005W
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005V
+	SUCCESSORS
+		_006o
+		_006g
+
+_006o, <csdl.operations.power_combination.power_combination object at 0x7fc233f57ee0>
+	PREDECESSORS
+		_005W,(1, 50) 
+		_006n,(1, 50) 
+	SUCCESSORS
+		r1_dummy,(1, 50) 
+
+_006g, <csdl.operations.power_combination.power_combination object at 0x7fc233f57ca0>
+	PREDECESSORS
+		_005W,(1, 50) 
+		_006f,(1, 50) 
+	SUCCESSORS
+		_006h,(1, 50) 
+
+r1_dummy, <csdl.lang.output.Output object at 0x7fc233f57f10>, lowson_spl_model.r1_dummy
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006o
+	SUCCESSORS
+		_006R
+
+_006f, <csdl.lang.output.Output object at 0x7fc233f57c10>, lowson_spl_model._006f
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006e
+	SUCCESSORS
+		_006g
+
+_006x, <csdl.operations.dot.dot object at 0x7fc233f65160>
+	PREDECESSORS
+		_006w,(1, 3, 50) 
+		rel_obs_position,(1, 3, 50) 
+	SUCCESSORS
+		x_in_frame_dummy,(1, 50) 
+
+_006z, <csdl.operations.dot.dot object at 0x7fc233f65190>
+	PREDECESSORS
+		_006t,(1, 3, 50) 
+		rel_obs_position,(1, 3, 50) 
+	SUCCESSORS
+		z_in_frame_dummy,(1, 50) 
+
+_006h, <csdl.lang.output.Output object at 0x7fc233f57cd0>, lowson_spl_model._006h
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006g
+	SUCCESSORS
+		_006k
+
+_006k, <csdl.operations.power_combination.power_combination object at 0x7fc233f57e20>
+	PREDECESSORS
+		_006h,(1, 50) 
+		_006j,(1, 50) 
+	SUCCESSORS
+		_006l,(1, 50) 
+
+_006l, <csdl.lang.output.Output object at 0x7fc233f57e50>, lowson_spl_model._006l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006k
+	SUCCESSORS
+		_006m
+
+_006i, <csdl.operations.expand.expand object at 0x7fc233f57d30>
+	PREDECESSORS
+		speed_of_sound,(1,) 
+	SUCCESSORS
+		_006j,(1, 50) 
+
+_006P, <csdl.operations.expand.expand object at 0x7fc233f65610>
+	PREDECESSORS
+		speed_of_sound,(1,) 
+	SUCCESSORS
+		_006Q,(1, 50, 1, 2, 11) 
+
+_006j, <csdl.lang.output.Output object at 0x7fc233f57d90>, lowson_spl_model._006j
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006i
+	SUCCESSORS
+		_006k
+
+_006m, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f57e80>
+	PREDECESSORS
+		_006l,(1, 50) 
+	SUCCESSORS
+		_006n,(1, 50) 
+
+_006n, <csdl.lang.output.Output object at 0x7fc233f57eb0>, lowson_spl_model._006n
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006m
+	SUCCESSORS
+		_006o
+
+_006R, <csdl.operations.expand.expand object at 0x7fc233f656a0>
+	PREDECESSORS
+		r1_dummy,(1, 50) 
+	SUCCESSORS
+		_006S,(1, 50, 1, 2, 11) 
+
+x_in_frame_dummy, <csdl.lang.output.Output object at 0x7fc233f65130>, lowson_spl_model.x_in_frame_dummy
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006x
+	SUCCESSORS
+		_006N
+
+in_plane_ex, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f57f40>, lowson_spl_model.in_plane_ex
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_006v
+
+_006v, <csdl.operations.expand.expand object at 0x7fc233f650d0>
+	PREDECESSORS
+		in_plane_ex,(1, 3) 
+	SUCCESSORS
+		_006w,(1, 3, 50) 
+
+_006w, <csdl.lang.output.Output object at 0x7fc233f65100>, lowson_spl_model._006w
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006v
+	SUCCESSORS
+		_006x
+
+_006N, <csdl.operations.expand.expand object at 0x7fc233f65550>
+	PREDECESSORS
+		x_in_frame_dummy,(1, 50) 
+	SUCCESSORS
+		_006O,(1, 50, 1, 2, 11) 
+
+z_in_frame_dummy, <csdl.lang.output.Output object at 0x7fc233f651c0>, lowson_spl_model.z_in_frame_dummy
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006z
+	SUCCESSORS
+		_006L
+
+_006s, <csdl.operations.expand.expand object at 0x7fc233f57fd0>
+	PREDECESSORS
+		thrust_dir,(3,) 
+	SUCCESSORS
+		_006t,(1, 3, 50) 
+
+_006t, <csdl.lang.output.Output object at 0x7fc233f65040>, lowson_spl_model._006t
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006s
+	SUCCESSORS
+		_006z
+
+_006L, <csdl.operations.expand.expand object at 0x7fc233f654c0>
+	PREDECESSORS
+		z_in_frame_dummy,(1, 50) 
+	SUCCESSORS
+		_006M,(1, 50, 1, 2, 11) 
+
+propeller_radius, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f57100>, lowson_spl_model.propeller_radius
+	WARNING: this declared variable is not a promotion or connection target with a value being set.
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_006T
+
+_006T, <csdl.operations.expand.expand object at 0x7fc233f653d0>
+	PREDECESSORS
+		propeller_radius,(1,) 
+	SUCCESSORS
+		_006U,(1, 50, 1, 2, 11) 
+
+_006U, <csdl.lang.output.Output object at 0x7fc233f65490>, lowson_spl_model._006U
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006T
+	SUCCESSORS
+		_007m
+		_007s
+
+_007m, <csdl.operations.power_combination.power_combination object at 0x7fc233f65c70>
+	PREDECESSORS
+		_006U,(1, 50, 1, 2, 11) 
+		_006S,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007n,(1, 50, 1, 2, 11) 
+
+_007s, <csdl.operations.power_combination.power_combination object at 0x7fc233f65d90>
+	PREDECESSORS
+		_006U,(1, 50, 1, 2, 11) 
+		_007r,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007t,(1, 50, 1, 2, 11) 
+
+_007n, <csdl.lang.output.Output object at 0x7fc233f65ca0>, lowson_spl_model._007n
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007m
+	SUCCESSORS
+		_007o
+
+_006S, <csdl.lang.output.Output object at 0x7fc233f65430>, lowson_spl_model._006S
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006R
+	SUCCESSORS
+		_007m
+		_007w
+		_007g
+
+_007w, <csdl.operations.power_combination.power_combination object at 0x7fc233f65e50>
+	PREDECESSORS
+		_006S,(1, 50, 1, 2, 11) 
+		_006Q,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007x,(1, 50, 1, 2, 11) 
+
+_007g, <csdl.operations.power_combination.power_combination object at 0x7fc233f65b50>
+	PREDECESSORS
+		_006S,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007h,(1, 50, 1, 2, 11) 
+
+_007o, <csdl.operations.power_combination.power_combination object at 0x7fc233f65cd0>
+	PREDECESSORS
+		_007n,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007p,(1, 50, 1, 2, 11) 
+
+_007p, <csdl.lang.output.Output object at 0x7fc233f65d00>, lowson_spl_model._007p
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007o
+	SUCCESSORS
+		_0081
+		_008Z
+
+_0081, <csdl.operations.power_combination.power_combination object at 0x7fc233f714f0>
+	PREDECESSORS
+		_007p,(1, 50, 1, 2, 11) 
+		_007L,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0082,(1, 50, 1, 2, 11) 
+
+_008Z, <csdl.operations.power_combination.power_combination object at 0x7fc233f04190>
+	PREDECESSORS
+		_007p,(1, 50, 1, 2, 11) 
+		_008I,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008_,(1, 50, 1, 2, 11) 
+
+_0082, <csdl.lang.output.Output object at 0x7fc233f71520>, lowson_spl_model._0082
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0081
+	SUCCESSORS
+		_008n
+
+coeff_sign_matrix_even, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f65a00>, lowson_spl_model.coeff_sign_matrix_even
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_007G
+		_007A
+		_008x
+		_008D
+
+_007G, <csdl.operations.power_combination.power_combination object at 0x7fc233f71070>
+	PREDECESSORS
+		coeff_sign_matrix_even,(1, 50, 1, 2, 11) 
+		_0071,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007H,(1, 50, 1, 2, 11) 
+
+_007A, <csdl.operations.power_combination.power_combination object at 0x7fc233f65f10>
+	PREDECESSORS
+		coeff_sign_matrix_even,(1, 50, 1, 2, 11) 
+		_006Y,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007B,(1, 50, 1, 2, 11) 
+
+_008x, <csdl.operations.power_combination.power_combination object at 0x7fc233f71bb0>
+	PREDECESSORS
+		coeff_sign_matrix_even,(1, 50, 1, 2, 11) 
+		_006W,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008y,(1, 50, 1, 2, 11) 
+
+_008D, <csdl.operations.power_combination.power_combination object at 0x7fc233f71cd0>
+	PREDECESSORS
+		coeff_sign_matrix_even,(1, 50, 1, 2, 11) 
+		_006_,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008E,(1, 50, 1, 2, 11) 
+
+_007H, <csdl.lang.output.Output object at 0x7fc233f710a0>, lowson_spl_model._007H
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007G
+	SUCCESSORS
+		_007K
+
+_0070, <csdl.operations.expand.expand object at 0x7fc233f65820>
+	PREDECESSORS
+		bD,(1, 2, 11) 
+	SUCCESSORS
+		_0071,(1, 50, 1, 2, 11) 
+
+_0071, <csdl.lang.output.Output object at 0x7fc233f65880>, lowson_spl_model._0071
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0070
+	SUCCESSORS
+		_007G
+		_008F
+
+_008F, <csdl.operations.power_combination.power_combination object at 0x7fc233f71d30>
+	PREDECESSORS
+		_0071,(1, 50, 1, 2, 11) 
+		coeff_sign_matrix_odd,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008G,(1, 50, 1, 2, 11) 
+
+_007K, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71130>
+	PREDECESSORS
+		_007H,(1, 50, 1, 2, 11) 
+		_007J,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007L,(1, 50, 1, 2, 11) 
+
+_007L, <csdl.lang.output.Output object at 0x7fc233f71160>, lowson_spl_model._007L
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007K
+	SUCCESSORS
+		_0081
+
+coeff_sign_matrix_odd, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f659d0>, lowson_spl_model.coeff_sign_matrix_odd
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_007I
+		_007C
+		_008z
+		_008F
+
+_007I, <csdl.operations.power_combination.power_combination object at 0x7fc233f710d0>
+	PREDECESSORS
+		coeff_sign_matrix_odd,(1, 50, 1, 2, 11) 
+		_006_,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007J,(1, 50, 1, 2, 11) 
+
+_007C, <csdl.operations.power_combination.power_combination object at 0x7fc233f65f70>
+	PREDECESSORS
+		coeff_sign_matrix_odd,(1, 50, 1, 2, 11) 
+		_006W,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007D,(1, 50, 1, 2, 11) 
+
+_008z, <csdl.operations.power_combination.power_combination object at 0x7fc233f71c10>
+	PREDECESSORS
+		coeff_sign_matrix_odd,(1, 50, 1, 2, 11) 
+		_006Y,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008A,(1, 50, 1, 2, 11) 
+
+_007J, <csdl.lang.output.Output object at 0x7fc233f71100>, lowson_spl_model._007J
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007I
+	SUCCESSORS
+		_007K
+
+_006Z, <csdl.operations.expand.expand object at 0x7fc233f65790>
+	PREDECESSORS
+		aD,(1, 2, 11) 
+	SUCCESSORS
+		_006_,(1, 50, 1, 2, 11) 
+
+_006_, <csdl.lang.output.Output object at 0x7fc233f657f0>, lowson_spl_model._006_
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006Z
+	SUCCESSORS
+		_007I
+		_008D
+
+_008n, <csdl.operations.power_combination.power_combination object at 0x7fc233f719a0>
+	PREDECESSORS
+		_0082,(1, 50, 1, 2, 11) 
+		_008m,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		asdf,(1, 50, 1, 2, 11) 
+
+asdf, <csdl.lang.output.Output object at 0x7fc233f719d0>, lowson_spl_model.asdf
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008n
+	SUCCESSORS
+		_008r
+
+n_var, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f658b0>, lowson_spl_model.n_var
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_0083
+		_007q
+		_008d
+		_007c
+		_0090
+		_009a
+
+_0083, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71550>
+	PREDECESSORS
+		n_var,(1, 50, 1, 2, 11) 
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0084,(1, 50, 1, 2, 11) 
+
+_007q, <csdl.operations.power_combination.power_combination object at 0x7fc233f65d30>
+	PREDECESSORS
+		n_var,(1, 50, 1, 2, 11) 
+		_006G,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007r,(1, 50, 1, 2, 11) 
+
+_008d, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f717c0>
+	PREDECESSORS
+		n_var,(1, 50, 1, 2, 11) 
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008e,(1, 50, 1, 2, 11) 
+
+_007c, <csdl.operations.power_combination.power_combination object at 0x7fc233f65a90>
+	PREDECESSORS
+		n_var,(1, 50, 1, 2, 11) 
+		_006G,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007d,(1, 50, 1, 2, 11) 
+
+_0090, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f041f0>
+	PREDECESSORS
+		n_var,(1, 50, 1, 2, 11) 
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0091,(1, 50, 1, 2, 11) 
+
+_009a, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f04460>
+	PREDECESSORS
+		n_var,(1, 50, 1, 2, 11) 
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009b,(1, 50, 1, 2, 11) 
+
+_0084, <csdl.lang.output.Output object at 0x7fc233f71580>, lowson_spl_model._0084
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0083
+	SUCCESSORS
+		_0087
+
+lam_var, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f65910>, lowson_spl_model.lam_var
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_0083
+		_0089
+		_008d
+		_007Q
+		_008N
+		_0090
+		_0096
+		_009a
+
+_0089, <csdl.operations.exp_a.exp_a object at 0x7fc233f716a0>
+	PREDECESSORS
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008a,(1, 50, 1, 2, 11) 
+
+_007Q, <csdl.operations.exp_a.exp_a object at 0x7fc233f71250>
+	PREDECESSORS
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007R,(1, 50, 1, 2, 11) 
+
+_008N, <csdl.operations.exp_a.exp_a object at 0x7fc233f71eb0>
+	PREDECESSORS
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008O,(1, 50, 1, 2, 11) 
+
+_0096, <csdl.operations.exp_a.exp_a object at 0x7fc233f04340>
+	PREDECESSORS
+		lam_var,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0097,(1, 50, 1, 2, 11) 
+
+_0087, <csdl.operations.power_combination.power_combination object at 0x7fc233f71640>
+	PREDECESSORS
+		_0084,(1, 50, 1, 2, 11) 
+		_0086,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0088,(1, 50, 1, 2, 11) 
+
+_0088, <csdl.lang.output.Output object at 0x7fc233f71670>, lowson_spl_model._0088
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0087
+	SUCCESSORS
+		_008l
+
+_007r, <csdl.lang.output.Output object at 0x7fc233f65d60>, lowson_spl_model._007r
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007q
+	SUCCESSORS
+		_007s
+
+_005D, <csdl.operations.reshape.reshape object at 0x7fc233f57190>
+	PREDECESSORS
+		rpm,(1, 1) 
+	SUCCESSORS
+		_005E,(1,) 
+
+_005E, <csdl.lang.output.Output object at 0x7fc233f57250>, lowson_spl_model._005E
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005D
+	SUCCESSORS
+		_005F
+
+_005F, <csdl.operations.power_combination.power_combination object at 0x7fc233f57280>
+	PREDECESSORS
+		_005E,(1,) 
+	SUCCESSORS
+		_005G,(1,) 
+
+_005G, <csdl.lang.output.Output object at 0x7fc233f572b0>, lowson_spl_model._005G
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005F
+	SUCCESSORS
+		_005H
+
+_005H, <csdl.operations.power_combination.power_combination object at 0x7fc233f573a0>
+	PREDECESSORS
+		_005G,(1,) 
+	SUCCESSORS
+		_005I,(1,) 
+
+_005I, <csdl.lang.output.Output object at 0x7fc233f573d0>, lowson_spl_model._005I
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005H
+	SUCCESSORS
+		_005J
+
+_005J, <csdl.operations.power_combination.power_combination object at 0x7fc233f57430>
+	PREDECESSORS
+		_005I,(1,) 
+	SUCCESSORS
+		_005K,(1,) 
+
+_005K, <csdl.lang.output.Output object at 0x7fc233f57460>, lowson_spl_model._005K
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_005J
+	SUCCESSORS
+		_006F
+
+_006F, <csdl.operations.expand.expand object at 0x7fc233f652e0>
+	PREDECESSORS
+		_005K,(1,) 
+	SUCCESSORS
+		_006G,(1, 50, 1, 2, 11) 
+
+_006G, <csdl.lang.output.Output object at 0x7fc233f65370>, lowson_spl_model._006G
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006F
+	SUCCESSORS
+		_007q
+		_007c
+
+_007t, <csdl.lang.output.Output object at 0x7fc233f65dc0>, lowson_spl_model._007t
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007s
+	SUCCESSORS
+		_007u
+
+_007u, <csdl.operations.power_combination.power_combination object at 0x7fc233f65df0>
+	PREDECESSORS
+		_007t,(1, 50, 1, 2, 11) 
+		_006O,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007v,(1, 50, 1, 2, 11) 
+
+_007v, <csdl.lang.output.Output object at 0x7fc233f65e20>, lowson_spl_model._007v
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007u
+	SUCCESSORS
+		_007y
+
+_006O, <csdl.lang.output.Output object at 0x7fc233f655b0>, lowson_spl_model._006O
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006N
+	SUCCESSORS
+		_007u
+
+_007y, <csdl.operations.power_combination.power_combination object at 0x7fc233f65eb0>
+	PREDECESSORS
+		_007v,(1, 50, 1, 2, 11) 
+		_007x,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007z,(1, 50, 1, 2, 11) 
+
+_007z, <csdl.lang.output.Output object at 0x7fc233f65ee0>, lowson_spl_model._007z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007y
+	SUCCESSORS
+		_0085
+		_008h
+		_007O
+		_007U
+		_008L
+		_008R
+		_0092
+		_009e
+
+_006Q, <csdl.lang.output.Output object at 0x7fc233f65640>, lowson_spl_model._006Q
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006P
+	SUCCESSORS
+		_007w
+		_007i
+
+_007i, <csdl.operations.power_combination.power_combination object at 0x7fc233f65bb0>
+	PREDECESSORS
+		_006Q,(1, 50, 1, 2, 11) 
+		_007h,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007j,(1, 50, 1, 2, 11) 
+
+_007x, <csdl.lang.output.Output object at 0x7fc233f65e80>, lowson_spl_model._007x
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007w
+	SUCCESSORS
+		_007y
+
+_0085, <csdl.operations.bessel.bessel object at 0x7fc233f715b0>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0086,(1, 50, 1, 2, 11) 
+
+_008h, <csdl.operations.bessel.bessel object at 0x7fc233f71880>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008i,(1, 50, 1, 2, 11) 
+
+_007O, <csdl.operations.bessel.bessel object at 0x7fc233f711f0>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007P,(1, 50, 1, 2, 11) 
+
+_007U, <csdl.operations.bessel.bessel object at 0x7fc233f71370>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007V,(1, 50, 1, 2, 11) 
+
+_008L, <csdl.operations.bessel.bessel object at 0x7fc233f71e50>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008M,(1, 50, 1, 2, 11) 
+
+_008R, <csdl.operations.bessel.bessel object at 0x7fc233f71fd0>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008S,(1, 50, 1, 2, 11) 
+
+_0092, <csdl.operations.bessel.bessel object at 0x7fc233f04250>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0093,(1, 50, 1, 2, 11) 
+
+_009e, <csdl.operations.bessel.bessel object at 0x7fc233f04520>
+	PREDECESSORS
+		_007z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009f,(1, 50, 1, 2, 11) 
+
+_0086, <csdl.lang.output.Output object at 0x7fc233f715e0>, lowson_spl_model._0086
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0085
+	SUCCESSORS
+		_0087
+
+_008l, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71940>
+	PREDECESSORS
+		_0088,(1, 50, 1, 2, 11) 
+		_008k,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008m,(1, 50, 1, 2, 11) 
+
+_008m, <csdl.lang.output.Output object at 0x7fc233f71970>, lowson_spl_model._008m
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008l
+	SUCCESSORS
+		_008n
+
+A_lin_comb_sign_matrix, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f65a30>, lowson_spl_model.A_lin_comb_sign_matrix
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_008b
+		_007S
+
+_008b, <csdl.operations.power_combination.power_combination object at 0x7fc233f71760>
+	PREDECESSORS
+		A_lin_comb_sign_matrix,(1, 50, 1, 2, 11) 
+		_008a,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008c,(1, 50, 1, 2, 11) 
+
+_007S, <csdl.operations.power_combination.power_combination object at 0x7fc233f71310>
+	PREDECESSORS
+		A_lin_comb_sign_matrix,(1, 50, 1, 2, 11) 
+		_007R,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007T,(1, 50, 1, 2, 11) 
+
+_008c, <csdl.lang.output.Output object at 0x7fc233f71790>, lowson_spl_model._008c
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008b
+	SUCCESSORS
+		_008f
+
+_008a, <csdl.lang.output.Output object at 0x7fc233f71730>, lowson_spl_model._008a
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0089
+	SUCCESSORS
+		_008b
+
+_008f, <csdl.operations.power_combination.power_combination object at 0x7fc233f71820>
+	PREDECESSORS
+		_008c,(1, 50, 1, 2, 11) 
+		_008e,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008g,(1, 50, 1, 2, 11) 
+
+_008g, <csdl.lang.output.Output object at 0x7fc233f71850>, lowson_spl_model._008g
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008f
+	SUCCESSORS
+		_008j
+
+_008e, <csdl.lang.output.Output object at 0x7fc233f717f0>, lowson_spl_model._008e
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008d
+	SUCCESSORS
+		_008f
+
+_008j, <csdl.operations.power_combination.power_combination object at 0x7fc233f718e0>
+	PREDECESSORS
+		_008g,(1, 50, 1, 2, 11) 
+		_008i,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008k,(1, 50, 1, 2, 11) 
+
+_008k, <csdl.lang.output.Output object at 0x7fc233f71910>, lowson_spl_model._008k
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008j
+	SUCCESSORS
+		_008l
+
+_008i, <csdl.lang.output.Output object at 0x7fc233f718b0>, lowson_spl_model._008i
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008h
+	SUCCESSORS
+		_008j
+
+_008r, <csdl.operations.power_combination.power_combination object at 0x7fc233f71a60>
+	PREDECESSORS
+		asdf,(1, 50, 1, 2, 11) 
+		term_2_coeff_A,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008s,(1, 50, 1, 2, 11) 
+
+term_1_coeff_A, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f65940>, lowson_spl_model.term_1_coeff_A
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_008p
+
+_008p, <csdl.operations.power_combination.power_combination object at 0x7fc233f71a00>
+	PREDECESSORS
+		term_1_coeff_A,(1, 50, 1, 2, 11) 
+		_0080,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008q,(1, 50, 1, 2, 11) 
+
+_008q, <csdl.lang.output.Output object at 0x7fc233f71a30>, lowson_spl_model._008q
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008p
+	SUCCESSORS
+		_008t
+
+_007d, <csdl.lang.output.Output object at 0x7fc233f65ac0>, lowson_spl_model._007d
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007c
+	SUCCESSORS
+		_007e
+
+_007e, <csdl.operations.power_combination.power_combination object at 0x7fc233f65af0>
+	PREDECESSORS
+		_007d,(1, 50, 1, 2, 11) 
+		_006M,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007f,(1, 50, 1, 2, 11) 
+
+_007f, <csdl.lang.output.Output object at 0x7fc233f65b20>, lowson_spl_model._007f
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007e
+	SUCCESSORS
+		_007k
+
+_006M, <csdl.lang.output.Output object at 0x7fc233f65520>, lowson_spl_model._006M
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006L
+	SUCCESSORS
+		_007e
+
+_007k, <csdl.operations.power_combination.power_combination object at 0x7fc233f65c10>
+	PREDECESSORS
+		_007f,(1, 50, 1, 2, 11) 
+		_007j,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007l,(1, 50, 1, 2, 11) 
+
+_007l, <csdl.lang.output.Output object at 0x7fc233f65c40>, lowson_spl_model._007l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007k
+	SUCCESSORS
+		_007M
+		_008J
+
+_007j, <csdl.lang.output.Output object at 0x7fc233f65be0>, lowson_spl_model._007j
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007i
+	SUCCESSORS
+		_007k
+
+_007h, <csdl.lang.output.Output object at 0x7fc233f65b80>, lowson_spl_model._007h
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007g
+	SUCCESSORS
+		_007i
+
+_007M, <csdl.operations.power_combination.power_combination object at 0x7fc233f71190>
+	PREDECESSORS
+		_007l,(1, 50, 1, 2, 11) 
+		_007F,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007N,(1, 50, 1, 2, 11) 
+
+_008J, <csdl.operations.power_combination.power_combination object at 0x7fc233f71df0>
+	PREDECESSORS
+		_007l,(1, 50, 1, 2, 11) 
+		_008C,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008K,(1, 50, 1, 2, 11) 
+
+_007N, <csdl.lang.output.Output object at 0x7fc233f711c0>, lowson_spl_model._007N
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007M
+	SUCCESSORS
+		_007_
+
+_007B, <csdl.lang.output.Output object at 0x7fc233f65f40>, lowson_spl_model._007B
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007A
+	SUCCESSORS
+		_007E
+
+_006X, <csdl.operations.expand.expand object at 0x7fc233f65700>
+	PREDECESSORS
+		bT,(1, 2, 11) 
+	SUCCESSORS
+		_006Y,(1, 50, 1, 2, 11) 
+
+_006Y, <csdl.lang.output.Output object at 0x7fc233f65760>, lowson_spl_model._006Y
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006X
+	SUCCESSORS
+		_007A
+		_008z
+
+_007E, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f65fd0>
+	PREDECESSORS
+		_007B,(1, 50, 1, 2, 11) 
+		_007D,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007F,(1, 50, 1, 2, 11) 
+
+_007F, <csdl.lang.output.Output object at 0x7fc233f71040>, lowson_spl_model._007F
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007E
+	SUCCESSORS
+		_007M
+
+_007D, <csdl.lang.output.Output object at 0x7fc233f65fa0>, lowson_spl_model._007D
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007C
+	SUCCESSORS
+		_007E
+
+_006V, <csdl.operations.expand.expand object at 0x7fc233f65670>
+	PREDECESSORS
+		aT,(1, 2, 11) 
+	SUCCESSORS
+		_006W,(1, 50, 1, 2, 11) 
+
+_006W, <csdl.lang.output.Output object at 0x7fc233f656d0>, lowson_spl_model._006W
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_006V
+	SUCCESSORS
+		_007C
+		_008x
+
+_007_, <csdl.operations.power_combination.power_combination object at 0x7fc233f71490>
+	PREDECESSORS
+		_007N,(1, 50, 1, 2, 11) 
+		_007Z,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0080,(1, 50, 1, 2, 11) 
+
+_0080, <csdl.lang.output.Output object at 0x7fc233f714c0>, lowson_spl_model._0080
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007_
+	SUCCESSORS
+		_008p
+
+_007P, <csdl.lang.output.Output object at 0x7fc233f71220>, lowson_spl_model._007P
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007O
+	SUCCESSORS
+		_007Y
+
+_007Y, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71430>
+	PREDECESSORS
+		_007P,(1, 50, 1, 2, 11) 
+		_007X,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007Z,(1, 50, 1, 2, 11) 
+
+_007Z, <csdl.lang.output.Output object at 0x7fc233f71460>, lowson_spl_model._007Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007Y
+	SUCCESSORS
+		_007_
+
+_007T, <csdl.lang.output.Output object at 0x7fc233f71340>, lowson_spl_model._007T
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007S
+	SUCCESSORS
+		_007W
+
+_007R, <csdl.lang.output.Output object at 0x7fc233f712e0>, lowson_spl_model._007R
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007Q
+	SUCCESSORS
+		_007S
+
+_007W, <csdl.operations.power_combination.power_combination object at 0x7fc233f713d0>
+	PREDECESSORS
+		_007T,(1, 50, 1, 2, 11) 
+		_007V,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_007X,(1, 50, 1, 2, 11) 
+
+_007X, <csdl.lang.output.Output object at 0x7fc233f71400>, lowson_spl_model._007X
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007W
+	SUCCESSORS
+		_007Y
+
+_007V, <csdl.lang.output.Output object at 0x7fc233f713a0>, lowson_spl_model._007V
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_007U
+	SUCCESSORS
+		_007W
+
+_008t, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71ac0>
+	PREDECESSORS
+		_008q,(1, 50, 1, 2, 11) 
+		_008s,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008u,(1, 50, 1, 2, 11) 
+
+_008u, <csdl.lang.output.Output object at 0x7fc233f71af0>, lowson_spl_model._008u
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008t
+	SUCCESSORS
+		_008v
+
+term_2_coeff_A, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f65970>, lowson_spl_model.term_2_coeff_A
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_008r
+
+_008s, <csdl.lang.output.Output object at 0x7fc233f71a90>, lowson_spl_model._008s
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008r
+	SUCCESSORS
+		_008t
+
+_008v, <csdl.operations.power_combination.power_combination object at 0x7fc233f71b20>
+	PREDECESSORS
+		_008u,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		An,(1, 50, 1, 2, 11) 
+
+An, <csdl.lang.output.Output object at 0x7fc233f71b50>, lowson_spl_model.An
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008v
+	SUCCESSORS
+		_009u
+
+_009u, <csdl.operations.sum.sum object at 0x7fc233f04850>
+	PREDECESSORS
+		An,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009v,(1, 50, 1, 2) 
+
+term_1_coeff_B, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f658e0>, lowson_spl_model.term_1_coeff_B
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_009m
+
+_009m, <csdl.operations.power_combination.power_combination object at 0x7fc233f046a0>
+	PREDECESSORS
+		term_1_coeff_B,(1, 50, 1, 2, 11) 
+		_008Y,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009n,(1, 50, 1, 2, 11) 
+
+_009n, <csdl.lang.output.Output object at 0x7fc233f046d0>, lowson_spl_model._009n
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009m
+	SUCCESSORS
+		_009q
+
+_008K, <csdl.lang.output.Output object at 0x7fc233f71e20>, lowson_spl_model._008K
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008J
+	SUCCESSORS
+		_008X
+
+_008y, <csdl.lang.output.Output object at 0x7fc233f71be0>, lowson_spl_model._008y
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008x
+	SUCCESSORS
+		_008B
+
+_008B, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71c70>
+	PREDECESSORS
+		_008y,(1, 50, 1, 2, 11) 
+		_008A,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008C,(1, 50, 1, 2, 11) 
+
+_008C, <csdl.lang.output.Output object at 0x7fc233f71ca0>, lowson_spl_model._008C
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008B
+	SUCCESSORS
+		_008J
+
+_008A, <csdl.lang.output.Output object at 0x7fc233f71c40>, lowson_spl_model._008A
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008z
+	SUCCESSORS
+		_008B
+
+_008X, <csdl.operations.power_combination.power_combination object at 0x7fc233f04130>
+	PREDECESSORS
+		_008K,(1, 50, 1, 2, 11) 
+		_008W,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008Y,(1, 50, 1, 2, 11) 
+
+_008Y, <csdl.lang.output.Output object at 0x7fc233f04160>, lowson_spl_model._008Y
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008X
+	SUCCESSORS
+		_009m
+
+_008M, <csdl.lang.output.Output object at 0x7fc233f71e80>, lowson_spl_model._008M
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008L
+	SUCCESSORS
+		_008V
+
+_008V, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f040d0>
+	PREDECESSORS
+		_008M,(1, 50, 1, 2, 11) 
+		_008U,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008W,(1, 50, 1, 2, 11) 
+
+_008W, <csdl.lang.output.Output object at 0x7fc233f04100>, lowson_spl_model._008W
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008V
+	SUCCESSORS
+		_008X
+
+B_lin_comb_sign_matrix, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f65a60>, lowson_spl_model.B_lin_comb_sign_matrix
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_008P
+		_0098
+
+_008P, <csdl.operations.power_combination.power_combination object at 0x7fc233f71f70>
+	PREDECESSORS
+		B_lin_comb_sign_matrix,(1, 50, 1, 2, 11) 
+		_008O,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008Q,(1, 50, 1, 2, 11) 
+
+_0098, <csdl.operations.power_combination.power_combination object at 0x7fc233f04400>
+	PREDECESSORS
+		B_lin_comb_sign_matrix,(1, 50, 1, 2, 11) 
+		_0097,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0099,(1, 50, 1, 2, 11) 
+
+_008Q, <csdl.lang.output.Output object at 0x7fc233f71fa0>, lowson_spl_model._008Q
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008P
+	SUCCESSORS
+		_008T
+
+_008O, <csdl.lang.output.Output object at 0x7fc233f71f40>, lowson_spl_model._008O
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008N
+	SUCCESSORS
+		_008P
+
+_008T, <csdl.operations.power_combination.power_combination object at 0x7fc233f04070>
+	PREDECESSORS
+		_008Q,(1, 50, 1, 2, 11) 
+		_008S,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008U,(1, 50, 1, 2, 11) 
+
+_008U, <csdl.lang.output.Output object at 0x7fc233f040a0>, lowson_spl_model._008U
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008T
+	SUCCESSORS
+		_008V
+
+_008S, <csdl.lang.output.Output object at 0x7fc233f04040>, lowson_spl_model._008S
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008R
+	SUCCESSORS
+		_008T
+
+_009q, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f04760>
+	PREDECESSORS
+		_009n,(1, 50, 1, 2, 11) 
+		_009p,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009r,(1, 50, 1, 2, 11) 
+
+_009r, <csdl.lang.output.Output object at 0x7fc233f04790>, lowson_spl_model._009r
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009q
+	SUCCESSORS
+		_009s
+
+term_2_coeff_B, <csdl.lang.declared_variable.DeclaredVariable object at 0x7fc233f659a0>, lowson_spl_model.term_2_coeff_B
+	WARNING: this declared variable is not a promotion or connection. 
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+	SUCCESSORS
+		_009o
+
+_009o, <csdl.operations.power_combination.power_combination object at 0x7fc233f04700>
+	PREDECESSORS
+		term_2_coeff_B,(1, 50, 1, 2, 11) 
+		_009l,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009p,(1, 50, 1, 2, 11) 
+
+_009p, <csdl.lang.output.Output object at 0x7fc233f04730>, lowson_spl_model._009p
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009o
+	SUCCESSORS
+		_009q
+
+_008_, <csdl.lang.output.Output object at 0x7fc233f041c0>, lowson_spl_model._008_
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008Z
+	SUCCESSORS
+		_009k
+
+_008E, <csdl.lang.output.Output object at 0x7fc233f71d00>, lowson_spl_model._008E
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008D
+	SUCCESSORS
+		_008H
+
+_008H, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f71d90>
+	PREDECESSORS
+		_008E,(1, 50, 1, 2, 11) 
+		_008G,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_008I,(1, 50, 1, 2, 11) 
+
+_008I, <csdl.lang.output.Output object at 0x7fc233f71dc0>, lowson_spl_model._008I
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008H
+	SUCCESSORS
+		_008Z
+
+_008G, <csdl.lang.output.Output object at 0x7fc233f71d60>, lowson_spl_model._008G
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_008F
+	SUCCESSORS
+		_008H
+
+_009k, <csdl.operations.power_combination.power_combination object at 0x7fc233f04640>
+	PREDECESSORS
+		_008_,(1, 50, 1, 2, 11) 
+		_009j,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009l,(1, 50, 1, 2, 11) 
+
+_009l, <csdl.lang.output.Output object at 0x7fc233f04670>, lowson_spl_model._009l
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009k
+	SUCCESSORS
+		_009o
+
+_0091, <csdl.lang.output.Output object at 0x7fc233f04220>, lowson_spl_model._0091
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0090
+	SUCCESSORS
+		_0094
+
+_0094, <csdl.operations.power_combination.power_combination object at 0x7fc233f042e0>
+	PREDECESSORS
+		_0091,(1, 50, 1, 2, 11) 
+		_0093,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_0095,(1, 50, 1, 2, 11) 
+
+_0095, <csdl.lang.output.Output object at 0x7fc233f04310>, lowson_spl_model._0095
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0094
+	SUCCESSORS
+		_009i
+
+_0093, <csdl.lang.output.Output object at 0x7fc233f04280>, lowson_spl_model._0093
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0092
+	SUCCESSORS
+		_0094
+
+_009i, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f045e0>
+	PREDECESSORS
+		_0095,(1, 50, 1, 2, 11) 
+		_009h,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009j,(1, 50, 1, 2, 11) 
+
+_009j, <csdl.lang.output.Output object at 0x7fc233f04610>, lowson_spl_model._009j
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009i
+	SUCCESSORS
+		_009k
+
+_0099, <csdl.lang.output.Output object at 0x7fc233f04430>, lowson_spl_model._0099
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0098
+	SUCCESSORS
+		_009c
+
+_0097, <csdl.lang.output.Output object at 0x7fc233f043d0>, lowson_spl_model._0097
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_0096
+	SUCCESSORS
+		_0098
+
+_009c, <csdl.operations.power_combination.power_combination object at 0x7fc233f044c0>
+	PREDECESSORS
+		_0099,(1, 50, 1, 2, 11) 
+		_009b,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009d,(1, 50, 1, 2, 11) 
+
+_009d, <csdl.lang.output.Output object at 0x7fc233f044f0>, lowson_spl_model._009d
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009c
+	SUCCESSORS
+		_009g
+
+_009b, <csdl.lang.output.Output object at 0x7fc233f04490>, lowson_spl_model._009b
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009a
+	SUCCESSORS
+		_009c
+
+_009g, <csdl.operations.power_combination.power_combination object at 0x7fc233f04580>
+	PREDECESSORS
+		_009d,(1, 50, 1, 2, 11) 
+		_009f,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009h,(1, 50, 1, 2, 11) 
+
+_009h, <csdl.lang.output.Output object at 0x7fc233f045b0>, lowson_spl_model._009h
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009g
+	SUCCESSORS
+		_009i
+
+_009f, <csdl.lang.output.Output object at 0x7fc233f04550>, lowson_spl_model._009f
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009e
+	SUCCESSORS
+		_009g
+
+_009s, <csdl.operations.power_combination.power_combination object at 0x7fc233f047c0>
+	PREDECESSORS
+		_009r,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		Bn,(1, 50, 1, 2, 11) 
+
+Bn, <csdl.lang.output.Output object at 0x7fc233f047f0>, lowson_spl_model.Bn
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009s
+	SUCCESSORS
+		_009w
+
+_009w, <csdl.operations.sum.sum object at 0x7fc233f048e0>
+	PREDECESSORS
+		Bn,(1, 50, 1, 2, 11) 
+	SUCCESSORS
+		_009x,(1, 50, 1, 2) 
+
+_009v, <csdl.lang.output.Output object at 0x7fc233f048b0>, lowson_spl_model._009v
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009u
+	SUCCESSORS
+		_009y
+
+_009y, <csdl.operations.power_combination.power_combination object at 0x7fc233f04970>
+	PREDECESSORS
+		_009v,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009z,(1, 50, 1, 2) 
+
+_009z, <csdl.lang.output.Output object at 0x7fc233f049a0>, lowson_spl_model._009z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009y
+	SUCCESSORS
+		_009C
+
+_009C, <csdl.operations.linear_combination.linear_combination object at 0x7fc233f04a30>
+	PREDECESSORS
+		_009z,(1, 50, 1, 2) 
+		_009B,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009D,(1, 50, 1, 2) 
+
+_009D, <csdl.lang.output.Output object at 0x7fc233f04a60>, lowson_spl_model._009D
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009C
+	SUCCESSORS
+		_009E
+
+_009x, <csdl.lang.output.Output object at 0x7fc233f04940>, lowson_spl_model._009x
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009w
+	SUCCESSORS
+		_009A
+
+_009A, <csdl.operations.power_combination.power_combination object at 0x7fc233f049d0>
+	PREDECESSORS
+		_009x,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009B,(1, 50, 1, 2) 
+
+_009B, <csdl.lang.output.Output object at 0x7fc233f04a00>, lowson_spl_model._009B
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009A
+	SUCCESSORS
+		_009C
+
+_009E, <csdl.operations.power_combination.power_combination object at 0x7fc233f04a90>
+	PREDECESSORS
+		_009D,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009F,(1, 50, 1, 2) 
+
+_009F, <csdl.lang.output.Output object at 0x7fc233f04ac0>, lowson_spl_model._009F
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009E
+	SUCCESSORS
+		_009G
+
+_009G, <csdl.operations.log10.log10 object at 0x7fc233f04af0>
+	PREDECESSORS
+		_009F,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009H,(1, 50, 1, 2) 
+
+_009H, <csdl.lang.output.Output object at 0x7fc233f04b20>, lowson_spl_model._009H
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009G
+	SUCCESSORS
+		_009I
+
+_009I, <csdl.operations.power_combination.power_combination object at 0x7fc233f04b50>
+	PREDECESSORS
+		_009H,(1, 50, 1, 2) 
+	SUCCESSORS
+		bladeSPL,(1, 50, 1, 2) 
+
+bladeSPL, <csdl.lang.output.Output object at 0x7fc233f04b80>, lowson_spl_model.bladeSPL
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009I
+	SUCCESSORS
+		_009K
+
+_009K, <csdl.operations.power_combination.power_combination object at 0x7fc233f04be0>
+	PREDECESSORS
+		bladeSPL,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009L,(1, 50, 1, 2) 
+
+_009L, <csdl.lang.output.Output object at 0x7fc233f04c10>, lowson_spl_model._009L
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009K
+	SUCCESSORS
+		_009M
+
+_009M, <csdl.operations.exp_a.exp_a object at 0x7fc233f04c40>
+	PREDECESSORS
+		_009L,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009N,(1, 50, 1, 2) 
+
+_009N, <csdl.lang.output.Output object at 0x7fc233f04ca0>, lowson_spl_model._009N
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009M
+	SUCCESSORS
+		_009O
+
+_009O, <csdl.operations.sum.sum object at 0x7fc233f04cd0>
+	PREDECESSORS
+		_009N,(1, 50, 1, 2) 
+	SUCCESSORS
+		_009P,(1, 50, 1) 
+
+_009P, <csdl.lang.output.Output object at 0x7fc233f04d30>, lowson_spl_model._009P
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009O
+	SUCCESSORS
+		_009Q
+
+_009Q, <csdl.operations.log10.log10 object at 0x7fc233f04d60>
+	PREDECESSORS
+		_009P,(1, 50, 1) 
+	SUCCESSORS
+		_009R,(1, 50, 1) 
+
+_009R, <csdl.lang.output.Output object at 0x7fc233f04d90>, lowson_spl_model._009R
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009Q
+	SUCCESSORS
+		_009S
+
+_009S, <csdl.operations.power_combination.power_combination object at 0x7fc233f04dc0>
+	PREDECESSORS
+		_009R,(1, 50, 1) 
+	SUCCESSORS
+		_009T,(1, 50, 1) 
+
+_009T, <csdl.lang.output.Output object at 0x7fc233f04df0>, lowson_spl_model._009T
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009S
+	SUCCESSORS
+		_009U
+
+_009U, <csdl.operations.power_combination.power_combination object at 0x7fc233f04e50>
+	PREDECESSORS
+		_009T,(1, 50, 1) 
+	SUCCESSORS
+		_009V,(1, 50, 1) 
+
+_009V, <csdl.lang.output.Output object at 0x7fc233f04e80>, lowson_spl_model._009V
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009U
+	SUCCESSORS
+		_009W
+
+_009W, <csdl.operations.exp_a.exp_a object at 0x7fc233f04eb0>
+	PREDECESSORS
+		_009V,(1, 50, 1) 
+	SUCCESSORS
+		_009X,(1, 50, 1) 
+
+_009X, <csdl.lang.output.Output object at 0x7fc233f04f10>, lowson_spl_model._009X
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009W
+	SUCCESSORS
+		_009Y
+
+_009Y, <csdl.operations.sum.sum object at 0x7fc233f04f40>
+	PREDECESSORS
+		_009X,(1, 50, 1) 
+	SUCCESSORS
+		_009Z,(1, 50) 
+
+_009Z, <csdl.lang.output.Output object at 0x7fc233f04fa0>, lowson_spl_model._009Z
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009Y
+	SUCCESSORS
+		_009_
+
+_009_, <csdl.operations.log10.log10 object at 0x7fc233f04fd0>
+	PREDECESSORS
+		_009Z,(1, 50) 
+	SUCCESSORS
+		_00a0,(1, 50) 
+
+_00a0, <csdl.lang.output.Output object at 0x7fc233f14040>, lowson_spl_model._00a0
+	CONNECTED TO: False
+	PROMOTED TO: False
+	PREDECESSORS
+		_009_
+	SUCCESSORS
+		_00a1
+
+_00a1, <csdl.operations.power_combination.power_combination object at 0x7fc233f14070>
+	PREDECESSORS
+		_00a0,(1, 50) 
+	SUCCESSORS
+		verif_tonal_spl,(1, 50) 
+
+verif_tonal_spl, <csdl.lang.output.Output object at 0x7fc233f140a0>, lowson_spl_model.verif_tonal_spl
+	CONNECTED TO: False
+	PROMOTED TO: True
+		verif_tonal_spl, .verif_tonal_spl
+	PREDECESSORS
+		_00a1
+	SUCCESSORS
+		_0015
