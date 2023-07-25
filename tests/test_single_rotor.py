@@ -300,6 +300,17 @@ caddee_csdl_model.connect(
     'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
     'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.lowson_spl_model.rpm'
 )
+
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.in_plane_ex',
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_Lowson_tonal_model.lowson_spl_model.in_plane_ex'
+)
+
+caddee_csdl_model.connect(
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
+    'system_model.single_rotor_test.cruise.cruise.rotor_disk_SKM_broadband_model.rpm'
+)
+
 caddee_csdl_model.connect(
     'system_model.single_rotor_test.hover.hover.rotor_disk_bem_model.BEM_external_inputs_model.rpm',
     'system_model.single_rotor_test.hover.hover.rotor_disk_KS_tonal_model.ks_spl_model.rpm'

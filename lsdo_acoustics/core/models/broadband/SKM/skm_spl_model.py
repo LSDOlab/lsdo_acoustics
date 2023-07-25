@@ -69,7 +69,7 @@ class SKMSPLModel(ModuleCSDL):
             'i->ia'
         )
         SPL150_SKM = 10*csdl.log10(1e-10 + (Omega_skm*R_skm)**6*Ab_skm*(CT_skm/sigma_skm)**2) - 42.9
-        SPL_SKM = SPL150_SKM + 20*csdl.log10(1e-10 + csdl.sin(theta0_skm)/(S0_skm/150))
+        SPL_SKM = SPL150_SKM + 20*csdl.log10(1e-10 + csdl.sin((theta0_skm**2)**0.5)/(S0_skm/150))
 
         self.register_module_output(f'{component_name}_broadband_spl', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
 

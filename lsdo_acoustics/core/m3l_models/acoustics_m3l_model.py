@@ -179,6 +179,7 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.arguments['Vx'] = ac_states['u']
         self.arguments['Vy'] = ac_states['v']
         self.arguments['Vz'] = ac_states['w']
+        self.arguments['theta'] = ac_states['theta']
         if CT is not None:
             self.arguments['CT'] = CT
 

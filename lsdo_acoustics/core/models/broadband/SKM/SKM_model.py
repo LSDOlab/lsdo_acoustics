@@ -34,7 +34,7 @@ class SKMBroadbandModel(ModuleCSDL):
 
 
         self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
-        self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
         if test:
             rotor_radius = self.declare_variable('propeller_radius')
