@@ -121,7 +121,7 @@ cruise_condition.set_module_input(name='mach_number', val=0.0705)
 cruise_condition.set_module_input(name='range', val=40000)
 cruise_condition.set_module_input(name='altitude', val=500)
 cruise_condition.set_module_input(name='wing_incidence_angle', val=np.deg2rad(0))
-cruise_condition.set_module_input(name='pitch_angle', val=np.deg2rad(2), dv_flag=False, lower=np.deg2rad(0), upper=np.deg2rad(5))
+cruise_condition.set_module_input(name='pitch_angle', val=np.deg2rad(0), dv_flag=False, lower=np.deg2rad(0), upper=np.deg2rad(5))
 cruise_condition.set_module_input(name='observer_location', val=np.array([0, 0, 500]))
 ac_states = cruise_condition.evaluate_ac_states()
 cruise_model.register_output(ac_states)
@@ -152,12 +152,12 @@ cruise_model.register_output(CT)
 
 # region acoustics
 cruise_acoustics = Acoustics(
-    aircraft_position = np.array([0.,0.,4.])
+    aircraft_position = np.array([0.,0.,74.])
 )
 
 cruise_acoustics.add_observer(
     name='obs1',
-    obs_position=np.array([1.85947514, 0., -1.30201851]),
+    obs_position=np.array([0., 0., 0.]),
     time_vector=np.array([0., 1.]),
 )
 
