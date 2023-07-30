@@ -7,6 +7,7 @@ from lsdo_acoustics.core.models.tonal.KS.ks_spl_model import KSSPLModel
 from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
 from lsdo_acoustics.utils.a_weighting import A_weighting_func
+from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
 
 class KvurtStalnovModel(ModuleCSDL):
     def initialize(self):
@@ -94,7 +95,6 @@ class KvurtStalnovModel(ModuleCSDL):
         rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
         # region atmospheric model (to get density)
-        from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
         self.add(
             AtmosphereModel(
                 shape=(num_nodes,),

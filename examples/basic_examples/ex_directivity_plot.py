@@ -119,7 +119,7 @@ elif mode == 'KS':
         debug=True
     )
 
-sim = Simulator(m, analytics=True, name='verif')
+sim = Simulator(m, analytics=True)
 
 sim['rpm'] = inputs['RPM']
 sim['propeller_radius'] = inputs['radius']
