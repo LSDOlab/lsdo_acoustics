@@ -10,7 +10,9 @@ class BPMSPLModel(ModuleCSDL):
         self.parameters.declare('num_nodes')
         self.parameters.declare('num_observers')
         self.parameters.declare('num_radial')
+        self.parameters.declare('num_azim')
         self.parameters.declare('num_blades')
+        self.parameters.declare('freq')
         
     
     def define(self):
@@ -20,39 +22,47 @@ class BPMSPLModel(ModuleCSDL):
         num_blades = self.parameters['num_blades']
 
         num_radial = self.parameters['num_radial']
+        num_azim = self.parameters['num_azim']
 
         # NOTE: variables need to be of shape (num_nodes, num_observers, num_radial)
         # region ================================ INPUTS ================================
-        target_shape = (num_nodes, num_observers, num_radial)
+        target_shape = (num_nodes, num_observers, num_radial, num_azim)
         mach = csdl.expand(self.declare_variable('mach_number'), shape=target_shape)
         visc = csdl.expand(self.declare_variable('nu'), shape=target_shape)
-        u = csdl.expand(self.declare_variable('U', shape=(num_nodes,num_radial)), shape=target_shape, indices='ij->iaj')
-        l = csdl.expand(self.declare_variable('propeller_radius'), shape=target_shape)
-        S = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), (num_nodes, num_observers))
-        re = csdl.expand(S, shape=target_shape, indices='ij->ija')
-        boundaryP = csdl.expand(self.declare_variable('delta_P', val=1.025e-4, shape=(num_nodes,)), target_shape, 'i->iab')
-        boundaryS = csdl.expand(self.declare_variable('delta_S', val=1.025e-4, shape=(num_nodes,)), target_shape, 'i->iab')
+        u = csdl.expand(self.declare_variable('U', shape=(num_nodes,num_radial)), shape=target_shape, indices='ij->iajb')
+        l = csdl.expand(self.declare_variable('propeller_radius')/num_radial, shape=target_shape)
+        # S = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), (num_nodes, num_observers))
+        # re = csdl.expand(S, shape=target_shape, indices='ij->ija')
+        S = self.declare_variable('S_r', shape=target_shape)
+        boundaryP = csdl.expand(self.declare_variable('delta_P', val=3.1690e-04, shape=(num_nodes,num_radial)), target_shape, 'ij->iajc')
+        boundaryS = csdl.expand(self.declare_variable('delta_S', val=3.1690e-04, shape=(num_nodes,num_radial)), target_shape, 'ij->iajc')
         rpm = csdl.expand(
             csdl.reshape(self.declare_variable('rpm', shape=(num_nodes,1)), new_shape=(num_nodes,)), 
-            target_shape, 'i->iab'
+            target_shape, 'i->iabc'
         )
-        f = rpm*num_blades/60.
+        # f = num_blades*rpm/60.
+        # f = 10000.
+        f = self.parameters['freq']
 
         angleOfAttack = csdl.expand(
             self.declare_variable('a_star', shape=(num_radial,)),
             target_shape,
-            'i->abi'
+            'i->abic'
         )
 
         rc  = self.declare_variable('Rc', shape=target_shape)
         Rsp = self.declare_variable('Rdp', shape=target_shape)
 
         # endregion
-
+        sectional_mach = u / csdl.expand(
+            self.declare_variable('speed_of_sound', shape=(num_nodes,)),
+            (num_nodes, num_observers, num_radial, num_azim),
+            'i->iabc'
+        )
         # region ================================ computing St (Strouhal numbers) ================================
         sts = self.register_output('sts', ((f*boundaryS)/(u+1e-7)))  #EQ 31.1
         stp = self.register_output('stp', ((f*boundaryP)/(u+1e-7))) #EQ 31.2
-        st1 = self.register_output('st1', 0.02*((mach+1e-7)**(-0.6)))  #EQ 32
+        st1 = self.register_output('st1', 0.02*((sectional_mach+1e-7)**(-0.6)))  #EQ 32
 
         #EQ 34
         f_1 = self.register_output('f_1', st1*1 )
@@ -189,82 +199,134 @@ class BPMSPLModel(ModuleCSDL):
         ak1 = switch_func(Rsp, f_list_ak, bounds_list_ak)
         self.register_output('ak1', ak1)
         # EQ 50
-        y = self.register_output('y', ((27.094 * mach) + 3.31))
-        y0 = self.register_output('y0', ((23.43 * mach) + 4.651))
-        betha = self.register_output('betha', ((72.65 * mach) + 10.74))
-        betha0 = self.register_output('betha0', ((-34.19 * mach) - 13.82))
+        y = self.register_output('y', ((27.094 * sectional_mach) + 3.31))
+        y0 = self.register_output('y0', ((23.43 * sectional_mach) + 4.651))
+        betha = self.register_output('betha', ((72.65 * sectional_mach) + 10.74))
+        betha0 = self.register_output('betha0', ((-34.19 * sectional_mach) - 13.82))
         # EQ 49
         f1k2 = self.register_output('f1k2', (-1000*betha)/betha)
         f2k2 = self.register_output('f2k2', (((((betha**2)-(((betha/y)**2)*((angleOfAttack-y0)**2)))**2)**0.5)**0.5)+betha0)
         f3k2 = self.register_output('f3k2', (-12*betha)/betha)
-        f_list_k2 =[f1k2, f2k2, f3k2]
+        f_list_k2 =[k1 + f1k2, k1 + f2k2, k1 + f3k2]
         bounds_list_k2 = [y0-y, y0+y]
         k2 = switch_func(angleOfAttack, f_list_k2, bounds_list_k2)
         self.register_output('k2', k2)
         # endregion
 
         # region ================================ DIRECTIVITY COMPUTATION (EQ B1) ================================
-        x_pos = self.declare_variable('rel_obs_x_pos', shape=(num_nodes, 1, num_observers))
-        y_pos = self.declare_variable('rel_obs_y_pos', shape=(num_nodes, 1, num_observers))
-        z_pos = self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers))
-        machC, theta, psi = self.convection_adjustment(re, x_pos, y_pos, z_pos, num_nodes, num_observers, num_radial)
+        x_r = self.declare_variable('x_r', shape=target_shape)
+        y_r = self.declare_variable('y_r', shape=target_shape)
+        z_r = self.declare_variable('z_r', shape=target_shape)
+        re = self.declare_variable('S_r', shape=target_shape)
+
+        x_r = csdl.expand(
+            csdl.reshape(
+                self.declare_variable('rel_obs_x_pos', shape=(num_nodes, 1, num_observers)),
+                (num_nodes, num_observers)
+            ), 
+            target_shape,
+            'ij->ijab'
+        )
+        y_r = csdl.expand(
+            csdl.reshape(
+                self.declare_variable('rel_obs_y_pos', shape=(num_nodes, 1, num_observers)),
+                (num_nodes, num_observers)
+            ), 
+            target_shape,
+            'ij->ijab'
+        )
+        z_r = csdl.expand(
+            csdl.reshape(
+                self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers)),
+                (num_nodes, num_observers)
+            ), 
+            target_shape,
+            'ij->ijab'
+        )
+        S = csdl.expand(
+            csdl.reshape(
+                self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)),
+                (num_nodes, num_observers)
+            ), 
+            target_shape,
+            'ij->ijab'
+        )
+
+
+        machC, theta, psi = self.convection_adjustment(S, x_r, y_r, z_r, num_nodes, num_observers, num_radial, num_azim)
         # machC = self.register_output('machC', 0.8*mach) # chord-wise Mach number, FIX
-        dh= self.register_output('dh',(((2*(csdl.sin(theta/2))**2)*((csdl.sin(psi))**2))/((1+(mach*csdl.cos(theta)))*(1+(mach-machC)*csdl.cos(theta))**2)))   #EQ B1
+        dh= self.register_output('dh',(((2*(csdl.sin(theta/2))**2)*((csdl.sin(psi))**2))/((1+(sectional_mach*csdl.cos(theta)))*(1+(sectional_mach-machC)*csdl.cos(theta))**2)))   #EQ B1
         # endregion
 
         # region ================================ major noise components ================================
         # EQS 25 (p), 26 (s), 27 (a) in order
-        splp = self.register_output('splp', (csdl.log10((boundaryP*(mach**5)*l*dh)/(re**2)  + 1e-7))+(A_a*(stp/st1))+(k1-3)+ak1)  #EQ 25
-        spls = self.register_output('spls', (csdl.log10((boundaryS*(mach**5)*l*dh)/(re**2)  + 1e-7))+(A_a*(sts/st1))+(k1-3)) #EQ 26
-        spla = self.register_output('spla', (csdl.log10((boundaryS*(mach**5)*l*dh)/(re**2)  + 1e-7))+(Bb*(sts/st2))+k2)     #EQ 27
+        S = csdl.expand(
+            csdl.reshape(
+                self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)),
+                (num_nodes, num_observers)
+            ), 
+            target_shape,
+            'ij->ijab'
+        )
+        # splp = self.register_output('splp', 10.*(csdl.log10((boundaryP*(mach**5)*l*dh)/(S**2) + 1e-7))+(A_a*(stp/st1))+(k1-3)+ak1)  #EQ 25
+        # spls = self.register_output('spls', 10.*(csdl.log10((boundaryS*(mach**5)*l*dh)/(S**2) + 1e-7))+(A_a*(sts/st1))+(k1-3)) #EQ 26
+        # spla = self.register_output('spla', 10.*(csdl.log10((boundaryS*(mach**5)*l*dh)/(S**2) + 1e-7))+(Bb*(sts/st2))+k2)     #EQ 27
+        splp = self.register_output('splp', 10.*(csdl.log10((boundaryP*(sectional_mach**5)*l*dh)/(S**2) + 1e-7))+(A_a)+(k1-3)+ak1)  #EQ 25
+        spls = self.register_output('spls', 10.*(csdl.log10((boundaryS*(sectional_mach**5)*l*dh)/(S**2) + 1e-7))+(A_a)+(k1-3)) #EQ 26
+        spla = self.register_output('spla', 10.*(csdl.log10((boundaryS*(sectional_mach**5)*l*dh)/(S**2) + 1e-7))+(Bb)+k2)     #EQ 27
         # endregion
 
         # region ================================ total noise level computation (EQ 24) ================================
-        SPLTOT_radial = 10*csdl.log(
+        SPLTOT = 10*csdl.log(
             csdl.exp_a(10., spla/10.) + csdl.exp_a(10., spls/10.) + csdl.exp_a(10., splp/10.)
-        ) # SHAPE IS (num_nodes, num_observers, num_radial)
-        # SPLTOT = 10*csdl.log(csdl.sum(csdl.exp_a(10., SPLTOT_radial/10.), axes=(2,)))
+        ) # SHAPE IS (num_nodes, num_observers, num_radial, num_azim)
 
-        Spp_bar = csdl.exp_a(10., SPLTOT_radial/10.)
+        Spp_bar = csdl.exp_a(10., SPLTOT/10.) # shape is (num_nodes, num_observers, num_radial, num_azim)
         Mr = u / csdl.expand(
             self.declare_variable('speed_of_sound', shape=(num_nodes,)),
-            (num_nodes, num_observers, num_radial),
+            (num_nodes, num_observers, num_radial, num_azim),
             'i->iab'
         )
-        Spp = (1/(1 + Mr)*0.5)**-2 * Spp_bar / (2*np.pi)
 
-        SPLTOT = 10*csdl.log(csdl.sum(Spp, axes=(2,)))
-        self.register_module_output(f'{component_name}_broadband_spl', SPLTOT) # SHAPE IS (num_nodes, num_observers)
+        W = 1/(1 + Mr*x_r/re) # shape is (num_nodes, num_observers, num_radial, num_azim)
+        Spp = csdl.sum(Spp_bar/(W**2), axes=(3,)) * 2*np.pi/num_azim/(2*np.pi) # (num_nodes, num_observers, num_radial)
+
+        finalSPL = 10*csdl.log(csdl.sum(Spp, axes=(2,)))
+        self.register_module_output(f'{component_name}_broadband_spl', finalSPL) # SHAPE IS (num_nodes, num_observers)
         # endregion
 
-    def convection_adjustment(self, S, x, y, z, num_nodes, num_observers, num_radial):
-        x_pos = csdl.expand(x, (num_nodes, num_observers, num_radial, 1), 'ijk->ikaj')
-        y_pos = csdl.expand(y, (num_nodes, num_observers, num_radial, 1), 'ijk->ikaj')
-        z_pos = csdl.expand(z, (num_nodes, num_observers, num_radial, 1), 'ijk->ikaj')
-        position_vec = self.create_output('position_vec', shape=(num_nodes, num_observers, num_radial, 3))
-        position_vec[:,:,:,0] = x_pos
-        position_vec[:,:,:,1] = y_pos
-        position_vec[:,:,:,2] = z_pos
+    def convection_adjustment(self, S, x, y, z, num_nodes, num_observers, num_radial, num_azim):
+        x_pos = csdl.expand(x, (num_nodes, num_observers, num_radial, num_azim, 1), 'ijkl->ikjla')
+        y_pos = csdl.expand(y, (num_nodes, num_observers, num_radial, num_azim, 1), 'ijkl->ikjla')
+        z_pos = csdl.expand(z, (num_nodes, num_observers, num_radial, num_azim, 1), 'ijkl->ikjla')
+        position_vec = self.create_output('position_vec', shape=(num_nodes, num_observers, num_radial, num_azim, 3))
+        position_vec[:,:,:,:,0] = x_pos
+        position_vec[:,:,:,:,1] = y_pos
+        position_vec[:,:,:,:,2] = z_pos
 
-        Vx = csdl.expand(self.declare_variable('Vx', shape=(num_nodes,)), (num_nodes, num_observers, num_radial, 1), 'i->iabc')
-        Vy = csdl.expand(self.declare_variable('Vy', shape=(num_nodes,)), (num_nodes, num_observers, num_radial, 1), 'i->iabc')
-        Vz = csdl.expand(self.declare_variable('Vz', shape=(num_nodes,)), (num_nodes, num_observers, num_radial, 1), 'i->iabc')
+        Vx = csdl.expand(self.declare_variable('Vx', shape=(num_nodes,)), (num_nodes, num_observers, num_radial, num_azim, 1), 'i->iabcd')
+        Vy = csdl.expand(self.declare_variable('Vy', shape=(num_nodes,)), (num_nodes, num_observers, num_radial, num_azim, 1), 'i->iabcd')
+        Vz = csdl.expand(self.declare_variable('Vz', shape=(num_nodes,)), (num_nodes, num_observers, num_radial, num_azim, 1), 'i->iabcd')
 
-        V_vec = self.create_output('V_vec', shape=(num_nodes, num_observers, num_radial, 3))
-        V_vec[:,:,:,0] = Vx
-        V_vec[:,:,:,1] = Vy
-        V_vec[:,:,:,2] = Vz
-        V_conv = csdl.dot(V_vec, position_vec, axis=3) / S
+        V_vec = self.create_output('V_vec', shape=(num_nodes, num_observers, num_radial, num_azim, 3))
+        V_vec[:,:,:,:,0] = Vx
+        V_vec[:,:,:,:,1] = Vy
+        V_vec[:,:,:,:,2] = Vz
+        V_conv = csdl.dot(V_vec, position_vec, axis=4) / S
         machC = V_conv / csdl.expand(
             self.declare_variable('speed_of_sound', shape=(num_nodes,)),
-            (num_nodes, num_observers, num_radial),
-            'i->iab'
+            (num_nodes, num_observers, num_radial, num_azim),
+            'i->iabc'
         )
+        self.register_output('asdf', machC)
 
         # ANGLES TAKEN FROM AIRCRAFT FRAME; NEED TO CHANGE IN THE FUTURE
-        x_z_mag = (csdl.reshape(x_pos,(num_nodes, num_observers, num_radial))**2 + csdl.reshape(z_pos,(num_nodes, num_observers, num_radial))**2)**0.5
-        theta = csdl.sin(x_z_mag/S)
-        psi = csdl.cos(csdl.reshape(y_pos,(num_nodes, num_observers, num_radial))/x_z_mag)
+        x_z_mag = (csdl.reshape(x_pos,(num_nodes, num_observers, num_radial, num_azim))**2 + csdl.reshape(z_pos,(num_nodes, num_observers, num_radial, num_azim))**2)**0.5
+        theta = csdl.arccos(x/S)
+        y_z_mag = (csdl.reshape(y_pos,(num_nodes, num_observers, num_radial, num_azim))**2 + csdl.reshape(z_pos,(num_nodes, num_observers, num_radial, num_azim))**2)**0.5
+        psi = csdl.arccos(csdl.reshape(y_pos,(num_nodes, num_observers, num_radial, num_azim))/y_z_mag)
 
+        self.register_output('theta_dummy', theta)
+        self.register_output('psi_dummy', psi)
         return machC, theta, psi
     

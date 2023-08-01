@@ -17,6 +17,7 @@ class BPMModel(ModuleCSDL):
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('debug', default=False)
+        self.parameters.declare('freq')
 
     def define(self):
         component_name = self.parameters['component_name']
@@ -27,14 +28,16 @@ class BPMModel(ModuleCSDL):
         num_blades = self.parameters['num_blades'] 
         num_nodes = self.parameters['num_nodes']
         test = self.parameters['debug']
+        freq = self.parameters['freq']
 
         num_radial = mesh.parameters['num_radial']
+        num_azim = mesh.parameters['num_tangential']
         num_observers = observer_data['num_observers']
 
         if test:
             propeller_radius = self.declare_variable('propeller_radius')
             chord_profile = self.declare_variable('chord_profile', shape=(num_radial,1))
-            twist_profile = self.declare_variable('twist_profile', val = 0., shape=(num_radial,1))
+            twist_profile = self.declare_variable('twist_profile', val = 0. * np.pi/180, shape=(num_radial,1))
             self.declare_variable('thrust_dir', shape=(3,))
         else:
             # Thrust vector and origin
@@ -100,60 +103,110 @@ class BPMModel(ModuleCSDL):
             'steady_observer_location_model'
         )
 
+        # region observer adjustment based on mesh
+        x = self.declare_variable('rel_obs_x_pos', shape=(num_nodes, 1, num_observers))
+        y = self.declare_variable('rel_obs_y_pos', shape=(num_nodes, 1, num_observers))
+        z = self.declare_variable('rel_obs_z_pos', shape=(num_nodes, 1, num_observers))
+
+        non_dim_r = self.declare_variable(
+            'non_dim_rad',
+            val=np.linspace(0.2, 1., num_radial)
+        )
+        radial_dist = csdl.expand(propeller_radius, (num_radial,)) * non_dim_r
+        x_r, y_r, z_r = self.compute_rotor_frame_position(
+            x, y, z, radial_dist, twist_profile, mesh, num_nodes, num_observers
+        )
+        self.register_output('x_r', x_r) # shape of (num_nodes, num_observers, num_radial, num_azim)
+        self.register_output('y_r', y_r)
+        self.register_output('z_r', z_r)
+        self.register_output('S_r', (x_r**2 + y_r**2 + z_r**2)**0.5)
+        # endregion
+        
         # region BPM SPL inputs 
-        target_shape = (num_nodes, num_observers, num_radial)
-        delta_P = self.register_module_input('delta_P', 1.025e-4, shape=(num_nodes,)) # NOTE: FIX NAME LATER
+        target_shape = (num_nodes, num_observers, num_radial, num_azim)
+        delta_P = self.register_module_input('delta_P', 3.1690e-04, shape=(num_nodes,num_radial)) # NOTE: FIX NAME LATER
 
         rho = self.declare_variable('density')
         mu = self.declare_variable('dynamic_viscosity')
         nu = self.register_output('nu', mu/rho)
 
-        non_dim_rad = csdl.expand(
-            self.declare_variable('non_dim_rad', np.linspace(0.2, 1, num_radial)),
-            (num_nodes, num_radial), 'i->ai'
-        )
-        rpm = self.declare_variable('rpm', shape=(num_nodes,1))
-
-        # Vx = self.declare_variable('Vx', shape=(num_nodes,), val=0.)
-        # Vy = self.declare_variable('Vy', shape=(num_nodes,), val=0.)
-        # Vz = self.declare_variable('Vz', shape=(num_nodes,), val=0.)
-
-        # U = self.register_output('U', (Vx**2 + Vy**2 + Vz**2)**0.5 + 1e-7)
+        non_dim_rad_exp = csdl.expand(non_dim_r, (num_nodes, num_radial), 'i->ai' )
 
         rpm = csdl.expand(
             csdl.reshape(self.declare_variable('rpm', shape=(num_nodes,1)), new_shape=(num_nodes,)), 
             (num_nodes, num_radial), 'i->ia'
         )
 
-        U = non_dim_rad * 2*np.pi/60. * rpm  * csdl.expand(propeller_radius, (num_nodes, num_radial))
+        U = non_dim_rad_exp * 2*np.pi/60. * rpm  * csdl.expand(propeller_radius, (num_nodes, num_radial))
         self.register_output('U', U)
         # COMPUTE REYNOLDS NUMBERS HERE
         chord_exp = csdl.expand(
             csdl.reshape(chord_profile, (num_radial,)), 
-            (num_nodes, num_observers, num_radial), 
-            'i->abi'
+            target_shape, 
+            'i->abic'
         )
         # U_exp = csdl.expand(U, target_shape, 'i->iab')
-        U_exp = csdl.expand(U, target_shape, 'ij->iaj')
+        U_exp = csdl.expand(U, target_shape, 'ij->iajb')
         nu_exp  = csdl.expand(nu, target_shape)
-        delta_P_exp = csdl.expand(delta_P, target_shape, 'i->iab')
+        delta_P_exp = csdl.expand(delta_P, target_shape, 'ij->iajb')
         Rc = self.register_output('Rc', (U_exp*chord_exp/nu_exp)+1e-7)
         Rdp = self.register_output('Rdp', U_exp*delta_P_exp/nu_exp+1e-7)
 
         a_CL0 = self.register_module_input('a_CL0', val=0., shape=(num_radial,1))
-        a_star = twist_profile - a_CL0
+        AOA =  self.register_module_input('aoa', val=0., shape=(num_radial,1))
+        a_star = AOA - a_CL0
         self.register_output('a_star', a_star)
 
         # endregion
         
-
         self.add(
             BPMSPLModel(
                 num_nodes=num_nodes,
                 num_observers=num_observers,
                 component_name=component_name,
                 num_blades=num_blades,
-                num_radial=num_radial
+                num_radial=num_radial,
+                num_azim=num_azim,
+                freq=freq
             ),
             'bpm_spl_model'
         )
+
+    def compute_rotor_frame_position(self, x, y, z, radial_dist, twist_profile, mesh, num_nodes, num_observers):
+        '''
+        inputs:
+            x, y, z: inertial frame position
+            mesh: holds the num radial and num tangential info
+        outputs:
+            - x_r, y_r, z_r: positions in the frame of the disk element
+        '''
+        num_radial = mesh.parameters['num_radial']
+        num_azim = mesh.parameters['num_tangential']
+
+        target_shape = (num_nodes, num_observers, num_radial, num_azim)
+
+        # azim_angle = np.linspace(-np.pi, np.pi, num_azim+1)[:-1]
+        azim_angle = np.linspace(0, 2*np.pi, num_azim+1)[:-1]
+        azim_dist = self.declare_variable('azim_dist', azim_angle)
+
+        x_exp = csdl.expand(csdl.reshape(x, (num_nodes, num_observers)), target_shape, 'ij->ijab')
+        y_exp = csdl.expand(csdl.reshape(y, (num_nodes, num_observers)), target_shape, 'ij->ijab')
+        z_exp = csdl.expand(csdl.reshape(z, (num_nodes, num_observers)), target_shape, 'ij->ijab')
+
+        twist_exp = csdl.expand(csdl.reshape(twist_profile, (num_radial,)), target_shape, 'i->abic') # twist_profile has shape (num_radial, 1)
+        radius_exp = csdl.expand(radial_dist, target_shape, 'i->abic')
+        azim_expanded = csdl.expand(azim_dist, target_shape, 'i->abci')
+
+        sin_th = csdl.sin(twist_exp)
+        cos_th = csdl.cos(twist_exp)
+        sin_ph = csdl.sin(azim_expanded)
+        cos_ph = csdl.cos(azim_expanded)
+        
+        beta_p = 0. # flapping angle
+        coll = 0. # collective pitch
+
+        x_r = x_exp*cos_th*sin_ph - y_exp*cos_ph*cos_th + (z_exp+radius_exp)*sin_th
+        y_r = x_exp*cos_ph + y_exp*sin_th
+        z_r = -x_exp*sin_ph*sin_th + y_exp*cos_ph*sin_th + (z_exp+radius_exp)*cos_th
+
+        return x_r, y_r, z_r
