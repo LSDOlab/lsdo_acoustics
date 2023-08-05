@@ -22,6 +22,7 @@ class LowsonModel(ModuleCSDL):
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
         self.parameters.declare('debug', default=False)
+        self.parameters.declare('use_geometry', default=True)
 
     def define(self):
         component_name = self.parameters['component_name']
@@ -39,7 +40,7 @@ class LowsonModel(ModuleCSDL):
         num_azim = mesh.parameters['num_tangential']
 
         test = self.parameters['debug'] # USE FOR VALIDATION PURPOSES
-    
+        use_geometry = self.parameters['use_geometry']
         # FOR TESTING PURPOSES
         sectional_D = self.declare_variable(
             '_dD', 
@@ -57,9 +58,11 @@ class LowsonModel(ModuleCSDL):
         self.register_module_input('altitude', shape=(num_nodes,), promotes=True)
 
         # Thrust vector and origin
-        if test:
-            self.declare_variable('propeller_radius')
-            self.declare_variable('thrust_dir', shape=(3,))
+        if test or not use_geometry:
+            self.register_module_input('propeller_radius')
+            self.register_module_input('thrust_dir', shape=(3,))
+            self.register_module_input('in_plane_ex', shape=(3,))
+            self.register_module_input('origin', shape=(3,))
         else:
             units = 'ft'
             if units == 'ft':

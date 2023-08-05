@@ -16,6 +16,7 @@ class GLModel(ModuleCSDL):
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('debug', default=False)
+        self.parameters.declare('use_geometry', default=True)
 
     def define(self):
         
@@ -28,14 +29,17 @@ class GLModel(ModuleCSDL):
         num_blades = self.parameters['num_blades'] 
         num_nodes = self.parameters['num_nodes']
         test = self.parameters['debug']
+        use_geometry = self.parameters['use_geometry']
 
         num_radial = mesh.parameters['num_radial']
 
 
-        if test:
-            rotor_radius = self.declare_variable('propeller_radius')
-            chord_profile = self.declare_variable('chord_profile', shape=(num_radial,1))
-            self.declare_variable('thrust_dir', shape=(3,))
+        if test or not use_geometry:
+            rotor_radius = self.register_module_input('propeller_radius')
+            chord_profile = self.register_module_input('chord_profile', shape=(num_radial,1))
+            self.register_module_input('thrust_dir', shape=(3,))
+            self.register_module_input('origin', shape=(3,))
+
         else:
             # Thrust vector and origin
             units = 'ft'

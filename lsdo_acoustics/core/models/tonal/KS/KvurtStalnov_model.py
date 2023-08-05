@@ -21,6 +21,7 @@ class KvurtStalnovModel(ModuleCSDL):
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
         self.parameters.declare('debug', default=False)
+        self.parameters.declare('use_geometry', default=True)
 
     def define(self):
         component_name = self.parameters['component_name']
@@ -38,12 +39,14 @@ class KvurtStalnovModel(ModuleCSDL):
         num_observers = observer_data['num_observers']
 
         test = self.parameters['debug']
+        use_geometry = self.parameters['use_geometry']
 
         # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
-        if test:
-            rotor_radius = self.declare_variable('propeller_radius')
-            chord_profile = self.declare_variable('chord_profile', shape=(num_radial,))
-            self.declare_variable('thrust_dir', shape=(3,))
+        if test or not use_geometry:
+            rotor_radius = self.register_module_input('propeller_radius')
+            chord_profile = self.register_module_input('chord_profile', shape=(num_radial,))
+            self.register_module_input('thrust_dir', shape=(3,))
+            self.register_module_input('origin', shape=(3,))
             # self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
         else:
             # Thrust vector and origin
@@ -87,9 +90,9 @@ class KvurtStalnovModel(ModuleCSDL):
 
 
         self.register_module_input('altitude', shape=(num_nodes,))
-        Vx = self.declare_variable('Vx', shape=(num_nodes,))
-        Vy = self.declare_variable('Vy', shape=(num_nodes,))
-        Vz = self.declare_variable('Vz', shape=(num_nodes,))
+        Vx = self.register_module_input('Vx', shape=(num_nodes,))
+        Vy = self.register_module_input('Vy', shape=(num_nodes,))
+        Vz = self.register_module_input('Vz', shape=(num_nodes,))
         # rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
         rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
@@ -134,7 +137,8 @@ class KvurtStalnovModel(ModuleCSDL):
                 num_azim=num_azim,
                 modes=modes,
                 load_harmonics=load_harmonics,
-                test=test
+                test=test,
+                use_geometry=use_geometry
             ),
             'ks_spl_model'
         )

@@ -15,6 +15,7 @@ class KSSPLModel(csdl.Model):
         self.parameters.declare('num_radial')
         self.parameters.declare('num_azim')
         self.parameters.declare('test', default=False)
+        self.parameters.declare('use_geometry', default=True)
 
     def sears_function(self, m, omega, r, R, c):
         Ut = omega*r*R

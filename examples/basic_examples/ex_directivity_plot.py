@@ -26,7 +26,7 @@ class DummyMesh(object):
         }
 
 num_radial = 40
-mode = 'Lowson'
+mode = 'KS'
 
 # region inputs
 if mode == 'Lowson':
@@ -103,7 +103,8 @@ if mode == 'Lowson':
         num_blades=inputs['num_blades'],
         modes=[1],
         # load_harmonics=[0,1],
-        debug=True
+        debug=True,
+        # use_geometry=False
     )
 
 elif mode == 'KS':
@@ -116,7 +117,8 @@ elif mode == 'KS':
         num_blades=inputs['num_blades'],
         modes=[1],
         load_harmonics=[0,1],
-        debug=True
+        debug=True,
+        # use_geometry=False
     )
 
 sim = Simulator(m, analytics=True, name='verif')
@@ -158,12 +160,15 @@ elif mode == 'KS': # all of shape (num_nodes, num_radial)
 
 sim.run()
 
-obs_data = sim['verif_tonal_spl']
-import matplotlib.pyplot as plt
-# import seaborn as sns
+'''
+================================= DIRECTIVITY PLOT EXAMPLE =================================
+'''
 
-x = sim['init_obs_x_loc']
-y = sim['init_obs_y_loc']
+obs_data = sim['verif_tonal_spl'] # verif is the prefix here
+import matplotlib.pyplot as plt
+
+x = sim['init_obs_x_loc'] # x-location
+y = sim['init_obs_y_loc'] # y-location
 
 r = np.sqrt(x**2 + y**2)
 theta = np.arctan2(y,x)
