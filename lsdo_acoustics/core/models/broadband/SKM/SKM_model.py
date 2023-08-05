@@ -33,7 +33,7 @@ class SKMBroadbandModel(ModuleCSDL):
         num_radial = mesh.parameters['num_radial']
 
 
-        self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
+        # self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
         self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
         if test:
