@@ -1,10 +1,10 @@
 import numpy as np
 import csdl
 
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
+
 from lsdo_acoustics.utils.csdl_switch import switch_func
 
-class BPMSPLModel(ModuleCSDL):
+class BPMSPLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('num_nodes')
@@ -292,7 +292,7 @@ class BPMSPLModel(ModuleCSDL):
         Spp = csdl.sum(Spp_bar/(W**2), axes=(3,)) * 2*np.pi/num_azim/(2*np.pi) # (num_nodes, num_observers, num_radial)
 
         finalSPL = 10*csdl.log(csdl.sum(Spp, axes=(2,)))
-        self.register_module_output(f'{component_name}_broadband_spl', finalSPL) # SHAPE IS (num_nodes, num_observers)
+        self.register_output(f'{component_name}_broadband_spl', finalSPL) # SHAPE IS (num_nodes, num_observers)
         # endregion
 
     def convection_adjustment(self, S, x, y, z, num_nodes, num_observers, num_radial, num_azim):

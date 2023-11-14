@@ -4,16 +4,13 @@ from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLoc
 # from lsdo_acoustics.core.models.tonal.KS.ks_spl_model_old import KSSPLModel
 from lsdo_acoustics.core.models.tonal.KS.ks_spl_model import KSSPLModel
 
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
+
 
 from lsdo_acoustics.utils.a_weighting import A_weighting_func
 from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
 
-class KvurtStalnovModel(ModuleCSDL):
+class KvurtStalnovModel(csdl.Model):
     def initialize(self):
-        self.parameters.declare('component_name')
-        self.parameters.declare('disk_prefix')
-        self.parameters.declare('blade_prefix')
         self.parameters.declare('mesh')
         # self.parameters.declare('num_radial')
         self.parameters.declare('observer_data')
@@ -25,10 +22,8 @@ class KvurtStalnovModel(ModuleCSDL):
         self.parameters.declare('use_geometry', default=True)
 
     def define(self):
-        component_name = self.parameters['component_name']
-        disk_prefix = self.parameters['disk_prefix']
-        blade_prefix = self.parameters['blade_prefix']
         mesh = self.parameters['mesh']
+        units = mesh.parameters['mesh_units']
         num_radial = mesh.parameters['num_radial']
         num_azim = mesh.parameters['num_tangential']
         observer_data = self.parameters['observer_data']
@@ -43,40 +38,32 @@ class KvurtStalnovModel(ModuleCSDL):
         use_geometry = self.parameters['use_geometry']
 
         # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
+        # Thrust vector and origin
         if test or not use_geometry:
-            rotor_radius = self.register_module_input('propeller_radius')
-            chord_profile = self.register_module_input('chord_profile', shape=(num_radial,))
-            self.register_module_input('thrust_dir', shape=(3,))
-            self.register_module_input('origin', shape=(3,))
-            # self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
+            self.declare_variable('propeller_radius')
+            self.declare_variable('thrust_dir', shape=(3,))
+            self.declare_variable('in_plane_ex', shape=(3,))
+            self.declare_variable('origin', shape=(3,))
         else:
-            # Thrust vector and origin
-            units = 'ft'
             if units == 'ft':
-                in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
-                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) * 0.3048
-                self.register_output('origin', to)
-                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
-                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True) * 0.3048
-            else:
-                in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
-                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3,), promotes=True) 
-                self.register_output('origin', to * 1)
-                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True)
-                # to = self.register_module_input(f'{component_name}_origin', shape=(3, ), promotes=True)
-                            
-            R = csdl.pnorm(in_plane_y, 2) / 2
-            rotor_radius = self.register_module_output('propeller_radius', R)
+                r = self.declare_variable('R', shape=(num_nodes, 1))
+                rotor_radius= self.register_output('propeller_radius', r * 0.3048)
+                self.declare_variable(f'disk_origin', shape=(3,)) * 0.3048
 
-            chord = self.register_module_input(f'{blade_prefix}_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
-            chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
+            else:
+                r = self.declare_variable('R', shape=(num_nodes, 1))
+                rotor_radius = self.register_output('propeller_radius', r * 1)
+                self.declare_variable(f'disk_origin', shape=(3,)) * 1
+
+            # Chord 
+            chord_length = self.declare_variable(f'chord_length', shape=(num_radial, )) # NOTE: GENERALIZE THIS NAMING
             if units == 'ft':
                 chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
             else:
-                chord_profile = self.register_output('chord_profile', chord_length)
-            
+                chord_profile = self.register_output('chord_profile', chord_length * 1)
+
             # FINDING THRUST VECTOR DIRECTION
-            theta = self.register_module_input(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
+            theta = self.declare_variable(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
             rotation_matrix = self.create_output('rot_mat', shape=(3,3), val=0.)
             # ONLY CONSIDERING PITCH CHANGES (X-Z), NO YAW OR ROLL FOR NOW
             rotation_matrix[1, 1] = (theta + 10)/(theta + 10)
@@ -84,17 +71,17 @@ class KvurtStalnovModel(ModuleCSDL):
             rotation_matrix[0, 2] = -1 * csdl.sin(theta)
             rotation_matrix[2, 0] = -1 * csdl.sin(theta)
             rotation_matrix[2, 2] = -1 * csdl.cos(theta)
-            thrust_vec = csdl.cross(in_plane_x, in_plane_y, axis=0)
+            thrust_vec = self.declare_variable('thrust_vector', shape=(3, ))
             thrust_dir = csdl.matvec(rotation_matrix, thrust_vec/csdl.expand(csdl.pnorm(thrust_vec), shape=(3,)))
             self.register_output('thrust_dir', thrust_dir)
 
 
 
-        self.register_module_input('altitude', shape=(num_nodes,))
-        Vx = self.register_module_input('Vx', shape=(num_nodes,))
-        Vy = self.register_module_input('Vy', shape=(num_nodes,))
-        Vz = self.register_module_input('Vz', shape=(num_nodes,))
-        # rpm = self.register_module_input('rpm', shape=(num_nodes, 1), units='rpm', promotes=True)
+        self.declare_variable('altitude', shape=(num_nodes,))
+        Vx = self.declare_variable('Vx', shape=(num_nodes,))
+        Vy = self.declare_variable('Vy', shape=(num_nodes,))
+        Vz = self.declare_variable('Vz', shape=(num_nodes,))
+        # rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
         rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
         # region atmospheric model (to get density)
@@ -109,7 +96,6 @@ class KvurtStalnovModel(ModuleCSDL):
         # region observer location model
         self.add(
             SteadyObserverLocationModel(
-                component_name=disk_prefix,
                 num_nodes=num_nodes,
                 aircraft_location=observer_data['aircraft_position'],
                 init_obs_x_loc=observer_data['x'],
@@ -129,7 +115,6 @@ class KvurtStalnovModel(ModuleCSDL):
         # region KS SPL model
         self.add(
             KSSPLModel(
-                component_name=component_name,
                 num_nodes=num_nodes,
                 num_observers=observer_data['num_observers'],
                 num_blades=num_blades,
@@ -145,10 +130,10 @@ class KvurtStalnovModel(ModuleCSDL):
         # endregion
 
         # A-WEIGHTING
-        rotor_tonal_spl = self.declare_variable(f'{component_name}_tonal_spl', shape=(num_nodes, num_observers))
+        rotor_tonal_spl = self.declare_variable(f'tonal_spl', shape=(num_nodes, num_observers))
         BPF = 1. * rpm * num_blades/ 60.
         rotor_tonal_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_tonal_spl, f=BPF)
-        self.register_output(f'{component_name}_tonal_spl_A_weighted', rotor_tonal_spl_A)
+        self.register_output(f'tonal_spl_A_weighted', rotor_tonal_spl_A)
 
 if __name__ == '__main__':
     model = KvurtStalnovModel(

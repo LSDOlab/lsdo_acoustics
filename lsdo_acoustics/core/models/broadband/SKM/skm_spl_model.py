@@ -1,10 +1,9 @@
 import numpy as np
 import csdl
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
-class SKMSPLModel(ModuleCSDL):
+
+class SKMSPLModel(csdl.Model):
     def initialize(self):
-        self.parameters.declare('component_name')
         self.parameters.declare('num_nodes')
         self.parameters.declare('num_observers')
         self.parameters.declare('num_blades')
@@ -13,7 +12,6 @@ class SKMSPLModel(ModuleCSDL):
     def define(self):
         num_nodes = self.parameters['num_nodes']
         num_observers = self.parameters['num_observers']
-        component_name = self.parameters['component_name']
 
         B = self.parameters['num_blades'] 
         num_radial = self.parameters['num_radial']
@@ -71,7 +69,7 @@ class SKMSPLModel(ModuleCSDL):
         SPL150_SKM = 10*csdl.log10(1e-10 + (Omega_skm*R_skm)**6*Ab_skm*(CT_skm/sigma_skm)**2) - 42.9
         SPL_SKM = SPL150_SKM + 20*csdl.log10(1e-10 + csdl.sin((theta0_skm**2)**0.5)/(S0_skm/150))
 
-        self.register_module_output(f'{component_name}_broadband_spl', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
+        self.register_output(f'broadband_spl', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
 
 if __name__ == '__main__':
     model = SKMSPLModel(

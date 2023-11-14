@@ -87,9 +87,9 @@ hover_model.register_output(ac_states)
 ================================ BEM MODELS ================================
 '''
 
-from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
+from lsdo_rotor import BEM, BEMParameters
 
-rotor_1_bem_mesh = BEMMesh(
+rotor_1_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_1_in_plane_1=rotor_1_in_plane_1,
         rotor_1_in_plane_2=rotor_1_in_plane_2,
@@ -104,7 +104,7 @@ bem_model_1 = BEM(component=rotor_1, mesh=rotor_1_bem_mesh)
 bem_model_1.set_module_input('rpm', val=1200)
 bem_forces_1, bem_moments_1 = bem_model_1.evaluate(ac_states=ac_states)
 
-rotor_7_bem_mesh = BEMMesh(
+rotor_7_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_7_in_plane_1=rotor_7_in_plane_1,
         rotor_7_in_plane_2=rotor_7_in_plane_2,

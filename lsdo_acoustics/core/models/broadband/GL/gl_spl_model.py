@@ -4,7 +4,6 @@ from lsdo_acoustics.utils.csdl_switch import switch_func
 
 class GLSPLModel(csdl.Model):
     def initialize(self):
-        self.parameters.declare('component_name')
         self.parameters.declare('num_nodes')
         self.parameters.declare('num_observers')
         self.parameters.declare('num_blades')
@@ -13,7 +12,6 @@ class GLSPLModel(csdl.Model):
     def define(self):
         num_nodes = self.parameters['num_nodes']
         num_observers = self.parameters['num_observers']
-        component_name = self.parameters['component_name']
 
         B = self.parameters['num_blades'] 
         num_radial = self.parameters['num_radial']
@@ -70,7 +68,7 @@ class GLSPLModel(csdl.Model):
         OASPL = OASPL_ref * csdl.sin((theta_0**2.)**0.5)**beta_1 - \
                 csdl.log10(s_0/D) * (beta_2 + beta_3*(1-csdl.sin((theta_0**2)**0.5)))
         
-        self.register_output(f'{component_name}_broadband_spl', OASPL) # shape is (num_nodes, num_observers)
+        self.register_output(f'broadband_spl', OASPL) # shape is (num_nodes, num_observers)
         
 if __name__ == '__main__':
     model = GLSPLModel(

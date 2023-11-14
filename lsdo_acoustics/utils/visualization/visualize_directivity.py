@@ -57,10 +57,6 @@ class AcousticsVisualization(object):
 
         spl_dictionary, sim_list = self.evaluate(self.dc_data_dict)
 
-        plot=False
-        if plot:
-            self.generate_directivity_plots(spl_dictionary, theta)
-
         return spl_dictionary, theta
     
     def calculate_angle(self):
@@ -74,23 +70,6 @@ class AcousticsVisualization(object):
         
         return np.array(theta_full)
     
-    def generate_directivity_plots(self, spl_dictionary, theta):
-        import matplotlib.pyplot as plt
-        for dc in spl_dictionary:
-            total_spl = spl_dictionary[dc]['total_spl']
-            total_spl_A_weighted = spl_dictionary[dc]['A_weighted_total_spl']
-
-            fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-            ax.plot(theta, np.reshape(total_spl, theta.shape))
-            # ax.set_rmax(2)
-            # ax.set_rticks([0.5, 1, 1.5, 2])  # Less radial ticks
-            # ax.set_rlabel_position(-22.5)  # Move radial labels away from plotted line
-            ax.grid(True)
-
-            ax.set_title("It's SHO-TIME", va='bottom')
-
-        plt.show()
-
     def evaluate(self, dc_data_dict):
         sim_list = []
         spl_dictionary = {}

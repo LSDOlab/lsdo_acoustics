@@ -6,7 +6,7 @@ from python_csdl_backend import Simulator
 import array_mapper as am 
 from lsdo_acoustics import GEOMETRY_PATH, IMPORTS_PATH
 
-from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
+from lsdo_rotor import BEM, BEMParameters
 
 from lsdo_acoustics import Acoustics
 from lsdo_acoustics.core.m3l_models import Lowson, KS, SKM, GL, TotalAircraftNoise
@@ -189,7 +189,7 @@ hover_model.register_output(ac_states)
 '''
 ================================ BEM MODELS ================================
 '''
-rotor_1_bem_mesh = BEMMesh(
+rotor_1_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_1_in_plane_x=rotor_1_in_plane_x,
         rotor_1_in_plane_y=rotor_1_in_plane_y,
@@ -209,7 +209,7 @@ _, _, dT_1, _, dD_1, CT_1 = bem_model_1.evaluate(ac_states=ac_states)
 hover_model.register_output(dT_1)
 hover_model.register_output(dD_1)
 
-rotor_2_bem_mesh = BEMMesh(
+rotor_2_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_2_in_plane_x=rotor_2_in_plane_x,
         rotor_2_in_plane_y=rotor_2_in_plane_y,
@@ -332,7 +332,7 @@ cruise_model.register_output(ac_states)
 '''
 ================================ BEM MODELS ================================
 '''
-rotor_1_bem_mesh = BEMMesh(
+rotor_1_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_1_in_plane_x=rotor_1_in_plane_x,
         rotor_1_in_plane_y=rotor_1_in_plane_y,
@@ -352,7 +352,7 @@ _, _, dT_1, _, dD_1, CT_1 = bem_model_1.evaluate(ac_states=ac_states)
 cruise_model.register_output(dT_1)
 cruise_model.register_output(dD_1)
 
-rotor_2_bem_mesh = BEMMesh(
+rotor_2_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_2_in_plane_x=rotor_1_in_plane_x,
         rotor_2_in_plane_y=rotor_1_in_plane_y,

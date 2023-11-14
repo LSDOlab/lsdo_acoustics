@@ -9,7 +9,7 @@ def RA_func(f):
 def A_weighting_func(self, tonal_SPL, f):
     shape = tonal_SPL.shape
     RA_1000_val = RA_func(1000.)
-    RA_1000 = self.declare_variable('RA_1000', val=RA_1000_val, shape=f.shape)
+    RA_1000 = self.create_input('RA_1000', val=RA_1000_val, shape=f.shape)
     RA_f = RA_func(f)
     A_shift = csdl.reshape(
         20.*csdl.log10(RA_f) - 20.*csdl.log10(RA_1000),

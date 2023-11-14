@@ -9,7 +9,7 @@ from lsdo_acoustics.core.models.broadband.SKM.SKM_model import SKMBroadbandModel
 from lsdo_acoustics.core.models.broadband.BPM.BPM_model import BPMModel
 from lsdo_acoustics.core.models.total_noise_model import TotalAircraftNoiseModel
 
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
+
 
 ''' NOTES:
 Data files used for each condition:
@@ -25,7 +25,7 @@ class DummyMesh(object):
         }
 # endregion
 
-class BroadbandModels(ModuleCSDL):
+class BroadbandModels(csdl.Model):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('disk_prefix')

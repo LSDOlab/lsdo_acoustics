@@ -1,13 +1,13 @@
 import csdl
 import numpy as np
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
+
 
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 from lsdo_acoustics.core.models.broadband.BPM.bpm_spl_model import BPMSPLModel
 
 from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
 
-class BPMModel(ModuleCSDL):
+class BPMModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('component_name')
         self.parameters.declare('disk_prefix')
@@ -43,24 +43,24 @@ class BPMModel(ModuleCSDL):
             # Thrust vector and origin
             units = 'ft'
             if units == 'ft':
-                in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True) * 0.3048
-                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3, ), promotes=True) * 0.3048
+                in_plane_y = self.declare_variable(f'{disk_prefix}_in_plane_1', shape=(3, )) * 0.3048
+                to = self.declare_variable(f'{disk_prefix}_origin', shape=(3, )) * 0.3048
                 self.register_output('origin', to)
-                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
-                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True) * 0.3048
+                in_plane_x = self.declare_variable(f'{disk_prefix}_in_plane_2', shape=(3, )) * 0.3048
+                # in_plane_x = self.declare_variable(f'{component_name}_in_plane_2', shape=(3, )) * 0.3048
             else:
-                in_plane_y = self.register_module_input(f'{disk_prefix}_in_plane_1', shape=(3, ), promotes=True)
-                to = self.register_module_input(f'{disk_prefix}_origin', shape=(3, ), promotes=True)
+                in_plane_y = self.declare_variable(f'{disk_prefix}_in_plane_1', shape=(3, ))
+                to = self.declare_variable(f'{disk_prefix}_origin', shape=(3, ))
                 self.register_output('origin', to*1)
-                in_plane_x = self.register_module_input(f'{disk_prefix}_in_plane_2', shape=(3, ), promotes=True)
-                # in_plane_x = self.register_module_input(f'{component_name}_in_plane_2', shape=(3, ), promotes=True)
+                in_plane_x = self.declare_variable(f'{disk_prefix}_in_plane_2', shape=(3, ))
+                # in_plane_x = self.declare_variable(f'{component_name}_in_plane_2', shape=(3, ))
                             
             R = csdl.pnorm(in_plane_y, 2) / 2
-            rotor_radius = self.register_module_output('propeller_radius', R)
+            rotor_radius = self.register_output('propeller_radius', R)
 
             # Chord 
-            # chord = self.register_module_input(f'{component_name}_chord_length', shape=(num_radial, 3), promotes=True)
-            chord = self.register_module_input(f'{blade_prefix}_chord_length', shape=(num_radial, 3), promotes=True) # NOTE: GENERALIZE THIS NAMING
+            # chord = self.declare_variable(f'{component_name}_chord_length', shape=(num_radial, 3))
+            chord = self.declare_variable(f'{blade_prefix}_chord_length', shape=(num_radial, 3)) # NOTE: GENERALIZE THIS NAMING
             chord_length = csdl.reshape(csdl.pnorm(chord, 2, axis=1), (num_radial, 1))
             if units == 'ft':
                 chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
@@ -68,7 +68,7 @@ class BPMModel(ModuleCSDL):
                 chord_profile = self.register_output('chord_profile', chord_length)
 
             # FINDING THRUST VECTOR DIRECTION
-            theta = self.register_module_input(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
+            theta = self.declare_variable(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
             rotation_matrix = self.create_output('rot_mat', shape=(3,3), val=0.)
             # ONLY CONSIDERING PITCH CHANGES (X-Z), NO YAW OR ROLL FOR NOW
             rotation_matrix[1, 1] = (theta + 10)/(theta + 10)
@@ -124,7 +124,7 @@ class BPMModel(ModuleCSDL):
         
         # region BPM SPL inputs 
         target_shape = (num_nodes, num_observers, num_radial, num_azim)
-        delta_P = self.register_module_input('delta_P', 3.1690e-04, shape=(num_nodes,num_radial)) # NOTE: FIX NAME LATER
+        delta_P = self.declare_variable('delta_P', 3.1690e-04, shape=(num_nodes,num_radial)) # NOTE: FIX NAME LATER
 
         rho = self.declare_variable('density')
         mu = self.declare_variable('dynamic_viscosity')
@@ -152,8 +152,8 @@ class BPMModel(ModuleCSDL):
         Rc = self.register_output('Rc', (U_exp*chord_exp/nu_exp)+1e-7)
         Rdp = self.register_output('Rdp', U_exp*delta_P_exp/nu_exp+1e-7)
 
-        a_CL0 = self.register_module_input('a_CL0', val=0., shape=(num_radial,1))
-        AOA =  self.register_module_input('aoa', val=0., shape=(num_radial,1))
+        a_CL0 = self.declare_variable('a_CL0', val=0., shape=(num_radial,1))
+        AOA =  self.declare_variable('aoa', val=0., shape=(num_radial,1))
         a_star = AOA - a_CL0
         self.register_output('a_star', a_star)
 

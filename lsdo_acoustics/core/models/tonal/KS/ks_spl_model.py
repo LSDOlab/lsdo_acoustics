@@ -5,7 +5,6 @@ P_ref = 2.e-5
 
 class KSSPLModel(csdl.Model):
     def initialize(self):
-        self.parameters.declare('component_name')
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_observers', default=1)
         self.parameters.declare('modes', default=[1,2,3])
@@ -35,7 +34,6 @@ class KSSPLModel(csdl.Model):
         return S_real, S_imag
 
     def define(self):
-        component_name = self.parameters['component_name']
         num_nodes = self.parameters['num_nodes']
         num_observers = self.parameters['num_observers']
         modes = self.parameters['modes']
@@ -78,7 +76,7 @@ class KSSPLModel(csdl.Model):
             dDdR_real_loads = self.declare_variable('dDdR_real', shape=(num_nodes, num_radial))
             r = self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
         else:
-            r = self.declare_variable('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
+            r = self.create_input('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
             # setting up the steady loads
             dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim)) 
             dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))
@@ -132,12 +130,12 @@ class KSSPLModel(csdl.Model):
         n = np.ones(shape=target_shape)
         for i in range(num_modes):
             n[:,:,i,:,:] = modes[i]
-        n_var = self.declare_variable('n_var', val=n)
+        n_var = self.create_input('n_var', val=n)
 
         lam = np.ones(shape=target_shape)
         for i in range(num_harmonics):
             lam[:,:,:,:,i] = i
-        lam_var = self.declare_variable('lam_var', val=lam)
+        lam_var = self.create_input('lam_var', val=lam)
 
 
         coeff_matrix_A = np.ones_like(n)
@@ -191,10 +189,10 @@ class KSSPLModel(csdl.Model):
                 coeff_matrix_A[:,:,i,:,j] = coeff_A
                 coeff_matrix_B[:,:,i,:,j] = coeff_B
 
-        coeff_matrix_A = self.declare_variable('coeff_matrix_A', coeff_matrix_A)
-        coeff_matrix_B = self.declare_variable('coeff_matrix_B', coeff_matrix_B)
-        real_weighting = self.declare_variable('real_weighting', real_weighting_matrix)
-        imag_weighting = self.declare_variable('imag_weighting', imag_weighting_matrix)
+        coeff_matrix_A = self.create_input('coeff_matrix_A', coeff_matrix_A)
+        coeff_matrix_B = self.create_input('coeff_matrix_B', coeff_matrix_B)
+        real_weighting = self.create_input('real_weighting', real_weighting_matrix)
+        imag_weighting = self.create_input('imag_weighting', imag_weighting_matrix)
         # SUM ACROSS HARMONICS (lambda) AND INTEGRATE RADIALLY
         dTdR_real = self.create_output('dTdR_real_exp', val=0., shape=(num_nodes, num_observers, num_modes, num_radial, num_harmonics))
         dDdR_real = self.create_output('dDdR_real_exp', val=0., shape=(num_nodes, num_observers, num_modes, num_radial, num_harmonics)) 
@@ -282,7 +280,7 @@ class KSSPLModel(csdl.Model):
                 axes=(2,)
             )
         )
-        self.register_output(f'{component_name}_tonal_spl', tonal_SPL_rotor) # (num_nodes, num_observers)
+        self.register_output(f'tonal_spl', tonal_SPL_rotor) # (num_nodes, num_observers)
 
 class TrapezoidMethod(csdl.Model):
     def initialize(self):

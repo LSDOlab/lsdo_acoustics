@@ -36,7 +36,7 @@ class LoadIntegrationModel(csdl.Model):
 
         theta = np.linspace(0., 2*np.pi, num_azim) # we assume num_azim is the number of azimuthal divisions in ONE ROTATION
 
-        n_theta_prod = self.declare_variable('n_theta_prod', np.outer(load_harmonics, theta)) # (num_harmonics, num_azim)
+        n_theta_prod = self.create_input('n_theta_prod', np.outer(load_harmonics, theta)) # (num_harmonics, num_azim)
         cos_vec = csdl.expand(csdl.cos(n_theta_prod), (num_nodes, num_blades, len(load_harmonics), num_azim), 'ij->abij') # CHECK
         sin_vec = csdl.expand(csdl.sin(n_theta_prod), (num_nodes, num_blades, len(load_harmonics), num_azim), 'ij->abij') # CHECK
 
@@ -99,7 +99,7 @@ class TrapezoidMethod(csdl.Model):
         dim = self.parameters['dim']
         num_azim = self.parameters['num_azim']
         
-        h = self.declare_variable('dtheta', val=2.*np.pi/num_azim) # FIX TO USE THE AZIMUTHAL SEPARATIONS
+        h = self.create_input(f'{input_name}_dtheta', val=2.*np.pi/num_azim) # FIX TO USE THE AZIMUTHAL SEPARATIONS
         f = self.declare_variable(input_name, shape=input_shape)
         # out_pre_integration = 1/(2*np.pi)*(f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
         # out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))

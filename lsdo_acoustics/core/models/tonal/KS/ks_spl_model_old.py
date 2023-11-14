@@ -72,7 +72,7 @@ class KSSPLModel(csdl.Model):
             dDdR_real_loads = self.declare_variable('dDdR_real', shape=(num_nodes, num_radial))
             r = self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
         else:
-            r = self.declare_variable('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
+            r = self.create_input('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
             # setting up the steady loads
             dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim)) 
             dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))

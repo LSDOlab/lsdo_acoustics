@@ -1,15 +1,14 @@
 import csdl
 import numpy as np
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
-class LowsonSPLModel(ModuleCSDL):
+
+class LowsonSPLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_blades', default=2)
         self.parameters.declare('num_observers', default=1)
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
-        self.parameters.declare('component_name')
 
     
     def define(self):
@@ -23,7 +22,6 @@ class LowsonSPLModel(ModuleCSDL):
         harmonics = self.parameters['load_harmonics']
         num_harmonics = len(harmonics)
 
-        component_name = self.parameters['component_name']
 
         a = self.declare_variable('speed_of_sound')
         M = self.declare_variable('mach_number') # mach number traveling forward
@@ -104,12 +102,12 @@ class LowsonSPLModel(ModuleCSDL):
         n = np.ones(shape=coeff_target_shape)
         for i in range(num_modes):
             n[:,:,i,:,:] = modes[i] * B
-        n_var = self.declare_variable('n_var', val=n)
+        n_var = self.create_input('n_var', val=n)
 
         lam = np.ones(shape=coeff_target_shape)
         for i in range(num_harmonics):
             lam[:,:,:,:,i] = i
-        lam_var = self.declare_variable('lam_var', val=lam)
+        lam_var = self.create_input('lam_var', val=lam)
 
         ind = n-lam
 
@@ -186,14 +184,14 @@ class LowsonSPLModel(ModuleCSDL):
                         term_1_coeff_B[:,:,i,:,j] = 1.
                         term_2_coeff_B[:,:,i,:,j] = -1.
 
-        term_1_coeff_A = self.declare_variable('term_1_coeff_A', term_1_coeff_A)
-        term_2_coeff_A = self.declare_variable('term_2_coeff_A', term_2_coeff_A)
-        term_1_coeff_B = self.declare_variable('term_1_coeff_B', term_1_coeff_B)
-        term_2_coeff_B = self.declare_variable('term_2_coeff_B', term_2_coeff_B)
-        coeff_sign_matrix_odd = self.declare_variable('coeff_sign_matrix_odd', coeff_sign_matrix_odd)
-        coeff_sign_matrix_even = self.declare_variable('coeff_sign_matrix_even', coeff_sign_matrix_even)
-        A_lin_comb_sign_matrix = self.declare_variable('A_lin_comb_sign_matrix', A_lin_comb_sign_matrix)
-        B_lin_comb_sign_matrix = self.declare_variable('B_lin_comb_sign_matrix', B_lin_comb_sign_matrix)
+        term_1_coeff_A = self.create_input('term_1_coeff_A', term_1_coeff_A)
+        term_2_coeff_A = self.create_input('term_2_coeff_A', term_2_coeff_A)
+        term_1_coeff_B = self.create_input('term_1_coeff_B', term_1_coeff_B)
+        term_2_coeff_B = self.create_input('term_2_coeff_B', term_2_coeff_B)
+        coeff_sign_matrix_odd = self.create_input('coeff_sign_matrix_odd', coeff_sign_matrix_odd)
+        coeff_sign_matrix_even = self.create_input('coeff_sign_matrix_even', coeff_sign_matrix_even)
+        A_lin_comb_sign_matrix = self.create_input('A_lin_comb_sign_matrix', A_lin_comb_sign_matrix)
+        B_lin_comb_sign_matrix = self.create_input('B_lin_comb_sign_matrix', B_lin_comb_sign_matrix)
         #endregion 
 
         # NOTE: need to a_lambda and b_lambda coeff from load integration to a new array 
@@ -241,7 +239,7 @@ class LowsonSPLModel(ModuleCSDL):
         SPL_m = 10.*csdl.log10(ex_sum)
 
         rotor_tonal_spl = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
-        self.register_output(f'{component_name}_tonal_spl', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
+        self.register_output(f'tonal_spl_compute', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
 
     def convection_adjustment(self, S, x, y, z, Vx, Vy, Vz, a):
         '''

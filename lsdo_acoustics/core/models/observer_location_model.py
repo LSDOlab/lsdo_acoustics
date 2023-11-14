@@ -7,7 +7,6 @@ class SteadyObserverLocationModel(csdl.Model):
     We treat the problem such that the aircraft is still and the observer moves.
     '''
     def initialize(self):
-        self.parameters.declare('component_name')
         self.parameters.declare('aircraft_location')
         self.parameters.declare('init_obs_x_loc')
         self.parameters.declare('init_obs_y_loc')
@@ -17,7 +16,6 @@ class SteadyObserverLocationModel(csdl.Model):
         self.parameters.declare('num_nodes', default=1)
     
     def define(self):
-        component_name = self.parameters['component_name']
         num_nodes = self.parameters['num_nodes']
         aircraft_location = self.parameters['aircraft_location']
         init_obs_x_loc = self.parameters['init_obs_x_loc']
@@ -29,9 +27,9 @@ class SteadyObserverLocationModel(csdl.Model):
         num_observers =  self.parameters['total_num_observers'] 
         num_observer_groups = len(time_vectors)
 
-        init_obs_x_loc = self.declare_variable('init_obs_x_loc', init_obs_x_loc)
-        init_obs_y_loc = self.declare_variable('init_obs_y_loc', init_obs_y_loc)
-        init_obs_z_loc = self.declare_variable('init_obs_z_loc', init_obs_z_loc)
+        init_obs_x_loc = self.create_input('init_obs_x_loc', init_obs_x_loc)
+        init_obs_y_loc = self.create_input('init_obs_y_loc', init_obs_y_loc)
+        init_obs_z_loc = self.create_input('init_obs_z_loc', init_obs_z_loc)
 
         Vx = self.declare_variable('Vx', shape=(num_nodes,), val=0.)
         Vy = self.declare_variable('Vy', shape=(num_nodes,), val=0.)
@@ -51,12 +49,12 @@ class SteadyObserverLocationModel(csdl.Model):
         # aircraft_location = self.declare_variable('aircraft_location', aircraft_location)
 
         init_aircraft_location = csdl.expand(
-            self.declare_variable('aircraft_location', aircraft_location),
+            self.create_input('aircraft_location', aircraft_location),
             (num_nodes, 3, num_observers), 'ij->aij'
         )
 
         time = csdl.expand(
-            self.declare_variable('time_vectors', time_vectors),
+            self.create_input('time_vectors', time_vectors),
             (num_nodes, 3, num_observers), 'i->abi'
         )
 

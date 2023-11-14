@@ -1,8 +1,8 @@
 import csdl
 import numpy as np
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
-class LowsonSPLModel(ModuleCSDL):
+
+class LowsonSPLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_blades', default=2)
@@ -30,7 +30,7 @@ class LowsonSPLModel(ModuleCSDL):
         R = self.declare_variable('propeller_radius')
         
         rpm = csdl.reshape(
-            self.register_module_input('rpm', shape=(num_nodes,1), units='rpm', promotes=True),
+            self.declare_variable('rpm', shape=(num_nodes,1), units='rpm'),
             (num_nodes, ),
         )
 

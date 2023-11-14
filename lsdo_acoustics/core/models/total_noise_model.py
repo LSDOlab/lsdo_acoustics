@@ -1,20 +1,17 @@
 import csdl
 import numpy as np
-from lsdo_modules.module_csdl.module_csdl import ModuleCSDL
 
-class TotalAircraftNoiseModel(ModuleCSDL):
+
+class TotalAircraftNoiseModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_observers')
-        self.parameters.declare('component_names', default=None) # LIST
         self.parameters.declare('var_names', default=None)
         self.parameters.declare('var_names_A_weighted', default=None)
 
     def define(self):
         num_nodes = self.parameters['num_nodes']
         num_observers = self.parameters['num_observers']
-        component_names = self.parameters['component_names']
-        # num_components = len(component_names)
         var_names = self.parameters['var_names']
         var_names_A = self.parameters['var_names_A_weighted']
 
@@ -50,7 +47,7 @@ class TotalAircraftNoiseModel(ModuleCSDL):
                     axes=(0,)
                 )
             )
-            self.register_module_output('total_spl', total_noise)
+            self.register_output('total_spl', total_noise)
 
         # A-WEIGHTED TOTAL NOISE COMPUTATION   
         if var_names_A is not None: 
@@ -78,5 +75,5 @@ class TotalAircraftNoiseModel(ModuleCSDL):
                     axes=(0,)
                 )
             )
-            self.register_module_output('A_weighted_total_spl', total_noise_A)
+            self.register_output('A_weighted_total_spl', total_noise_A)
         

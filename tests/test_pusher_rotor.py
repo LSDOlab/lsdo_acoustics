@@ -6,7 +6,7 @@ from python_csdl_backend import Simulator
 import array_mapper as am
 from lsdo_acoustics import GEOMETRY_PATH, IMPORTS_PATH
 
-from lsdo_rotor.core.BEM_caddee.BEM_caddee import BEM, BEMMesh
+from lsdo_rotor import BEM, BEMParameters
 
 from lsdo_acoustics import Acoustics
 from lsdo_acoustics.core.m3l_models import Lowson, KS, SKM, GL, TotalAircraftNoise
@@ -128,7 +128,7 @@ cruise_model.register_output(ac_states)
 
 
 # region BEM
-rotor_bem_mesh = BEMMesh(
+rotor_bem_mesh = BEMParameters(
     meshes=dict(
         rotor_in_plane_1=rotor_in_plane_x,
         rotor_in_plane_2=rotor_in_plane_y,

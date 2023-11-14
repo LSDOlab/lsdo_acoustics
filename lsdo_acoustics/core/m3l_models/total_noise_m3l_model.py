@@ -3,27 +3,30 @@ import numpy as np
 from lsdo_acoustics.core.models.total_noise_model import TotalAircraftNoiseModel
 from lsdo_acoustics.core.m3l_models.acoustics_m3l_model import AcousticsModelTemplate
 
+
 class TotalAircraftNoise(m3l.ExplicitOperation):
     
     def initialize(self, kwargs):
+        self.parameters.declare('name', types=str)
         self.parameters.declare('acoustics_data', default=None)
-        self.parameters.declare('component_list', default=[])
         self.parameters.declare('num_nodes', default=1)
 
         self.num_nodes = 1
+
+    def assign_attributes(self):
+        self.name = self.parameters['name']
 
     def compute(self):
         model = TotalAircraftNoiseModel(
             num_nodes = self.num_nodes,
             num_observers=self.observer_data['num_observers'],
-            component_names=self.component_names,
             var_names = self.var_names,
             var_names_A_weighted = self.var_names_A_weighted
         )
 
         return model
 
-    def evaluate(self, noise_components=None, A_weighted_noise_components=None, design_condition=None) -> m3l.Variable:
+    def evaluate(self, noise_components, A_weighted_noise_components=None) -> m3l.Variable:
         '''
         This method computes the total aircraft noise at the observer locations.
         Inputs:
@@ -42,18 +45,10 @@ class TotalAircraftNoise(m3l.ExplicitOperation):
 
         self.observer_data = self._assemble_observers() # organizing observer data
         self.num_observers = self.observer_data['num_observers']
-        self.component_list = self.parameters['component_list']
         self.num_nodes = self.parameters['num_nodes']
-        self.component_names = []
-        for component in self.component_list:
-            self.component_names.append(component.name)
             # print(component.name)
 
-        if design_condition:
-            dc_name = design_condition.parameters['name']
-            self.name = f'{dc_name}_total_noise_model'
-        else:
-            self.name = 'total_noise_model'
+        
         self.arguments = {}
         
         self.var_names = None
