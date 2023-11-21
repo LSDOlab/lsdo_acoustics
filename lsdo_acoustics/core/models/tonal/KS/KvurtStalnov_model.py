@@ -40,7 +40,7 @@ class KvurtStalnovModel(csdl.Model):
         # NOTE: ROTOR LOCATION CHANGES W OPTIMIZER IF THE AIRCRAFT DESIGN CHANGES
         # Thrust vector and origin
         if test or not use_geometry:
-            self.declare_variable('propeller_radius')
+            rotor_radius=self.declare_variable('propeller_radius')
             self.declare_variable('thrust_dir', shape=(3,))
             self.declare_variable('in_plane_ex', shape=(3,))
             self.declare_variable('origin', shape=(3,))

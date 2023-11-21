@@ -55,7 +55,7 @@ class LowsonModel(csdl.Model):
         # self.declare_variable(f'{component_name}_thrust_origin', shape=(3,))
         # rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
         rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
-        self.declare_variable('altitude', shape=(num_nodes,))
+        self.declare_variable('altitude', shape=(num_nodes,), val=0.)
 
         # Thrust vector and origin
         if test or not use_geometry:
