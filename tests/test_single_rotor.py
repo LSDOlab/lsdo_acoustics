@@ -121,7 +121,8 @@ cruise_tonal_SPL, cruise_tonal_SPL_A_weighted  = lowson_model.evaluate_tonal_noi
                                                                                    rpm=rpm, rotor_origin=rotor_disk_mesh.thrust_origin,
                                                                                    thrust_vector=rotor_disk_mesh.thrust_vector, 
                                                                                    rotor_radius=rotor_disk_mesh.radius, altitude=altitude,
-                                                                                   in_plane_ex=rotor_disk_mesh.in_plane_2)
+                                                                                   in_plane_ex=rotor_disk_mesh.in_plane_2,
+                                                                                   chord_length=rotor_disk_mesh.chord_profile, phi_profile=bem_outputs.phi)
 system_model.register_output(cruise_tonal_SPL)
 system_model.register_output(cruise_tonal_SPL_A_weighted)
 
@@ -182,21 +183,22 @@ hover_acoustics = Acoustics(
 
 hover_acoustics.add_observer(
     name='obs1',
-    obs_position=np.array([0., 0., 0.]),
-    time_vector=np.array([0., 1.]),
+    obs_position=np.array([100., 0., 0.]),
+    time_vector=np.array([0.]),
 )
 
 
-ks_model = KS(
-    name='hover_KS_model',
+ks_model = Lowson(
+    name='hover_Lowson_model',
     num_nodes=1,
     rotor_parameters=bem_rotor_parameters,
     acoustics_data=hover_acoustics,
 )
-hover_tonal_SPL, hover_tonal_SPL_A_weighted = ks_model.evaluate_tonal_noise(bem_outputs.dT, bem_outputs.dD, ac_states,
+hover_tonal_SPL, hover_tonal_SPL_A_weighted = ks_model.evaluate_tonal_noise(hover_bem_outputs.dT, hover_bem_outputs.dD, hover_ac_states,
                                                                                    rpm=rpm, rotor_origin=rotor_disk_mesh.thrust_origin,
                                                                                    thrust_vector=rotor_disk_mesh.thrust_vector, 
                                                                                    rotor_radius=rotor_disk_mesh.radius, altitude=altitude,
+                                                                                   in_plane_ex=rotor_disk_mesh.in_plane_2,
                                                                                    chord_length=rotor_disk_mesh.chord_profile, phi_profile=hover_bem_outputs.phi)
 system_model.register_output(hover_tonal_SPL)
 system_model.register_output(hover_tonal_SPL_A_weighted)
@@ -210,7 +212,7 @@ gl_model = GL(
     rotor_parameters=bem_rotor_parameters,
     acoustics_data=hover_acoustics,
 )
-hover_broadband_SPL, hover_broadband_SPL_A_weighted = gl_model.evaluate_broadband_noise(ac_states, bem_outputs.C_T, rpm=rpm,
+hover_broadband_SPL, hover_broadband_SPL_A_weighted = gl_model.evaluate_broadband_noise(hover_ac_states, bem_outputs.C_T, rpm=rpm,
                                                                                            disk_origin=rotor_disk_mesh.thrust_origin,
                                                                                            thrust_vector=rotor_disk_mesh.thrust_vector,
                                                                                            radius=rotor_disk_mesh.radius, chord_length=rotor_disk_mesh.chord_profile)
@@ -219,14 +221,14 @@ system_model.register_output(hover_broadband_SPL_A_weighted)
 
 total_noise_model = TotalAircraftNoise(
     name='hover_total_noise',
-    acoustics_data=cruise_acoustics,
+    acoustics_data=hover_acoustics,
 )
 noise_components = [hover_tonal_SPL, hover_broadband_SPL]
 noise_components_A = [hover_tonal_SPL_A_weighted, hover_broadband_SPL_A_weighted]
 
-cruise_total_SPL, cruise_total_SPL_A_weighted = total_noise_model.evaluate(noise_components, A_weighted_noise_components=noise_components_A)
-system_model.register_output(cruise_total_SPL)
-system_model.register_output(cruise_total_SPL_A_weighted)
+hover_total_SPL, hover_total_SPL_A_weighted = total_noise_model.evaluate(noise_components, A_weighted_noise_components=noise_components_A)
+system_model.register_output(hover_total_SPL)
+system_model.register_output(hover_total_SPL_A_weighted)
 
 
 csdl_model = system_model.assemble_csdl()
@@ -239,9 +241,10 @@ print('SKM broadband_spl_A_weighted', sim['test_skm_SKM_broadband_model.broadban
 print('Edgewise total_spl', sim['test_total_noise.total_spl'])
 print('Edgewise A_weighted_total_spl', sim['test_total_noise.A_weighted_total_spl'])
 print('\n')
-print('Hover KS tonal_spl_A_weighted', sim['hover_KS_model_KS_tonal_model.tonal_spl_A_weighted'])
-print('Hover KS tonal_spl', sim['hover_KS_model_KS_tonal_model.tonal_spl'])
+print('Hover Lowson tonal_spl_A_weighted', sim['hover_Lowson_model_Lowson_tonal_model.tonal_spl_A_weighted'])
+print('Hover Lowson tonal_spl', sim['hover_Lowson_model_Lowson_tonal_model.tonal_spl'])
 print('Hover GL broadband_spl_A_weighted', sim['hover_GL_model_GL_broadband_model.broadband_spl_A_weighted'])
+print('Hover GL broadband_spl', sim['hover_GL_model_GL_broadband_model.broadband_spl'])
 print('Hover total_spl', sim['hover_total_noise.total_spl'])
 print('Hover A_weighted_total_spl', sim['hover_total_noise.A_weighted_total_spl'])
 

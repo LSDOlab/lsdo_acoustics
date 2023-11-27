@@ -15,6 +15,13 @@ class GLModel(csdl.Model):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('debug', default=False)
         self.parameters.declare('use_geometry', default=True)
+        self.parameters.declare('freq_band', default=np.array(
+            [12.5, 16, 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 
+             500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000,
+             10000, 12500, 16000, 20000,
+             25000, 31500, 40000, 50000, 63000 # additional ones used by Hyunjune
+             ] 
+        ))
 
     def define(self):
         
@@ -26,6 +33,7 @@ class GLModel(csdl.Model):
         num_nodes = self.parameters['num_nodes']
         test = self.parameters['debug']
         use_geometry = self.parameters['use_geometry']
+        freq_band = self.parameters['freq_band']
 
         num_radial = mesh.parameters['num_radial']
 
@@ -93,7 +101,8 @@ class GLModel(csdl.Model):
                 num_nodes=num_nodes,
                 num_observers=num_observers,
                 num_blades=num_blades,
-                num_radial=num_radial
+                num_radial=num_radial,
+                freq_band=freq_band
             ),
             'gl_spl_model'
         )

@@ -31,40 +31,53 @@ class LoadIntegrationModel(csdl.Model):
         radial_sum_D = csdl.sum(sectional_D, axes=(2,)) # total blade drag as a function of theta
         radial_sum_T = csdl.sum(sectional_T, axes=(2,)) # total blade thrust as a function of theta
 
-        self.register_output('aaa', radial_sum_D)
-        self.register_output('bbb', radial_sum_T)
 
         theta = np.linspace(0., 2*np.pi, num_azim) # we assume num_azim is the number of azimuthal divisions in ONE ROTATION
 
         n_theta_prod = self.create_input('n_theta_prod', np.outer(load_harmonics, theta)) # (num_harmonics, num_azim)
-        cos_vec = csdl.expand(csdl.cos(n_theta_prod), (num_nodes, num_blades, len(load_harmonics), num_azim), 'ij->abij') # CHECK
-        sin_vec = csdl.expand(csdl.sin(n_theta_prod), (num_nodes, num_blades, len(load_harmonics), num_azim), 'ij->abij') # CHECK
+        cos_vec = csdl.expand(csdl.cos(n_theta_prod), (num_nodes, num_blades, len(load_harmonics), num_radial, num_azim), 'ij->abicj') # CHECK
+        sin_vec = csdl.expand(csdl.sin(n_theta_prod), (num_nodes, num_blades, len(load_harmonics), num_radial, num_azim), 'ij->abicj') # CHECK
+
+        # aT_integrand = self.register_output(
+        #     'aT_integrand',
+        #     csdl.expand(radial_sum_T, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * cos_vec
+        # )
+        # aD_integrand = self.register_output(
+        #     'aD_integrand',
+        #     csdl.expand(radial_sum_D, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * cos_vec
+        # )
+        # bT_integrand = self.register_output(
+        #     'bT_integrand',
+        #     csdl.expand(radial_sum_T, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * sin_vec * -1.
+        # )
+        # bD_integrand = self.register_output(
+        #     'bD_integrand',
+        #     csdl.expand(radial_sum_D, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * sin_vec * -1.
+        # )
 
         aT_integrand = self.register_output(
             'aT_integrand',
-            csdl.expand(radial_sum_T, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * cos_vec
+            csdl.expand(sectional_T, (num_nodes, num_blades, len(load_harmonics), num_radial, num_azim), 'ijkl->ijakl') * cos_vec
         )
         aD_integrand = self.register_output(
             'aD_integrand',
-            csdl.expand(radial_sum_D, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * cos_vec
+            csdl.expand(sectional_D, (num_nodes, num_blades, len(load_harmonics), num_radial, num_azim), 'ijkl->ijakl') * cos_vec
         )
         bT_integrand = self.register_output(
             'bT_integrand',
-            csdl.expand(radial_sum_T, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * sin_vec * -1.
+            csdl.expand(sectional_T, (num_nodes, num_blades, len(load_harmonics), num_radial, num_azim), 'ijkl->ijakl') * sin_vec * -1.
         )
         bD_integrand = self.register_output(
             'bD_integrand',
-            csdl.expand(radial_sum_D, (num_nodes, num_blades, len(load_harmonics), num_azim), 'ijk->ijak') * sin_vec * -1.
+            csdl.expand(sectional_D, (num_nodes, num_blades, len(load_harmonics), num_radial, num_azim), 'ijkl->ijakl') * sin_vec * -1.
         )
-        # aT_list = self.create_output('aT_list', shape=(num_nodes, num_blades, len(load_harmonics)))
-        # aD_list = self.create_output('aD_list', shape=(num_nodes, num_blades, len(load_harmonics)))
-        # bT_list = self.create_output('bT_list', shape=(num_nodes, num_blades, len(load_harmonics)))
-        # bD_list = self.create_output('bD_list', shape=(num_nodes, num_blades, len(load_harmonics)))
+
 
         input_shape = aT_integrand.shape
-        dim = 3
+        dim = 4
         input_names = ['aT_integrand', 'aD_integrand', 'bT_integrand', 'bD_integrand']
-        output_names = ['aT', 'aD', 'bT', 'bD']
+        # output_names = ['aT', 'aD', 'bT', 'bD']
+        output_names = ['aT_unsteady', 'aD_unsteady', 'bT_unsteady', 'bD_unsteady']
 
         for i in range(4):
             self.add(
@@ -103,9 +116,9 @@ class TrapezoidMethod(csdl.Model):
         f = self.declare_variable(input_name, shape=input_shape)
         # out_pre_integration = 1/(2*np.pi)*(f[:,:,:,0:-1] + f[:,:,:,1:]) *  csdl.expand(h, shape=f[:,:,:,1:].shape)/ 2.
         # out = self.register_output(output_name, csdl.sum(out_pre_integration, axes=(dim,)))
-        out_pre_integration = 1/(2*np.pi)*(csdl.sum(f, axes=(3,))) * csdl.expand(h, input_shape[:3])
+        out_pre_integration = 1/(2*np.pi)*(csdl.sum(f, axes=(4,))) * csdl.expand(h, input_shape[:4])
         self.register_output(output_name, out_pre_integration)
-        # print(out.shape)
+        print(out_pre_integration.shape)
 
 '''
 NOTE:

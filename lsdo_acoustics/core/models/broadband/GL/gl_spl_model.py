@@ -2,17 +2,18 @@ import csdl
 import numpy as np
 from lsdo_acoustics.utils.csdl_switch import switch_func
 
-class GLSPLModelNew(csdl.Model):
+class GLSPLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes')
         self.parameters.declare('num_observers')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_radial')
         self.parameters.declare('freq_band', default=np.array(
-            # [50., 100., 300., 350.]
             [12.5, 16, 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 
              500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000,
-             10000, 12500, 16000, 20000]
+             10000, 12500, 16000, 20000,
+             25000, 31500, 40000, 50000, 63000 # additional ones used by Hyunjune
+             ] 
         ))
     
     def define(self):
@@ -45,7 +46,7 @@ class GLSPLModelNew(csdl.Model):
         chord_profile_pe = self.declare_variable('chord_profile', shape=(num_radial,))
         S_pe = csdl.reshape(self.declare_variable('rel_obs_dist', shape=(num_nodes, 1, num_observers)), (num_nodes, num_observers))
         theta_0_pe = self.declare_variable('rel_angle_plane', shape=(num_nodes, num_observers))
-        R_pe = self.declare_variable('propeller_radius')
+        R_pe = self.declare_variable('propeller_radius') # 1.7145
         dr_pe = self.declare_variable('dr')
         rpm_pe = self.declare_variable('rpm', shape=(num_nodes,))
         a_pe = self.declare_variable('speed_of_sound', shape=(num_nodes,), val=343.)
@@ -57,9 +58,11 @@ class GLSPLModelNew(csdl.Model):
             'i->ia'
         )
 
-        A_b = B*csdl.expand(csdl.sum(chord_profile_pe)*dr_pe, CT_pe.shape)
-        sigma_pe = A_b/(np.pi*csdl.expand(R_pe, A_b.shape)**2)
-        c_sw_pe = A_b/B/csdl.expand(R_pe, (num_nodes,))
+        A_b = csdl.expand(csdl.sum((chord_profile_pe))*dr_pe, CT_pe.shape)
+        # A_b = csdl.expand(csdl.sum((chord_profile_pe[:-1] + chord_profile_pe[1:])*dr_pe/2), CT_pe.shape)
+        sigma_pe = A_b*B/(np.pi*csdl.expand(R_pe, A_b.shape)**2)
+        c_sw_pe = sigma_pe * np.pi * csdl.expand(R_pe, A_b.shape)/B
+        # c_sw_pe = A_b/csdl.expand(R_pe, (num_nodes,))
 
         # region expanding variables
         target_shape = (num_nodes, num_observers, num_freq_band)
@@ -77,43 +80,37 @@ class GLSPLModelNew(csdl.Model):
         f0 = csdl.log10(V_t**7.84) * 10.
         f1 = sigma
         f2 = 0.9*M_t*sigma*(M_t+3.82)
-        f3 = 1. # REMOVE LATER
-        f4 = 1. # REMOVE LATER
+        f3 = 1. # NOT USED
+        f4 = 1. # NOT USED
         f5 = -2.*M_t**2 + 2.06
         f6 = -CT * M_t * (CT-csdl.sin((theta_0**2)**0.5)+2.06) + 1.
-        f7 = CT*S/R
-        f8 = 4.97*CT*csdl.sin((theta_0**2)**0.5)*(4.3*S/R*M_t - (S/R) + 4.3)
+        f7 = CT
+        # f8 = 4.97*CT*csdl.sin((theta_0**2)**0.5)*(4.3*S/R*M_t - (S/R) + 4.3) # OLD FORMULATION
+        f8 = 4.97*CT*csdl.sin((theta_0**2)**0.5)*(1.5*S/R*M_t - (S/R) + 15.)
 
-        num = f0*(St - (f1*csdl.log10(CT) + f2*csdl.log10(sigma)))**0.6
-        den_1 = csdl.exp_a(f5, f6)
-        den_2 = csdl.exp_a(10., f8)
-        # SPL_1_3 = num/(den_1 + den_2)
-
-        SPL_1_3 = f0*(St - (f1*csdl.log10(CT) + f2*csdl.log10(sigma)))**0.6 / \
-        (csdl.exp_a(
-            (St - (f1*csdl.log10(CT) + f2*csdl.log10(sigma))) + f5,
+        num = f0*(St-(f1*csdl.log10(CT) + f2*csdl.log10(sigma)))**0.6
+        den_1 = csdl.exp_a(
+            St - (f1*csdl.log10(CT) + f2*csdl.log10(sigma)) + f5,
             f6
-        )  + \
-        csdl.exp_a(
-            f7*(St - (f1*csdl.log10(CT) + f2*csdl.log10(sigma))),
+        )
+        den_2 = csdl.exp_a(
+            f7*(St - (f1*csdl.log10(CT) +  f2*csdl.log10(sigma))),
             f8
-        ))
-        # SPL_1_3 = f0*(St - (f1*csdl.log10(CT) + f2*csdl.log10(sigma)))**0.6
-        self.register_output('asdf', SPL_1_3)
-
-        print(SPL_1_3.shape)
+        )
+        SPL_1_3 = num/(den_1 + den_2)
+        
+        self.register_output('broadband_spl_spectrum', SPL_1_3)
 
         OASPL = 10.*csdl.log10(
             csdl.sum(
                 csdl.exp_a(10., SPL_1_3/10.),
-                axes=(2,) # UPDATE TO BE OVER THE FREQUENCY AXIS
+                axes=(2,) # OVER THE FREQUENCY AXIS
             )
         )
-        # OASPL = csdl.sum(SPL_1_3, axes=(2,))
         self.register_output('broadband_spl', OASPL) # shape is (num_nodes, num_observers)
 
 
-class GLSPLModel(csdl.Model):
+class GLSPLModelOld(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes')
         self.parameters.declare('num_observers')

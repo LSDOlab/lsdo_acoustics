@@ -138,11 +138,14 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.arguments['R'] = rotor_radius
         self.arguments['thrust_vector'] = thrust_vector
         self.arguments['altitude'] = altitude
-        if self.model_name == 'Lowson':
-            self.arguments['in_plane_ex'] = in_plane_ex
-        elif self.model_name == 'KS':
-            self.arguments['chord_length'] = chord_length
-            self.arguments['phi'] = phi_profile
+        # if self.model_name == 'Lowson':
+        #     self.arguments['in_plane_ex'] = in_plane_ex
+        # elif self.model_name == 'KS':
+        #     self.arguments['chord_length'] = chord_length
+        #     self.arguments['phi'] = phi_profile
+        self.arguments['in_plane_ex'] = in_plane_ex
+        self.arguments['chord_length'] = chord_length
+        self.arguments['phi'] = phi_profile
             # self.arguments['z'] = ac_states['z']
         # if self.model_name == 'KS':
         #     pass

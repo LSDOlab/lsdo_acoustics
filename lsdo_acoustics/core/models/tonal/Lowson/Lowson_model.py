@@ -2,11 +2,14 @@ import csdl
 import numpy as np
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 from lsdo_acoustics.core.models.tonal.Lowson.load_integration_model import LoadIntegrationModel
+from lsdo_acoustics.core.models.tonal.Lowson.sears_function_model import SearsFunctionModel
 # from load_integration_model import LoadIntegrationModel
 # from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model_old import LowsonSPLModel
 from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model import LowsonSPLModel
 
 from lsdo_acoustics.utils.a_weighting import A_weighting_func
+
+from lsdo_acoustics.utils.csdl_switch import switch_func
 
 
 
@@ -59,19 +62,19 @@ class LowsonModel(csdl.Model):
 
         # Thrust vector and origin
         if test or not use_geometry:
-            self.declare_variable('propeller_radius')
-            self.declare_variable('thrust_dir', shape=(3,))
+            rotor_radius = self.declare_variable('propeller_radius')
+            thrust_dir = self.declare_variable('thrust_dir', shape=(3,))
             self.declare_variable('in_plane_ex', shape=(3,))
             self.declare_variable('origin', shape=(3,))
         else:
             if units == 'ft':
                 r = self.declare_variable('R', shape=(num_nodes, 1))
-                self.register_output('propeller_radius', r * 0.3048)
+                rotor_radius = self.register_output('propeller_radius', r * 0.3048)
                 self.declare_variable(f'disk_origin', shape=(3,)) * 0.3048
 
             else:
                 r = self.declare_variable('R', shape=(num_nodes, 1))
-                self.register_output('propeller_radius', r * 1)
+                rotor_radius = self.register_output('propeller_radius', r * 1)
                 self.declare_variable(f'disk_origin', shape=(3,)) * 1
                             
             # FINDING THRUST VECTOR DIRECTION
@@ -133,7 +136,7 @@ class LowsonModel(csdl.Model):
         # endregion
         # NOTE: NEED ROTOR LOCATION RELATIVE TO AIRCRAFT CG
 
-        # region load integration
+        # region load integration FOR UNSTEADY CASES
         self.add(
             LoadIntegrationModel(
                 num_radial=num_radial,
@@ -142,6 +145,56 @@ class LowsonModel(csdl.Model):
             ), 
             'load_integration_model'
         )
+        # endregion
+        norm_hub_rad = 0.2
+        dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)
+        self.register_output('dr', dr)
+        # region Sears function model (for 'unsteady' steady loads)
+        self.add(
+            SearsFunctionModel(
+                num_nodes=num_nodes,
+                num_blades=num_blades,
+                num_observers=num_observers,
+                modes=modes,
+                load_harmonics=load_harmonics,
+                num_radial=num_radial,
+                num_azim=num_azim
+            ),
+            'sears_function_model'
+        )
+        # endregion
+
+        # region balancing the unsteady vs. "steady unsteady" cases
+        thrust_dir_exp = csdl.expand(thrust_dir, (num_nodes, 3), 'i->ai')
+        V_aircraft = self.declare_variable('V_aircraft', shape=(num_nodes, 3))
+
+        # self.print_var(thrust_dir_exp)
+        # self.print_var(V_aircraft)
+
+        td_cross_V = self.register_output('td_cross_V', csdl.cross(thrust_dir_exp, V_aircraft, axis=1))
+        td_cross_V_norm  = self.register_output('td_cross_V_norm', csdl.pnorm(td_cross_V, axis=1))
+        # self.print_var(td_cross_V)
+        # self.print_var(td_cross_V_norm)
+        # if norm > 0, then use unsteady; otherwise, use steady
+
+        target_shape = (num_nodes, num_blades, len(load_harmonics), num_radial)
+        td_cross_V_norm_exp = csdl.expand(td_cross_V_norm, shape=target_shape, indices='i->iabc')
+        output_names = ['aT', 'aD', 'bT', 'bD']
+        for i, name in enumerate(output_names):
+            var_unsteady = self.declare_variable(f'{name}_unsteady', shape=target_shape)
+            # var_Sears = self.declare_variable(f'{name}_Sears', shape=target_shape)
+
+            # self.print_var(var_unsteady)
+            # self.print_var(var_Sears)
+
+            # if td_cross_V_norm > 1e-5, use var_unsteady
+            # if td_cross_V_norm < 1e-5, use var_Sears
+            # funcs_list = [var_Sears, var_unsteady]
+            # bounds_list = [1.e-5]
+            # smooth_var = switch_func(td_cross_V_norm_exp, funcs_list=funcs_list, bounds_list=bounds_list, scale=100)
+            # self.register_output(name, smooth_var)
+            self.register_output(name, var_unsteady*1.)
+
         # endregion
 
         # region lowson SPL model
@@ -152,6 +205,7 @@ class LowsonModel(csdl.Model):
                 num_observers=num_observers,
                 modes=modes,
                 load_harmonics=load_harmonics,
+                num_radial=num_radial
             ), 
             'lowson_spl_model'
         )

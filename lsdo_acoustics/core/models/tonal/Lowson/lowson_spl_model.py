@@ -9,6 +9,7 @@ class LowsonSPLModel(csdl.Model):
         self.parameters.declare('num_observers', default=1)
         self.parameters.declare('modes', default=[1,2,3])
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
+        self.parameters.declare('num_radial')
 
     
     def define(self):
@@ -21,6 +22,7 @@ class LowsonSPLModel(csdl.Model):
         num_modes = len(modes)
         harmonics = self.parameters['load_harmonics']
         num_harmonics = len(harmonics)
+        num_radial = self.parameters['num_radial']
 
 
         a = self.declare_variable('speed_of_sound')
@@ -65,31 +67,31 @@ class LowsonSPLModel(csdl.Model):
         # self.register_output('z_in_frame_dummy', z_in_frame)
 
         # FOURIER COEFFICIENTS FOR THRUST AND DRAG
-        a_T = self.declare_variable('aT', shape=(num_nodes, B, num_harmonics))
-        b_T = self.declare_variable('bT', shape=(num_nodes, B, num_harmonics))
-        a_D = self.declare_variable('aD', shape=(num_nodes, B, num_harmonics))
-        b_D = self.declare_variable('bD', shape=(num_nodes, B, num_harmonics))
+        a_T = self.declare_variable('aT', shape=(num_nodes, B, num_harmonics, num_radial))
+        b_T = self.declare_variable('bT', shape=(num_nodes, B, num_harmonics, num_radial))
+        a_D = self.declare_variable('aD', shape=(num_nodes, B, num_harmonics, num_radial))
+        b_D = self.declare_variable('bD', shape=(num_nodes, B, num_harmonics, num_radial))
 
         # theta = self.declare_variable('observer_theta', shape=(num_nodes, num_observers))
 
         # ====================================== VARIABLE EXPANSION ======================================
-        target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics)
-        omega_exp = csdl.expand(omega, target_shape, 'i->iabcd')
+        target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics, num_radial)
+        omega_exp = csdl.expand(omega, target_shape, 'i->iabcde')
         # z_exp = csdl.expand(z, target_shape, 'ij->ijabc')
         # x_exp = csdl.expand(x, target_shape, 'ij->ijabc')
-        z_exp = csdl.expand(z_in_frame, target_shape, 'ij->ijabc')
-        x_exp = csdl.expand(x_in_frame, target_shape, 'ij->ijabc')
+        z_exp = csdl.expand(z_in_frame, target_shape, 'ij->ijabcd')
+        x_exp = csdl.expand(x_in_frame, target_shape, 'ij->ijabcd')
         a_exp = csdl.expand(a, target_shape)
-        r1_exp = csdl.expand(r1, target_shape, 'ij->ijabc')
+        r1_exp = csdl.expand(r1, target_shape, 'ij->ijabcd')
         R_exp = csdl.expand(R, target_shape)
         
         # Target shape for fourier coefficients from integration step
         # NOTE: dim for num_modes == 1 because they do not differ across the blade modes
-        coeff_target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics) 
-        a_T_exp = csdl.expand(a_T, coeff_target_shape, 'ijk->iabjk')
-        b_T_exp = csdl.expand(b_T, coeff_target_shape, 'ijk->iabjk')
-        a_D_exp = csdl.expand(a_D, coeff_target_shape, 'ijk->iabjk')
-        b_D_exp = csdl.expand(b_D, coeff_target_shape, 'ijk->iabjk')
+        coeff_target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics, num_radial) 
+        a_T_exp = csdl.expand(a_T, coeff_target_shape, 'ijkl->iabjkl')
+        b_T_exp = csdl.expand(b_T, coeff_target_shape, 'ijkl->iabjkl')
+        a_D_exp = csdl.expand(a_D, coeff_target_shape, 'ijkl->iabjkl')
+        b_D_exp = csdl.expand(b_D, coeff_target_shape, 'ijkl->iabjkl')
 
         # ====================================== SETTING UP OUTPUTS ======================================
 
@@ -211,7 +213,7 @@ class LowsonSPLModel(csdl.Model):
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
         
 
-        An = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) 
+        a_n_radial_harmonics = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) 
 
         # TERM B
         term_1_B_fc = (coeff_sign_matrix_even * a_T_exp + coeff_sign_matrix_odd * b_T_exp) # weighting based on sign of n-lambda
@@ -222,20 +224,21 @@ class LowsonSPLModel(csdl.Model):
         term_2_B = term_2_constant * term_2_B_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
         B_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
 
-        Bn = (term_1_coeff_B*term_1_B + term_2_coeff_B*term_2_B) / (4*np.pi)
-        
-        self.register_output('An', An)
-        self.register_output('Bn', Bn)
+        b_n_radial_harmonics = (term_1_coeff_B*term_1_B + term_2_coeff_B*term_2_B) / (4*np.pi)
 
-        sum1 = csdl.sum(An, axes=(4,))
-        sum2 = csdl.sum(Bn, axes=(4,))
-        sum_A_B = (sum1)**2 + (sum2)**2
+        a_n_radial = csdl.sum(a_n_radial_harmonics, axes=(4,)) # first over harmonics
+        b_n_radial = csdl.sum(b_n_radial_harmonics, axes=(4,)) # first over harmonics
+
+        An = csdl.sum(a_n_radial, axes=(4,)) # now over radial dimension
+        Bn = csdl.sum(b_n_radial, axes=(4,)) # now over radial dimension
+        sum_A_B = (An)**2 + (Bn)**2
         
         bladeSPL = 10.*csdl.log10(sum_A_B/(2*P_ref**2))
         self.register_output('bladeSPL', bladeSPL)
 
         ex = csdl.exp_a(10., bladeSPL/10.)
         ex_sum = csdl.sum(ex, axes=(3,))
+
         SPL_m = 10.*csdl.log10(ex_sum)
 
         rotor_tonal_spl = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
@@ -262,7 +265,6 @@ class LowsonSPLModel(csdl.Model):
 
         r1 = S*(1-v_comp_obs/csdl.expand(a, v_comp_obs.shape))
         return r1 # shape is (num_nodes, num_observers)
-
 
 if __name__ == '__main__':
     from python_csdl_backend import Simulator
