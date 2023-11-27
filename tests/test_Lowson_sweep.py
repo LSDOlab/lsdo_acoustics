@@ -65,7 +65,7 @@ cruise_condition = cd.CruiseCondition(
     num_nodes=1,
 )
 
-mach_number = system_model.create_input('mach_number', val=0.0)
+mach_number = system_model.create_input('mach_number', val=0.01)
 altitude = system_model.create_input('cruise_altitude', val=500)
 pitch_angle = system_model.create_input('pitch_angle', val=np.deg2rad(0))
 cruise_range = system_model.create_input('cruise_range', val=40000)
@@ -128,7 +128,7 @@ system_model.register_output(cruise_tonal_SPL_A_weighted)
 
 csdl_model = system_model.assemble_csdl()
 
-sim = Simulator(csdl_model, analytics=True, display_scripts=False)
+sim = Simulator(csdl_model, analytics=False, display_scripts=False)
 sim.run()
 print('Lowson tonal_spl_A_weighted', sim['test_lowson_Lowson_tonal_model.tonal_spl_A_weighted'])
 print('Lowson tonal_spl', sim['test_lowson_Lowson_tonal_model.tonal_spl'])

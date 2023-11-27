@@ -108,7 +108,7 @@ m = GLModel(
     freq_band=freq_band
 )
 
-sim = Simulator(m, analytics=True)
+sim = Simulator(m, analytics=False)
 
 sim['propeller_radius'] = R
 sim['chord_profile'] = chord
@@ -122,4 +122,4 @@ sim.run()
 print(sim['rel_angle_plane'] * 180./np.pi)
 print(sim['broadband_spl'])
 for i in range(len(CT)):
-    print(sim['asdf'][i,0,:])
+    print(sim['broadband_spl_spectrum'][i,0,:])

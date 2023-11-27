@@ -47,7 +47,7 @@ class SearsFunctionModel(csdl.Model):
         num_azim = self.parameters['num_azim']
         test = self.parameters['test']
 
-        q = 0.05 # gust amplification factor
+        q = 0.06 # gust amplification factor
         rho = self.declare_variable('density')
         RPM = self.declare_variable('rpm')
     
@@ -55,29 +55,30 @@ class SearsFunctionModel(csdl.Model):
         # R = self.declare_variable(f'{component_name}_radius')
         R = self.declare_variable('propeller_radius')
         a = self.declare_variable('speed_of_sound')
-        c = self.declare_variable('chord_length', shape=(num_radial,))
+        c = self.declare_variable('chord_profile', shape=(num_radial,))
         # self.print_var(c)
 
         if test:
-            dTdR_real_loads = self.declare_variable('dTdR_real', shape=(num_nodes, num_radial))
-            dDdR_real_loads = self.declare_variable('dDdR_real', shape=(num_nodes, num_radial))
+            dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim))
+            dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))
             r = self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
+
+            dTdR_real_loads = csdl.reshape(dT[:,:,0], (num_nodes, num_radial)) 
+            dDdR_real_loads = csdl.reshape(dD[:,:,0], (num_nodes, num_radial))
         else:
             r = self.create_input('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
             # setting up the steady loads
             dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim)) 
             dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))
-            # dT_test = self.register_output('dT_test', dT[0,-1,:])
-            # dD_test = self.register_output('dD_test', dD[0,-1,:])
-            # self.print_var(dT_test)
-            # self.print_var(dD_test)
             dr = self.declare_variable('dr')
 
-            dTdR_inputs = dT / csdl.expand(dr, shape=dT.shape)
-            dDdR_inputs = dD / csdl.expand(dr, shape=dD.shape)
+            # dTdR_inputs = dT / csdl.expand(dr, shape=dT.shape)
+            # dDdR_inputs = dD / csdl.expand(dr, shape=dD.shape)
+            # dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
+            # dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
 
-            dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
-            dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
+            dTdR_real_loads = csdl.reshape(dT[:,:,0], (num_nodes, num_radial)) 
+            dDdR_real_loads = csdl.reshape(dD[:,:,0], (num_nodes, num_radial))
 
         # ======================== VARIABLE EXPANSION ========================
         target_shape = (num_nodes, B, num_harmonics, num_radial)
@@ -130,7 +131,8 @@ class SearsFunctionModel(csdl.Model):
 
         # UNSTEADY LOADS (REMAINING HARMONICS)
         S_real, S_imag = self.sears_function(lam_var[:,:,1:,:], omega_uns, r_uns, R_uns, c_uns)
-        w_lam = lambda_i_uns*omega_uns*R_uns/lam_var[:,:,1:,:] * q/B
+        # w_lam = lambda_i_uns*omega_uns*R_uns/lam_var[:,:,1:,:] * q/B  # B was left in with KS; Hyunjune says to take out
+        w_lam = lambda_i_uns*omega_uns*R_uns/lam_var[:,:,1:,:] * q
         dLdR = rho_uns*(omega_uns*r_uns*R_uns)*c_uns*w_lam*np.pi
         Lreal = S_real*dLdR
         Limag = S_imag*dLdR
@@ -139,5 +141,3 @@ class SearsFunctionModel(csdl.Model):
         dDdR_real[:,:,1:,:] = Lreal*csdl.sin(phi_uns)
         dTdR_imag[:,:,1:,:] = Limag*csdl.cos(phi_uns)
         dDdR_imag[:,:,1:,:] = Limag*csdl.sin(phi_uns)
-        print(dTdR_real.shape)
-        # exit()

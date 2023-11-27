@@ -51,12 +51,14 @@ class GLSPLModel(csdl.Model):
         rpm_pe = self.declare_variable('rpm', shape=(num_nodes,))
         a_pe = self.declare_variable('speed_of_sound', shape=(num_nodes,), val=343.)
 
+        V_aircraft = self.declare_variable('V_aircraft', shape=(num_nodes, 3))
+        V_inf = csdl.pnorm(V_aircraft, axis=1)
         omega_pe = rpm_pe*2.*np.pi/60.
         V_tip_pe = csdl.expand(
             omega_pe*csdl.expand(R_pe, (num_nodes,)), 
             (num_nodes, num_observers),
             'i->ia'
-        )
+        ) - csdl.expand(V_inf, (num_nodes, num_observers),'i->ia') # correction with the retreating blade
 
         A_b = csdl.expand(csdl.sum((chord_profile_pe))*dr_pe, CT_pe.shape)
         # A_b = csdl.expand(csdl.sum((chord_profile_pe[:-1] + chord_profile_pe[1:])*dr_pe/2), CT_pe.shape)

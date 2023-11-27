@@ -148,13 +148,14 @@ class AcousticsComparisonModel(csdl.Model):
             self.connect('rpm', f'{model}_model.rpm') # RPM
             self.connect('thrust_dir', f'{model}_model.thrust_dir') # thrust direction vector
             self.connect('thrust_origin', f'{model}_model.origin') # thrust origin 
-            if model != 'Lowson':
-                self.connect('chord_profile', f'{model}_model.chord_profile') # chord_profile
+            self.connect('chord_profile', f'{model}_model.chord_profile') # chord_profile
             if model == 'Lowson':
                 self.connect('in_plane_ex', f'{model}_model.in_plane_ex') # vector in plane of rotor disk
                 self.connect('mach_number', f'{model}_model.mach_number') # chord_profile
                 self.connect('_dT', f'{model}_model._dT') # chord_profile
                 self.connect('_dD', f'{model}_model._dD') # chord_profile
+                self.connect('lambda_i', f'{model}_model.lambda_i') # radius
+                self.connect('nondim_sectional_radius', f'{model}_model.nondim_sectional_radius') # radius
             if model in ['SKM', 'GL']:
                 self.connect('CT', f'{model}_model.CT') # CT
                 self.connect('Vx', f'{model}_model.Vx') # Vx
@@ -266,7 +267,7 @@ model = AcousticsComparisonModel(
 )
 # endregion
 
-sim = Simulator(model, analytics=True)
+sim = Simulator(model, analytics=False)
 
 # PLEASE REFER TO THIS FOR A LIST OF CSDL VARIABLES NEEDED AS INPUTS
 sim['propeller_radius'] = prop_radius

@@ -76,6 +76,13 @@ class LowsonModel(csdl.Model):
                 r = self.declare_variable('R', shape=(num_nodes, 1))
                 rotor_radius = self.register_output('propeller_radius', r * 1)
                 self.declare_variable(f'disk_origin', shape=(3,)) * 1
+
+            # Chord 
+            chord_length = self.declare_variable(f'chord_length', shape=(num_radial, )) # NOTE: GENERALIZE THIS NAMING
+            if units == 'ft':
+                chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
+            else:
+                chord_profile = self.register_output('chord_profile', chord_length * 1)
                             
             # FINDING THRUST VECTOR DIRECTION
             theta = self.declare_variable(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
@@ -150,20 +157,20 @@ class LowsonModel(csdl.Model):
         dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)
         self.register_output('dr', dr)
         # region Sears function model (for 'unsteady' steady loads)
-        # self.add(
-        #     SearsFunctionModel(
-        #         num_nodes=num_nodes,
-        #         num_blades=num_blades,
-        #         num_observers=num_observers,
-        #         modes=modes,
-        #         load_harmonics=load_harmonics,
-        #         num_radial=num_radial,
-        #         num_azim=num_azim,
-        #         test=True,
-        #         use_geometry=False
-        #     ),
-        #     'sears_function_model'
-        # )
+        self.add(
+            SearsFunctionModel(
+                num_nodes=num_nodes,
+                num_blades=num_blades,
+                num_observers=num_observers,
+                modes=modes,
+                load_harmonics=load_harmonics,
+                num_radial=num_radial,
+                num_azim=num_azim,
+                test=test,
+                use_geometry=use_geometry
+            ),
+            'sears_function_model'
+        )
         # endregion
 
         # region balancing the unsteady vs. "steady unsteady" cases
@@ -184,18 +191,18 @@ class LowsonModel(csdl.Model):
         output_names = ['aT', 'aD', 'bT', 'bD']
         for i, name in enumerate(output_names):
             var_unsteady = self.declare_variable(f'{name}_unsteady', shape=target_shape)
-            # var_Sears = self.declare_variable(f'{name}_Sears', shape=target_shape)
+            var_Sears = self.declare_variable(f'{name}_Sears', shape=target_shape)
 
             # self.print_var(var_unsteady)
             # self.print_var(var_Sears)
 
             # if td_cross_V_norm > 1e-5, use var_unsteady
             # if td_cross_V_norm < 1e-5, use var_Sears
-            # funcs_list = [var_Sears, var_unsteady]
-            # bounds_list = [1.e-5]
-            # smooth_var = switch_func(td_cross_V_norm_exp, funcs_list=funcs_list, bounds_list=bounds_list, scale=100)
-            # self.register_output(name, smooth_var)
-            self.register_output(name, var_unsteady*1.)
+            funcs_list = [var_Sears, var_unsteady]
+            bounds_list = [1.e-5]
+            smooth_var = switch_func(td_cross_V_norm_exp, funcs_list=funcs_list, bounds_list=bounds_list, scale=100)
+            self.register_output(name, smooth_var)
+            # self.register_output(name, var_unsteady*1.)
 
         # endregion
 
