@@ -150,18 +150,20 @@ class LowsonModel(csdl.Model):
         dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)
         self.register_output('dr', dr)
         # region Sears function model (for 'unsteady' steady loads)
-        self.add(
-            SearsFunctionModel(
-                num_nodes=num_nodes,
-                num_blades=num_blades,
-                num_observers=num_observers,
-                modes=modes,
-                load_harmonics=load_harmonics,
-                num_radial=num_radial,
-                num_azim=num_azim
-            ),
-            'sears_function_model'
-        )
+        # self.add(
+        #     SearsFunctionModel(
+        #         num_nodes=num_nodes,
+        #         num_blades=num_blades,
+        #         num_observers=num_observers,
+        #         modes=modes,
+        #         load_harmonics=load_harmonics,
+        #         num_radial=num_radial,
+        #         num_azim=num_azim,
+        #         test=True,
+        #         use_geometry=False
+        #     ),
+        #     'sears_function_model'
+        # )
         # endregion
 
         # region balancing the unsteady vs. "steady unsteady" cases

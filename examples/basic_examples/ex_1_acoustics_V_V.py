@@ -262,11 +262,11 @@ model = AcousticsComparisonModel(
     dummy_mesh=dummy_mesh,
     num_blades=num_blades,
     num_nodes=1,
-    observer_data=observer_data
+    observer_data=observer_data,
 )
 # endregion
 
-sim = Simulator(model)
+sim = Simulator(model, analytics=True)
 
 # PLEASE REFER TO THIS FOR A LIST OF CSDL VARIABLES NEEDED AS INPUTS
 sim['propeller_radius'] = prop_radius
