@@ -32,12 +32,12 @@ geometry.refit(parallelize=True)
 '''
 
 rotor_disk = geometry.declare_component(component_name='wing', b_spline_search_names=['Rotor_disk'])
-rotor_blade = geometry.declare_component(component_name='blade_0', b_spline_search_names=['Rotor_blades, 0'])
+# rotor_blade = geometry.declare_component(component_name='blade_0', b_spline_search_names=['Rotor_blades, 0'])
 
-rotor_blade_parameters = cd.BladeParameters(
-    blade_component=rotor_blade,
-    point_on_leading_edge=np.array([-0.062, 0.30, 0.007])
-) 
+# rotor_blade_parameters = cd.BladeParameters(
+#     blade_component=rotor_blade,
+#     point_on_leading_edge=np.array([-0.062, 0.30, 0.007])
+# ) 
 
 num_radial = 30
 rotor_disk_mesh = cd.make_rotor_mesh(
@@ -49,15 +49,20 @@ rotor_disk_mesh = cd.make_rotor_mesh(
     y2=np.array([-0.500, 0.000, 0.000]),
     z1=np.array([0.000, 0.500 , 0.000]),
     z2=np.array([0.000, -0.500, 0.000]),
-    blade_geometry_parameters=[rotor_blade_parameters],
+    # blade_geometry_parameters=[rotor_blade_parameters],
     plot=False,
 )
+
 
 '''
 ======================================== SYSTEM MODEL ========================================
 '''
 caddee = cd.CADDEE()
 system_model = m3l.Model()
+
+
+rotor_disk_mesh.radius = system_model.create_input('radius', val=1)
+
 
 # ==================== CRUISE ====================
 cruise_condition = cd.CruiseCondition(
