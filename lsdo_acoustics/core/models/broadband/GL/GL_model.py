@@ -10,6 +10,7 @@ from lsdo_acoustics.utils.a_weighting import A_weighting_func
 class GLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('mesh')
+        self.parameters.declare('name')
         self.parameters.declare('observer_data')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
@@ -34,6 +35,7 @@ class GLModel(csdl.Model):
         test = self.parameters['debug']
         use_geometry = self.parameters['use_geometry']
         freq_band = self.parameters['freq_band']
+        model_name = self.parameters['name']
 
         num_radial = mesh.parameters['num_radial']
 
@@ -99,6 +101,7 @@ class GLModel(csdl.Model):
         self.add(
             GLSPLModel(
                 num_nodes=num_nodes,
+                name=model_name,
                 num_observers=num_observers,
                 num_blades=num_blades,
                 num_radial=num_radial,
@@ -111,4 +114,8 @@ class GLModel(csdl.Model):
         rotor_broadband_spl = self.declare_variable(f'broadband_spl', shape=(num_nodes, num_observers))
         BPF = 1. * rpm * num_blades/ 60.
         rotor_broadband_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_broadband_spl, f=BPF)
-        self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
+
+        if model_name is not None:
+            self.register_output(f'{model_name}_broadband_spl_A_weighted', rotor_broadband_spl_A)
+        else:
+            self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)

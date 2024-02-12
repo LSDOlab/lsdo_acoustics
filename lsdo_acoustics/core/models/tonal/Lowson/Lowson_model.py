@@ -26,6 +26,7 @@ class LowsonModel(csdl.Model):
         self.parameters.declare('load_harmonics', default=np.arange(0,11,1))
         self.parameters.declare('debug', default=False)
         self.parameters.declare('use_geometry', default=True)
+        self.parameters.declare('name', types=str, default=None, allow_none=True)
 
     def define(self):
         # component_name = self.parameters['component_name']
@@ -34,6 +35,7 @@ class LowsonModel(csdl.Model):
         num_blades = self.parameters['num_blades']
         observer_data = self.parameters['observer_data']
         num_observers = observer_data['num_observers']
+        model_name = self.parameters['name']
 
         modes = self.parameters['modes']
         load_harmonics = self.parameters['load_harmonics']
@@ -181,7 +183,8 @@ class LowsonModel(csdl.Model):
         # self.print_var(V_aircraft)
 
         td_cross_V = self.register_output('td_cross_V', csdl.cross(thrust_dir_exp, V_aircraft, axis=1))
-        td_cross_V_norm  = self.register_output('td_cross_V_norm', csdl.pnorm(td_cross_V, axis=1))
+        td_cross_V_norm  = self.register_output('td_cross_V_norm', csdl.pnorm(td_cross_V+1e-4, axis=1))
+        # self.print_var(td_cross_V_norm)
         # self.print_var(td_cross_V)
         # self.print_var(td_cross_V_norm)
         # if norm > 0, then use unsteady; otherwise, use steady
@@ -222,7 +225,16 @@ class LowsonModel(csdl.Model):
 
         # A-WEIGHTING
         rotor_tonal_spl = self.declare_variable(f'tonal_spl_compute', shape=(num_nodes, num_observers))
-        self.register_output('tonal_spl', rotor_tonal_spl * 1)
+        if model_name is not None:
+            self.register_output(f'{model_name}_tonal_spl', rotor_tonal_spl * 1)
+        else:
+            self.register_output('tonal_spl', rotor_tonal_spl * 1)
         BPF = 1. * rpm * num_blades/ 60.
         rotor_tonal_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_tonal_spl, f=BPF)
-        self.register_output(f'tonal_spl_A_weighted', rotor_tonal_spl_A)
+        if model_name is not None:
+            self.register_output(f'{model_name}_tonal_spl_A_weighted', rotor_tonal_spl_A)
+        else:
+            self.register_output(f'tonal_spl_A_weighted', rotor_tonal_spl_A)
+        
+        # self.print_var(rotor_tonal_spl)
+        # self.print_var(rotor_tonal_spl_A)

@@ -76,4 +76,6 @@ class TotalAircraftNoiseModel(csdl.Model):
                 )
             )
             self.register_output('A_weighted_total_spl', total_noise_A)
+            # self.print_var(total_noise)
+            self.print_var(total_noise_A)
         
