@@ -18,17 +18,35 @@ class SearsFunctionModel(csdl.Model):
         Ut = omega*r*R
         k = m*omega*c/(2*Ut)
 
-        S_real = ((csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2 - csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) + \
-        csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,0) - csdl.bessel(k,1,1)*csdl.bessel(k,2,0)*csdl.bessel(k,2,1)) - \
-        ((csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2) + csdl.bessel(k,1,0)**2*csdl.bessel(k,2,1) - \
-        csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) - csdl.bessel(k,1,0)*csdl.bessel(k,2,1)**2)) \
-            / ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2)  # RECHECK
+        # S_real = ((csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2 - csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) + \
+        # csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,0) - csdl.bessel(k,1,1)*csdl.bessel(k,2,0)*csdl.bessel(k,2,1)) - \
+        # ((csdl.bessel(k,1,0)*csdl.bessel(k,1,1)**2) + csdl.bessel(k,1,0)**2*csdl.bessel(k,2,1) - \
+        # csdl.bessel(k,1,1)**2*csdl.bessel(k,2,1) - csdl.bessel(k,1,0)*csdl.bessel(k,2,1)**2)) \
+        #     / ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2)  # RECHECK
         
-        S_imag = -(csdl.bessel(k,1,1)**3 + csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + \
-            csdl.bessel(k,1,1)**2*csdl.bessel(k,2,0)+ csdl.bessel(k,1,0)*csdl.bessel(k,2,0)*csdl.bessel(k,2,1) + \
-            csdl.bessel(k,1,0)**2*csdl.bessel(k,1,1) - csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) - \
-            csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + csdl.bessel(k,1,1)*csdl.bessel(k,2,1)**2) / \
-            ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2) # RECHECK
+        # S_imag = -(csdl.bessel(k,1,1)**3 + csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + \
+        #     csdl.bessel(k,1,1)**2*csdl.bessel(k,2,0)+ csdl.bessel(k,1,0)*csdl.bessel(k,2,0)*csdl.bessel(k,2,1) + \
+        #     csdl.bessel(k,1,0)**2*csdl.bessel(k,1,1) - csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) - \
+        #     csdl.bessel(k,1,0)*csdl.bessel(k,1,1)*csdl.bessel(k,2,1) + csdl.bessel(k,1,1)*csdl.bessel(k,2,1)**2) / \
+        #     ((csdl.bessel(k,1,1) + csdl.bessel(k,2,0))**2 + (csdl.bessel(k,1,0) - csdl.bessel(k,2,1))**2) # RECHECK
+        
+        # BESSEL ARGUMENT FOR F & G IS k
+        J0 = csdl.bessel(k,1,0)
+        J1 = csdl.bessel(k,1,1)
+        Y0 = csdl.bessel(k,2,0)
+        Y1 = csdl.bessel(k,2,1)
+
+        # C-function from Hyunjune
+        den_term_1 = J1+Y0
+        den_term_2 = Y1-J0
+        den = den_term_1**2 + (-1.*den_term_2)**2
+        F = (J1*den_term_1 + Y1*den_term_2) / den
+        G = -(Y1*Y0 + J1*J0) / den
+
+        # Sears function (by modifying C-function)
+        S_real = F*J0 + G*J1
+        S_imag = (G*J0 - F*J1 + J1)
+        
         return S_real, S_imag
     
     def define(self):
@@ -59,26 +77,24 @@ class SearsFunctionModel(csdl.Model):
         # self.print_var(c)
 
         if test:
-            dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim))
-            dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))
-            r = self.declare_variable('nondim_sectional_radius', shape=(num_radial,)) # NOTE: ADJUST LATER 
+            dTdR = self.create_input('_dTdR', shape=(num_nodes, num_radial, num_azim))
+            dDdR = self.create_input('_dDdR', shape=(num_nodes, num_radial, num_azim))
+            r = self.create_input('nondim_sectional_radius',  val=np.linspace(0.2, 1., num_radial), shape=(num_radial,)) 
 
-            dTdR_real_loads = csdl.reshape(dT[:,:,0], (num_nodes, num_radial)) 
-            dDdR_real_loads = csdl.reshape(dD[:,:,0], (num_nodes, num_radial))
+            dTdR_real_loads = csdl.reshape(dTdR[:,:,0], (num_nodes, num_radial)) 
+            dDdR_real_loads = csdl.reshape(dDdR[:,:,0], (num_nodes, num_radial))
         else:
-            r = self.create_input('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial)) # NOTE: ADJUST LATER 
+            r = self.create_input('nondim_sectional_radius', val=np.linspace(0.2, 1., num_radial))
             # setting up the steady loads
             dT = self.declare_variable('_dT', shape=(num_nodes, num_radial, num_azim)) 
             dD = self.declare_variable('_dD', shape=(num_nodes, num_radial, num_azim))
             dr = self.declare_variable('dr')
 
-            # dTdR_inputs = dT / csdl.expand(dr, shape=dT.shape)
-            # dDdR_inputs = dD / csdl.expand(dr, shape=dD.shape)
-            # dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
-            # dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
+            dTdR_inputs = dT / csdl.expand(dr, shape=dT.shape)
+            dDdR_inputs = dD / csdl.expand(dr, shape=dD.shape)
 
-            dTdR_real_loads = csdl.reshape(dT[:,:,0], (num_nodes, num_radial)) 
-            dDdR_real_loads = csdl.reshape(dD[:,:,0], (num_nodes, num_radial))
+            dTdR_real_loads = csdl.reshape(dTdR_inputs[:,:,0], (num_nodes, num_radial)) 
+            dDdR_real_loads = csdl.reshape(dDdR_inputs[:,:,0], (num_nodes, num_radial))
 
         # ======================== VARIABLE EXPANSION ========================
         target_shape = (num_nodes, B, num_harmonics, num_radial)
@@ -96,9 +112,6 @@ class SearsFunctionModel(csdl.Model):
         a_uns = a_exp[:,:,1:,:]
         c_uns = c_exp[:,:,1:,:]
         rho_uns = rho_exp[:,:,1:,:]
-
-        # lambda_i_exp = csdl.expand(lambda_i, target_shape, 'ij->iabjc')
-        # phi_exp = lambda_i_exp/r_exp
 
         if test: # inputs are lambda and r, get phi
             lambda_i = self.declare_variable('lambda_i', shape=(num_nodes, num_radial))
@@ -136,8 +149,14 @@ class SearsFunctionModel(csdl.Model):
         dLdR = rho_uns*(omega_uns*r_uns*R_uns)*c_uns*w_lam*np.pi
         Lreal = S_real*dLdR
         Limag = S_imag*dLdR
+
+        self.register_output('dLdR_dummy', dLdR)
+        self.register_output('S_real_dummy', S_real)
+        self.register_output('S_imag_dummy', S_imag)
+
         
-        dTdR_real[:,:,1:,:] = Lreal*csdl.cos(phi_uns)
-        dDdR_real[:,:,1:,:] = Lreal*csdl.sin(phi_uns)
-        dTdR_imag[:,:,1:,:] = Limag*csdl.cos(phi_uns)
-        dDdR_imag[:,:,1:,:] = Limag*csdl.sin(phi_uns)
+        dTdR_real[:,:,1:,:] = Lreal*csdl.cos(phi_uns) # aT
+        dDdR_real[:,:,1:,:] = Lreal*csdl.sin(phi_uns) # aD
+
+        dTdR_imag[:,:,1:,:] = Limag*csdl.cos(phi_uns) # bT
+        dDdR_imag[:,:,1:,:] = Limag*csdl.sin(phi_uns) # bD

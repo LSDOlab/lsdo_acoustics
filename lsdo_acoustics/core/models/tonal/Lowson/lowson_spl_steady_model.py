@@ -2,7 +2,7 @@ import csdl
 import numpy as np
 
 
-class LowsonSPLModel(csdl.Model):
+class LowsonSPLSteadyModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('num_blades', default=2)
@@ -28,15 +28,13 @@ class LowsonSPLModel(csdl.Model):
         a = self.declare_variable('speed_of_sound')
         M = self.declare_variable('mach_number') # mach number traveling forward
         R = self.declare_variable('propeller_radius')
-        r = self.declare_variable('nondim_sectional_radius', shape=(num_radial,))
-        dr = self.declare_variable('dr')
         
         rpm = csdl.reshape(
             self.declare_variable('rpm', shape=(num_nodes,1)),
             (num_nodes, ),
         )
 
-        omega = rpm*2.*np.pi/60. # conversion to radians per second
+        omega = rpm*2*np.pi/60 # conversion to radians per second
 
         # DATA ON OBSERVER LOCATIONS
         x = csdl.reshape(self.declare_variable('rel_obs_x_pos', shape=(num_nodes, 1, num_observers)), new_shape=(num_nodes, num_observers))
@@ -54,7 +52,7 @@ class LowsonSPLModel(csdl.Model):
         # r1 = S*(1.-csdl.expand(M,(num_nodes, num_observers))*csdl.cos(theta))
 
         r1 = self.convection_adjustment(S, x, y, z, Vx, Vy, Vz, a)
-        self.register_output('r1_dummy', r1)
+        # self.register_output('r1_dummy', r1)
 
         # PROJECT THE OBSERVER X-LOCATION ALONG THE X-DIRECTION OF THE AERO COORDINATE SYSTEM VECTOR
 
@@ -62,33 +60,17 @@ class LowsonSPLModel(csdl.Model):
         thrust_dir = csdl.expand(self.declare_variable('thrust_dir', shape=(3,)), (num_nodes, 3, num_observers), 'i->aib')
         rel_obs_position = self.declare_variable('rel_obs_position', shape=(num_nodes,3,num_observers)) # coming from observer location model
 
+        x_in_frame = csdl.dot(rel_obs_position, csdl.expand(x_dir_aero, (num_nodes,3,num_observers), 'ij->ija'), axis=1)
         z_in_frame = csdl.dot(rel_obs_position, thrust_dir, axis=1)
-        # x_in_frame = csdl.dot(rel_obs_position, csdl.expand(x_dir_aero, (num_nodes,3,num_observers), 'ij->ija'), axis=1)
-        Y_in_frame = (S**2 - z_in_frame**2)**0.5
-        self.register_output('z_in_frame', z_in_frame)
-        self.register_output('Y_in_frame', Y_in_frame)
-
-        # z_in_frame = csdl.dot(rel_obs_position, csdl.expand(x_dir_aero, (num_nodes,3,num_observers), 'ij->ija'), axis=1)
-        # x_in_frame = csdl.dot(rel_obs_position, thrust_dir, axis=1)
 
         # self.register_output('x_in_frame_dummy', x_in_frame)
         # self.register_output('z_in_frame_dummy', z_in_frame)
 
         # FOURIER COEFFICIENTS FOR THRUST AND DRAG
-        # a_T = self.declare_variable('aT', shape=(num_nodes, B, num_harmonics, num_radial))
-        # b_T = self.declare_variable('bT', shape=(num_nodes, B, num_harmonics, num_radial))
-        # a_D = self.declare_variable('aD', shape=(num_nodes, B, num_harmonics, num_radial))
-        # b_D = self.declare_variable('bD', shape=(num_nodes, B, num_harmonics, num_radial))
-        
-        a_T_uns = self.declare_variable('aT_unsteady', shape=(num_nodes, B, num_harmonics, num_radial))
-        b_T_uns = self.declare_variable('bT_unsteady', shape=(num_nodes, B, num_harmonics, num_radial))
-        a_D_uns = self.declare_variable('aD_unsteady', shape=(num_nodes, B, num_harmonics, num_radial))
-        b_D_uns = self.declare_variable('bD_unsteady', shape=(num_nodes, B, num_harmonics, num_radial))
-
-        a_T_Sears = self.declare_variable('aT_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
-        b_T_Sears = self.declare_variable('bT_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
-        a_D_Sears = self.declare_variable('aD_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
-        b_D_Sears = self.declare_variable('bD_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
+        a_T = self.declare_variable('aT_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
+        b_T = self.declare_variable('bT_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
+        a_D = self.declare_variable('aD_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
+        b_D = self.declare_variable('bD_Sears', shape=(num_nodes, B, num_harmonics, num_radial))
 
         # ====================================== VARIABLE EXPANSION ======================================
         target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics, num_radial)
@@ -96,24 +78,18 @@ class LowsonSPLModel(csdl.Model):
         # z_exp = csdl.expand(z, target_shape, 'ij->ijabc')
         # x_exp = csdl.expand(x, target_shape, 'ij->ijabc')
         z_exp = csdl.expand(z_in_frame, target_shape, 'ij->ijabcd')
-        Y_exp = csdl.expand(Y_in_frame, target_shape, 'ij->ijabcd')
+        x_exp = csdl.expand(x_in_frame, target_shape, 'ij->ijabcd')
         a_exp = csdl.expand(a, target_shape)
         r1_exp = csdl.expand(r1, target_shape, 'ij->ijabcd')
         R_exp = csdl.expand(R, target_shape)
-        r_exp = csdl.expand(r, target_shape, 'i->abcdei')
         
         # Target shape for fourier coefficients from integration step
         # NOTE: dim for num_modes == 1 because they do not differ across the blade modes
         coeff_target_shape = (num_nodes, num_observers, num_modes, B, num_harmonics, num_radial) 
-        a_T_uns_exp = csdl.expand(a_T_uns, coeff_target_shape, 'ijkl->iabjkl')
-        b_T_uns_exp = csdl.expand(b_T_uns, coeff_target_shape, 'ijkl->iabjkl')
-        a_D_uns_exp = csdl.expand(a_D_uns, coeff_target_shape, 'ijkl->iabjkl')
-        b_D_uns_exp = csdl.expand(b_D_uns, coeff_target_shape, 'ijkl->iabjkl')
-
-        a_T_Sears_exp = csdl.expand(a_T_Sears, coeff_target_shape, 'ijkl->iabjkl')
-        b_T_Sears_exp = csdl.expand(b_T_Sears, coeff_target_shape, 'ijkl->iabjkl')
-        a_D_Sears_exp = csdl.expand(a_D_Sears, coeff_target_shape, 'ijkl->iabjkl')
-        b_D_Sears_exp = csdl.expand(b_D_Sears, coeff_target_shape, 'ijkl->iabjkl')
+        a_T_exp = csdl.expand(a_T, coeff_target_shape, 'ijkl->iabjkl')
+        b_T_exp = csdl.expand(b_T, coeff_target_shape, 'ijkl->iabjkl')
+        a_D_exp = csdl.expand(a_D, coeff_target_shape, 'ijkl->iabjkl')
+        b_D_exp = csdl.expand(b_D, coeff_target_shape, 'ijkl->iabjkl')
 
         # ====================================== SETTING UP OUTPUTS ======================================
 
@@ -151,62 +127,62 @@ class LowsonSPLModel(csdl.Model):
             for j in range(num_harmonics):
                 ind = m-j
                 if np.mod(ind,2) == 0:
-                    coeff_sign_matrix_even[:,:,i,:,j,:] = 1.
-                    A_lin_comb_sign_matrix[:,:,i,:,j,:] = -1.
-                    B_lin_comb_sign_matrix[:,:,i,:,j,:] = 1.
+                    coeff_sign_matrix_even[:,:,i,:,j] = 1.
+                    A_lin_comb_sign_matrix[:,:,i,:,j] = -1.
+                    B_lin_comb_sign_matrix[:,:,i,:,j] = 1.
                     # A
                     if np.mod(ind, 4) == 2:
-                        term_1_coeff_A[:,:,i,:,j,:] = 1.
-                        term_2_coeff_A[:,:,i,:,j,:] = -1.
+                        term_1_coeff_A[:,:,i,:,j] = 1.
+                        term_2_coeff_A[:,:,i,:,j] = -1.
                     elif np.mod(ind, 4) == 0:
-                        term_1_coeff_A[:,:,i,:,j,:] = -1.
-                        term_2_coeff_A[:,:,i,:,j,:] = 1.
+                        term_1_coeff_A[:,:,i,:,j] = -1.
+                        term_2_coeff_A[:,:,i,:,j] = 1.
 
                     # B
                     if (-ind+1<0) and (np.mod(np.abs(-ind+1),4)==1):
-                        term_1_coeff_B[:,:,i,:,j,:] = -1.
-                        term_2_coeff_B[:,:,i,:,j,:] = 1.
+                        term_1_coeff_B[:,:,i,:,j] = -1.
+                        term_2_coeff_B[:,:,i,:,j] = 1.
 
                     elif (-ind+1<0) and (np.mod(np.abs(-ind+1),4)==3):
-                        term_1_coeff_B[:,:,i,:,j,:] = 1.
-                        term_2_coeff_B[:,:,i,:,j,:] = -1.
+                        term_1_coeff_B[:,:,i,:,j] = 1.
+                        term_2_coeff_B[:,:,i,:,j] = -1.
 
                     elif (-ind+1>0) and (np.mod(np.abs(-ind+1),4)==1):
-                        term_1_coeff_B[:,:,i,:,j,:] = 1.
-                        term_2_coeff_B[:,:,i,:,j,:] = -1.
+                        term_1_coeff_B[:,:,i,:,j] = 1.
+                        term_2_coeff_B[:,:,i,:,j] = -1.
 
                     elif (-ind+1>0) and (np.mod(np.abs(-ind+1),4)==3):
-                        term_1_coeff_B[:,:,i,:,j,:] = -1.
-                        term_2_coeff_B[:,:,i,:,j,:] = 1.
+                        term_1_coeff_B[:,:,i,:,j] = -1.
+                        term_2_coeff_B[:,:,i,:,j] = 1.
 
                 elif np.mod(ind,2) == 1:
-                    coeff_sign_matrix_odd[:,:,i,:,j,:] = 1.
-                    A_lin_comb_sign_matrix[:,:,i,:,j,:] = 1.
-                    B_lin_comb_sign_matrix[:,:,i,:,j,:] = -1.
+                    coeff_sign_matrix_odd[:,:,i,:,j] = 1.
+                    A_lin_comb_sign_matrix[:,:,i,:,j] = 1.
+                    B_lin_comb_sign_matrix[:,:,i,:,j] = -1.
                     # A
                     if np.mod(ind, 4) == 2:
-                        term_1_coeff_A[:,:,i,:,j,:] = -1.
-                        term_2_coeff_A[:,:,i,:,j,:] = 1.
+                        term_1_coeff_A[:,:,i,:,j] = -1.
+                        term_2_coeff_A[:,:,i,:,j] = 1.
                     elif np.mod(ind, 4) == 0:
-                        term_1_coeff_A[:,:,i,:,j,:] = 1.
-                        term_2_coeff_A[:,:,i,:,j,:] = -1.
+                        term_1_coeff_A[:,:,i,:,j] = 1.
+                        term_2_coeff_A[:,:,i,:,j] = -1.
 
                     # B
                     if (-ind+1<0) and (np.mod(np.abs(-ind+1),4)==1):
-                        term_1_coeff_B[:,:,i,:,j,:] = 1.
-                        term_2_coeff_B[:,:,i,:,j,:] = -1.
+                        term_1_coeff_B[:,:,i,:,j] = 1.
+                        term_2_coeff_B[:,:,i,:,j] = -1.
 
                     elif (-ind+1<0) and (np.mod(np.abs(-ind+1),4)==3):
-                        term_1_coeff_B[:,:,i,:,j,:] = -1.
-                        term_2_coeff_B[:,:,i,:,j,:] = 1.
+                        term_1_coeff_B[:,:,i,:,j] = -1.
+                        term_2_coeff_B[:,:,i,:,j] = 1.
 
                     elif (-ind+1>0) and (np.mod(np.abs(-ind+1),4)==1):
-                        term_1_coeff_B[:,:,i,:,j,:] = -1.
-                        term_2_coeff_B[:,:,i,:,j,:] = 1.
+                        term_1_coeff_B[:,:,i,:,j] = -1.
+                        term_2_coeff_B[:,:,i,:,j] = 1.
 
                     elif (-ind+1>0) and (np.mod(np.abs(-ind+1),4)==3):
-                        term_1_coeff_B[:,:,i,:,j,:] = 1.
-                        term_2_coeff_B[:,:,i,:,j,:] = -1.
+                        term_1_coeff_B[:,:,i,:,j] = 1.
+                        term_2_coeff_B[:,:,i,:,j] = -1.
 
         term_1_coeff_A = self.create_input('term_1_coeff_A', term_1_coeff_A)
         term_2_coeff_A = self.create_input('term_2_coeff_A', term_2_coeff_A)
@@ -221,23 +197,26 @@ class LowsonSPLModel(csdl.Model):
         # NOTE: need to a_lambda and b_lambda coeff from load integration to a new array 
         # called A_fourier_coeff and B_fourier_coeff; these change based on if n-lambda is even or odd
         term_1_constant = n_var*omega_exp*z_exp/(a_exp*r1_exp**2)
-        term_2_constant = 1. / (R_exp*r_exp*r1_exp)
-        bessel_input = n_var*omega_exp*R_exp*r_exp*Y_exp/(a_exp*r1_exp)
+        term_2_constant = 1. / (R_exp*r1_exp)
+        bessel_input = n_var*omega_exp*R_exp*x_exp/(a_exp*r1_exp)
 
-        
+
         # TERM A
-        term_1_A_fc = (coeff_sign_matrix_even * b_T_uns_exp + coeff_sign_matrix_odd * a_T_uns_exp) # weighting based on sign of n-lambda
-        term_2_A_fc = (coeff_sign_matrix_even * b_D_uns_exp + coeff_sign_matrix_odd * a_D_uns_exp) # weighting based on sign of n-lambda
+        term_1_A_fc = (coeff_sign_matrix_even * b_T_exp + coeff_sign_matrix_odd * a_T_exp) # weighting based on sign of n-lambda
+        term_2_A_fc = (coeff_sign_matrix_even * b_D_exp + coeff_sign_matrix_odd * a_D_exp) # weighting based on sign of n-lambda
+
         term_1_A = term_1_constant*term_1_A_fc*(csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) * csdl.bessel(bessel_input, order=n+lam))
         term_2_A = term_2_constant * term_2_A_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
         A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
         
+
         a_n_radial_harmonics = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) 
 
         # TERM B
-        term_1_B_fc = (coeff_sign_matrix_even * a_T_uns_exp + coeff_sign_matrix_odd * b_T_uns_exp) # weighting based on sign of n-lambda
-        term_2_B_fc = (coeff_sign_matrix_even * a_D_uns_exp + coeff_sign_matrix_odd * b_D_uns_exp) # weighting based on sign of n-lambda
+        term_1_B_fc = (coeff_sign_matrix_even * a_T_exp + coeff_sign_matrix_odd * b_T_exp) # weighting based on sign of n-lambda
+        term_2_B_fc = (coeff_sign_matrix_even * a_D_exp + coeff_sign_matrix_odd * b_D_exp) # weighting based on sign of n-lambda
+
         term_1_B = term_1_constant*term_1_B_fc*(csdl.bessel(bessel_input, order=n-lam) + \
         B_lin_comb_sign_matrix * csdl.exp_a(-1., lam_var) *csdl.bessel(bessel_input, order=n+lam))
         term_2_B = term_2_constant * term_2_B_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
@@ -245,7 +224,6 @@ class LowsonSPLModel(csdl.Model):
 
         b_n_radial_harmonics = (term_1_coeff_B*term_1_B + term_2_coeff_B*term_2_B) / (4*np.pi)
 
-        # region ============ UNSTEADY FOURIER SERIES + SPL CALCULATION ============
         a_n_radial = csdl.sum(a_n_radial_harmonics, axes=(4,)) # first over harmonics
         b_n_radial = csdl.sum(b_n_radial_harmonics, axes=(4,)) # first over harmonics
 
@@ -254,76 +232,15 @@ class LowsonSPLModel(csdl.Model):
         sum_A_B = (An)**2 + (Bn)**2
         
         bladeSPL = 10.*csdl.log10(sum_A_B/(2*P_ref**2))
-        self.register_output('bladeSPL_uns', bladeSPL)
+        self.register_output('bladeSPL', bladeSPL)
 
         ex = csdl.exp_a(10., bladeSPL/10.)
         ex_sum = csdl.sum(ex, axes=(3,))
 
         SPL_m = 10.*csdl.log10(ex_sum)
 
-        rotor_tonal_spl_uns = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
-        self.register_output(f'tonal_spl_uns', rotor_tonal_spl_uns) # SHAPE IS (num_nodes, num_observers)
-
-        # endregion
-
-        # region ============ SEARS MODEL ("UNSTEADY" STEADY LOADING) FOURIER SERIES + SPL CALCULATION ============
-        # TERM A
-        term_1_A_fc = (coeff_sign_matrix_even * b_T_Sears_exp + coeff_sign_matrix_odd * a_T_Sears_exp) # weighting based on sign of n-lambda
-        term_2_A_fc = (coeff_sign_matrix_even * b_D_Sears_exp + coeff_sign_matrix_odd * a_D_Sears_exp) # weighting based on sign of n-lambda
-
-        term_1_A = term_1_constant*term_1_A_fc*(csdl.bessel(bessel_input, order=n-lam) + \
-        A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) * csdl.bessel(bessel_input, order=n+lam))
-        term_2_A = term_2_constant * term_2_A_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
-        A_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
-        
-        a_n_radial_harmonics = (term_1_coeff_A*term_1_A + term_2_coeff_A*term_2_A)/(4*np.pi) * B
-
-        # TERM B
-        term_1_B_fc = (coeff_sign_matrix_even * a_T_Sears_exp + coeff_sign_matrix_odd * b_T_Sears_exp) # weighting based on sign of n-lambda
-        term_2_B_fc = (coeff_sign_matrix_even * a_D_Sears_exp + coeff_sign_matrix_odd * b_D_Sears_exp) # weighting based on sign of n-lambda
-
-        term_1_B = term_1_constant*term_1_B_fc*(csdl.bessel(bessel_input, order=n-lam) + \
-        B_lin_comb_sign_matrix * csdl.exp_a(-1., lam_var) *csdl.bessel(bessel_input, order=n+lam))
-        term_2_B = term_2_constant * term_2_B_fc * ((n_var-lam_var)*csdl.bessel(bessel_input, order=n-lam) + \
-        B_lin_comb_sign_matrix*csdl.exp_a(-1., lam_var) *(n_var+lam_var)*csdl.bessel(bessel_input, order=n+lam))
-
-        b_n_radial_harmonics = (term_1_coeff_B*term_1_B + term_2_coeff_B*term_2_B) / (4*np.pi) * B
-
-        # RADIAL INTEGRATION
-        dr_integration = csdl.expand(dr, shape=coeff_target_shape[:-1])
-        A_n_trapz_harmonics = csdl.sum(
-            a_n_radial_harmonics[:,:,:,:,:,:-1] + a_n_radial_harmonics[:,:,:,:,:,1:],
-            axes=(5,)
-        ) / 2. * dr_integration[:,:,:,:,:]
-        B_n_trapz_harmonics = csdl.sum(
-            b_n_radial_harmonics[:,:,:,:,:,:-1] + b_n_radial_harmonics[:,:,:,:,:,1:],
-            axes=(5,)
-        ) / 2. * dr_integration[:,:,:,:,:]
-
-        A_n_trapz_s = csdl.reshape(A_n_trapz_harmonics[:,:,:,:,0], coeff_target_shape[:-2]) # STEADY
-        B_n_trapz_s = csdl.reshape(B_n_trapz_harmonics[:,:,:,:,0], coeff_target_shape[:-2]) # STEADY
-        A_n_trapz_uns = csdl.sum(A_n_trapz_harmonics[:,:,:,:,1:], axes=(4,)) # UNSTEADY
-        B_n_trapz_uns = csdl.sum(B_n_trapz_harmonics[:,:,:,:,1:], axes=(4,)) # UNSTEADY
-
-        C_n_trapz_s = A_n_trapz_s**2 + B_n_trapz_s**2
-        SPL_steady = 10.*csdl.log10(C_n_trapz_s/(2*P_ref**2))
-        self.register_output('SPL_steady', SPL_steady)
-
-        C_n_trapz_uns = A_n_trapz_uns**2 + B_n_trapz_uns**2
-        SPL_unsteady = 10.*csdl.log10(C_n_trapz_uns/(2*P_ref**2))
-        self.register_output('SPL_unsteady', SPL_unsteady)
-        # shape = (num_nodes, num_observers, num_modes, num_blades)
-
-        SPL_per_mode_per_blade = 10*csdl.log10(
-            csdl.exp_a(10., SPL_steady/10.) + csdl.exp_a(10., SPL_unsteady/10.)
-        )
-
-        SPL_m = csdl.reshape(SPL_per_mode_per_blade[:,:,:,0], (num_nodes, num_observers, num_modes))
-        self.register_output('SPL_m', SPL_m)
-
         rotor_tonal_spl = 10*csdl.log10(csdl.sum(csdl.exp_a(10.,SPL_m/10.), axes=(2,)))
-        self.register_output(f'tonal_spl_Sears', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
-        # endregion
+        self.register_output(f'tonal_spl_compute', rotor_tonal_spl) # SHAPE IS (num_nodes, num_observers)
 
     def convection_adjustment(self, S, x, y, z, Vx, Vy, Vz, a):
         '''
@@ -346,30 +263,3 @@ class LowsonSPLModel(csdl.Model):
 
         r1 = S*(1-v_comp_obs/csdl.expand(a, v_comp_obs.shape))
         return r1 # shape is (num_nodes, num_observers)
-
-    
-'''
-NOTES:
-================ 01/30/2024: ================
-In the SPL model, we will separately evaluate the SPL from the unsteady and "steady unsteady" loads
-The output is two different values for the SPL
-
-As discussed with Hyunjune, the unsteady and steady models use different inputs
-There is also a different way to calculate SPL for the two.
-
-'''
-
-if __name__ == '__main__':
-    from python_csdl_backend import Simulator
-    import time
-    
-    m = LowsonSPLModel(
-        num_nodes=2, 
-        num_blades=2, 
-        num_observers=2,
-        component_name='dummy'
-    )
-    sim = Simulator(m, display_scripts=True)
-    sim.run()
-
-    
