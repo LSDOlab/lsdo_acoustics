@@ -178,7 +178,7 @@ m = LowsonModel(
     use_geometry=False
 )
 
-sim = Simulator(m, analytics=True)
+sim = Simulator(m, analytics=False)
 
 sim['propeller_radius'] = radius
 sim['rpm'] = RPM

@@ -5,6 +5,7 @@ from lsdo_acoustics.utils.csdl_switch import switch_func
 class GLSPLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes')
+        self.parameters.declare('name', default=None, types=str, allow_none=True)
         self.parameters.declare('num_observers')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_radial')
@@ -19,6 +20,7 @@ class GLSPLModel(csdl.Model):
     def define(self):
         num_nodes = self.parameters['num_nodes']
         num_observers = self.parameters['num_observers']
+        model_name = self.parameters['name']
 
         B = self.parameters['num_blades'] 
         num_radial = self.parameters['num_radial']
@@ -101,7 +103,10 @@ class GLSPLModel(csdl.Model):
         )
         SPL_1_3 = num/(den_1 + den_2)
         
-        self.register_output('broadband_spl_spectrum', SPL_1_3)
+        if model_name is not None:
+            self.register_output('broadband_spl_spectrum', SPL_1_3)
+        else:
+            self.register_output(f'{model_name}_broadband_spl_spectrum', SPL_1_3)
 
         OASPL = 10.*csdl.log10(
             csdl.sum(
@@ -109,7 +114,10 @@ class GLSPLModel(csdl.Model):
                 axes=(2,) # OVER THE FREQUENCY AXIS
             )
         )
-        self.register_output('broadband_spl', OASPL) # shape is (num_nodes, num_observers)
+        if model_name is not None:
+            self.register_output(f'{model_name}_broadband_spl', OASPL) # shape is (num_nodes, num_observers)
+        else:
+            self.register_output('broadband_spl', OASPL) # shape is (num_nodes, num_observers)
 
 
 class GLSPLModelOld(csdl.Model):

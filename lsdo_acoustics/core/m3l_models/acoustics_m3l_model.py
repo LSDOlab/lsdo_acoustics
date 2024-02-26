@@ -40,11 +40,14 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
             )
         elif self.model_name == 'Lowson':
             from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import LowsonModel
+            # print(self.mesh.parameters['num_blades'])
+            # exit()
             model = LowsonModel(
                 # component_name=self.rotor_name,
                 # disk_prefix=self.disk_prefix,
                 # blade_prefix=self.blade_prefix,
                 mesh=self.mesh,
+                name=self.name,
                 num_blades=self.mesh.parameters['num_blades'],
                 observer_data=self.observer_data,
                 num_nodes=self.num_nodes,
@@ -87,6 +90,7 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
                 num_nodes=self.num_nodes,
                 # component_name=self.rotor_name,
                 observer_data=self.observer_data,
+                name=self.name,
                 mesh=self.mesh,
                 num_blades=self.mesh.parameters['num_blades']
             )
@@ -151,13 +155,13 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         #     pass
 
         tonal_spl = m3l.Variable(
-            name=f'tonal_spl', 
+            name=f'{self.name}_tonal_spl', 
             shape=(self.num_nodes, self.num_observers), 
             operation=self
         )
 
         A_weighted_tonal_spl = m3l.Variable(
-            name=f'tonal_spl_A_weighted', 
+            name=f'{self.name}_tonal_spl_A_weighted', 
             shape=(self.num_nodes, self.num_observers), 
             operation=self
         )
@@ -166,7 +170,9 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
     
     def evaluate_broadband_noise(self, ac_states: m3l.Variable, CT: m3l.Variable, rpm : m3l.Variable,
                                  thrust_vector : m3l.Variable, chord_length : m3l.Variable, 
-                                 disk_origin : m3l.Variable, radius : m3l.Variable) -> m3l.Variable:
+                                 disk_origin : m3l.Variable, radius : m3l.Variable,
+                                 speed_of_sound : m3l.Variable=None,
+                                 ) -> m3l.Variable:
         '''
         This method computes the broadband noise for one rotor.
 
@@ -192,15 +198,16 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
         self.arguments['chord_length'] = chord_length
         self.arguments['disk_origin'] = disk_origin
         self.arguments['R'] = radius
+        self.arguments['speed_of_sound'] =  speed_of_sound
 
         broadband_spl = m3l.Variable(
-            name=f'broadband_spl', 
+            name=f'{self.name}_broadband_spl', 
             shape=(self.num_nodes, self.num_observers), 
             operation=self
         )
 
         A_weighted_broadband_spl = m3l.Variable(
-            name=f'broadband_spl_A_weighted', 
+            name=f'{self.name}_broadband_spl_A_weighted', 
             shape=(self.num_nodes, self.num_observers), 
             operation=self
         )
