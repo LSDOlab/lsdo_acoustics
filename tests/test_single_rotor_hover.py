@@ -159,7 +159,7 @@ system_model.register_output(hover_total_SPL_A_weighted)
 
 csdl_model = system_model.assemble_csdl()
 
-sim = Simulator(csdl_model, analytics=True, display_scripts=True)
+sim = Simulator(csdl_model, analytics=False, display_scripts=False)
 sim.run()
 print('\n')
 print('Hover Lowson tonal SPL')
