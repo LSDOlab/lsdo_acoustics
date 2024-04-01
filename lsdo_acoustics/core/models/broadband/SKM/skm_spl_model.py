@@ -8,10 +8,12 @@ class SKMSPLModel(csdl.Model):
         self.parameters.declare('num_observers')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_radial')
+        self.parameters.declare('name', default=None, types=str, allow_none=True)
 
     def define(self):
         num_nodes = self.parameters['num_nodes']
         num_observers = self.parameters['num_observers']
+        model_name = self.parameters['name']
 
         B = self.parameters['num_blades'] 
         num_radial = self.parameters['num_radial']
@@ -69,7 +71,10 @@ class SKMSPLModel(csdl.Model):
         SPL150_SKM = 10*csdl.log10(1e-10 + (Omega_skm*R_skm)**6*Ab_skm*(CT_skm/sigma_skm)**2) - 42.9
         SPL_SKM = SPL150_SKM + 20*csdl.log10(1e-10 + csdl.sin((theta0_skm**2)**0.5)/(S0_skm/150))
 
-        self.register_output(f'broadband_spl', SPL_SKM) # SHAPE OF (num_nodes, num_observers)
+        if model_name is not None:
+            self.register_output(f'{model_name}_broadband_spl', SPL_SKM) # shape is (num_nodes, num_observers)
+        else:
+            self.register_output('broadband_spl', SPL_SKM) # shape is (num_nodes, num_observers)
 
 if __name__ == '__main__':
     model = SKMSPLModel(

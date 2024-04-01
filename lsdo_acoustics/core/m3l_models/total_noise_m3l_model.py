@@ -7,7 +7,7 @@ from lsdo_acoustics.core.m3l_models.acoustics_m3l_model import AcousticsModelTem
 class TotalAircraftNoise(m3l.ExplicitOperation):
     
     def initialize(self, kwargs):
-        self.parameters.declare('name', types=str)
+        self.parameters.declare('name', types=str, default='total_aircraft_noise')
         self.parameters.declare('acoustics_data', default=None)
         self.parameters.declare('num_nodes', default=1)
 

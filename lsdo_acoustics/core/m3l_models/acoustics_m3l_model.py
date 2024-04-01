@@ -82,7 +82,8 @@ class AcousticsModelTemplate(m3l.ExplicitOperation):
                 num_nodes=self.num_nodes,
                 observer_data=self.observer_data,
                 mesh=self.mesh,
-                num_blades=self.mesh.parameters['num_blades']
+                num_blades=self.mesh.parameters['num_blades'],
+                name=self.name,
             )
         elif self.model_name == 'GL':
             from lsdo_acoustics.core.models.broadband.GL.GL_model import GLModel

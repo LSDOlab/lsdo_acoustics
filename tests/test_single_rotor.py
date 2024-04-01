@@ -60,9 +60,7 @@ rotor_disk_mesh = cd.make_rotor_mesh(
 caddee = cd.CADDEE()
 system_model = m3l.Model()
 
-
 rotor_disk_mesh.radius = system_model.create_input('radius', val=1)
-
 
 # ==================== CRUISE ====================
 cruise_condition = cd.CruiseCondition(

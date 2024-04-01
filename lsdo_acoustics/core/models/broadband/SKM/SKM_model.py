@@ -15,6 +15,7 @@ class SKMBroadbandModel(csdl.Model):
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('debug', default=False)
+        self.parameters.declare('name', types=str, default=None, allow_none=True)
 
     def define(self):
         mesh = self.parameters['mesh']
@@ -26,6 +27,8 @@ class SKMBroadbandModel(csdl.Model):
 
         num_radial = mesh.parameters['num_radial']
         units = mesh.parameters['mesh_units']
+
+        model_name = self.parameters['name']
 
 
         self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
@@ -90,17 +93,28 @@ class SKMBroadbandModel(csdl.Model):
                 num_nodes=num_nodes,
                 num_observers=observer_data['num_observers'],
                 num_blades=num_blades,
-                num_radial=num_radial
+                num_radial=num_radial,
+                name=model_name
             ),
             'skm_spl_model'
         )
 
+        if model_name is not None:
+            rotor_broadband_spl = self.declare_variable(f'{model_name}_broadband_spl', shape=(num_nodes, num_observers))
+        else:
+            rotor_broadband_spl = self.declare_variable('broadband_spl', shape=(num_nodes, num_observers))
+
         # A-WEIGHTING
         rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
-        rotor_broadband_spl = self.declare_variable(f'broadband_spl', shape=(num_nodes, num_observers))
         BPF = 1. * rpm * num_blades/ 60.
         rotor_broadband_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_broadband_spl, f=BPF)
-        self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
+
+        if model_name is not None:
+            self.register_output(f'{model_name}_broadband_spl_A_weighted', rotor_broadband_spl_A)
+        else:
+            self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
+
+        # self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
 
 if __name__ == '__main__':
     model = SKMBroadbandModel(

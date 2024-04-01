@@ -82,7 +82,7 @@ class GLSPLModel(csdl.Model):
         # endregion
 
         f0 = csdl.log10(V_t**7.84) * 10.
-        f1 = sigma
+        f1 = sigma * 1.
         f2 = 0.9*M_t*sigma*(M_t+3.82)
         f3 = 1. # NOT USED
         f4 = 1. # NOT USED
@@ -91,6 +91,15 @@ class GLSPLModel(csdl.Model):
         f7 = CT
         # f8 = 4.97*CT*csdl.sin((theta_0**2)**0.5)*(4.3*S/R*M_t - (S/R) + 4.3) # OLD FORMULATION
         f8 = 4.97*CT*csdl.sin((theta_0**2)**0.5)*(1.5*S/R*M_t - (S/R) + 15.)
+
+        # self.print_var(c_sw_pe)
+        self.print_var(St)
+        self.print_var(f1)
+        self.print_var(CT)
+        self.print_var(f2)
+        self.print_var(f5)
+        self.print_var(f6)
+
 
         num = f0*(St-(f1*csdl.log10(CT) + f2*csdl.log10(sigma)))**0.6
         den_1 = csdl.exp_a(
@@ -102,6 +111,9 @@ class GLSPLModel(csdl.Model):
             f8
         )
         SPL_1_3 = num/(den_1 + den_2)
+
+        self.print_var(den_1)
+
         
         if model_name is not None:
             self.register_output('broadband_spl_spectrum', SPL_1_3)

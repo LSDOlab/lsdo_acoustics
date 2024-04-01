@@ -110,8 +110,12 @@ class GLModel(csdl.Model):
             'gl_spl_model'
         )
 
+        if model_name is not None:
+            rotor_broadband_spl = self.declare_variable(f'{model_name}_broadband_spl', shape=(num_nodes, num_observers))
+        else:
+            rotor_broadband_spl = self.declare_variable('broadband_spl', shape=(num_nodes, num_observers))
+
         # A-WEIGHTING
-        rotor_broadband_spl = self.declare_variable(f'broadband_spl', shape=(num_nodes, num_observers))
         BPF = 1. * rpm * num_blades/ 60.
         rotor_broadband_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_broadband_spl, f=BPF)
 
