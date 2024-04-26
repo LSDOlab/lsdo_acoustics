@@ -60,6 +60,7 @@ class AcousticsComparisonModel(csdl.Model):
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('observer_data')
+        self.parameters.declare('toggle_thickness_noise', default=False)
 
 
     def define(self):
@@ -96,7 +97,8 @@ class AcousticsComparisonModel(csdl.Model):
                 observer_data=observer_data,
                 num_nodes=num_nodes,
                 debug=True,
-                use_geometry=False
+                use_geometry=False,
+                toggle_thickness_noise=self.parameters['toggle_thickness_noise']
             ),
             'Lowson_model',
             promotes=[]
@@ -168,7 +170,7 @@ class AcousticsComparisonModel(csdl.Model):
 
 # ==== SETTING UP INPUTS ====
 # region ==== FLIGHT CASE/SEGMENT (does not need to be changed) ====
-case = 'cruise'                  # options are hover or cruise
+case = 'hover'                  # options are hover or cruise
 if case == 'hover':
     thrust_dir = np.array([0., 0., 1.])
     in_plane_ex = np.array([[1., 0., 0.,]])
@@ -259,11 +261,13 @@ dummy_mesh = DummyMesh(
     num_tangential=num_tangential
 )
 
+toggle_thickness_noise = True
 model = AcousticsComparisonModel(
     dummy_mesh=dummy_mesh,
     num_blades=num_blades,
     num_nodes=1,
     observer_data=observer_data,
+    toggle_thickness_noise=toggle_thickness_noise
 )
 # endregion
 
@@ -290,8 +294,29 @@ sim.run()
 
 models = ['Lowson', 'KS', 'SKM', 'GL']
 model_type = ['tonal', 'tonal', 'broadband', 'broadband']
+spl_val = {}
+
+for i, model in enumerate(models):
+    spl_val[model] = sim[f'{model}_model.{model_type[i]}_spl']
+
+OASPL = {}
+OASPL['Lowson_SKM'] = 10.*np.log10(10.**(spl_val['Lowson']/10.) + 10.**(spl_val['SKM']/10.))
+OASPL['Lowson_GL'] = 10.*np.log10(10.**(spl_val['Lowson']/10.) + 10.**(spl_val['GL']/10.))
+OASPL['KS_SKM'] = 10.*np.log10(10.**(spl_val['KS']/10.) + 10.**(spl_val['SKM']/10.))
+OASPL['KS_GL'] = 10.*np.log10(10.**(spl_val['KS']/10.) + 10.**(spl_val['GL']/10.))
+
 print('==== PRINTING SPL OUTPUTS ====')
 for i, model in enumerate(models):
+    spl_val[model] = sim[f'{model}_model.{model_type[i]}_spl']
     print('===='*5)
-    print(f'{model} SPL values  (dB): ', sim[f'{model}_model.{model_type[i]}_spl'])
+    print(f'{model} SPL values  (dB): ', spl_val[model])
+    if model == 'Lowson' and toggle_thickness_noise:
+        print('Lowson loading noise: ', sim['Lowson_model.tonal_spl_loading'])
+        print('Lowson thickness noise: ', sim['Lowson_model.rotor_thickness_spl'])
     print(f'A_weighted {model} SPL values (dB): ', sim[f'{model}_model.{model_type[i]}_spl_A_weighted'])
+print('\n')
+print('==== OASPL VALUES ====')
+print('OASPL from Lowson and SKM (dB): ', OASPL['Lowson_SKM'])
+print('OASPL from Lowson and GL (dB): ', OASPL['Lowson_GL'])
+print('OASPL from KS and SKM (dB): ', OASPL['KS_SKM'])
+print('OASPL from KS and GL (dB): ', OASPL['KS_GL'])

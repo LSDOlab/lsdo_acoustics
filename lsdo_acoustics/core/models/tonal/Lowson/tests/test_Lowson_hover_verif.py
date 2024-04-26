@@ -175,7 +175,8 @@ m = LowsonModel(
     modes=[1],
     # load_harmonics=,
     debug=True,
-    use_geometry=False
+    use_geometry=False,
+    toggle_thickness_noise=False
 )
 
 sim = Simulator(m, analytics=False)
@@ -195,7 +196,7 @@ sim['lambda_i'] = lambda_i
 sim['nondim_sectional_radius'] = nondim_sectional_radius
 
 sim.run()
-spl_Lowson = sim['tonal_spl_compute']
+spl_Lowson = sim['tonal_spl']
 spl_Lowson_A_weighted = sim['tonal_spl_A_weighted']
 Lowson_unsteady_aT = sim['aT_Sears']
 Lowson_unsteady_aD = sim['aD_Sears']

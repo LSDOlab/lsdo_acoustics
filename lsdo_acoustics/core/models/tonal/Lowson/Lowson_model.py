@@ -3,6 +3,7 @@ import numpy as np
 from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
 from lsdo_acoustics.core.models.tonal.Lowson.load_integration_model import LoadIntegrationModel
 from lsdo_acoustics.core.models.tonal.Lowson.sears_function_model import SearsFunctionModel
+from lsdo_acoustics.core.models.tonal.Barry_Magliozzi.thickness.BM_thickness_model import BMThicknessModel
 # from load_integration_model import LoadIntegrationModel
 # from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model_old import LowsonSPLModel
 from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model import LowsonSPLModel
@@ -28,6 +29,7 @@ class LowsonModel(csdl.Model):
         self.parameters.declare('debug', default=False)
         self.parameters.declare('use_geometry', default=True)
         self.parameters.declare('name', types=str, default=None, allow_none=True)
+        self.parameters.declare('toggle_thickness_noise', default=False)
 
     def define(self):
         # component_name = self.parameters['component_name']
@@ -69,7 +71,9 @@ class LowsonModel(csdl.Model):
             thrust_dir = self.create_input('thrust_dir', shape=(3,))
             self.create_input('in_plane_ex', shape=(3,))
             self.create_input('origin', shape=(3,))
+            self.create_input('thickness_to_chord_ratio', shape=(num_radial,), val=0.12)
         else:
+            self.declare_variable('thickness_to_chord_ratio', shape=(num_radial,), val=0.12)
             if units == 'ft':
                 r = self.declare_variable('R', shape=(num_nodes, 1))
                 rotor_radius = self.register_output('propeller_radius', r * 0.3048)
@@ -213,8 +217,24 @@ class LowsonModel(csdl.Model):
         funcs_list = [var_Sears, var_unsteady]
         bounds_list = [1.e-1]
         smooth_var = switch_func(td_cross_V_norm_exp, funcs_list=funcs_list, bounds_list=bounds_list, scale=100)
-        rotor_tonal_spl = self.register_output('tonal_spl_compute', smooth_var*1.)
+        rotor_loading_spl = self.register_output('tonal_spl_loading', smooth_var*1.)
         # endregion
+        if self.parameters['toggle_thickness_noise']:
+            self.add(
+                BMThicknessModel(
+                    num_nodes=num_nodes,
+                    num_blades=num_blades,
+                    num_observers=num_observers,
+                    modes=modes,
+                    num_radial=num_radial
+                ),
+                'bm_thickness_model'
+            )
+
+            rotor_thickness_spl = self.declare_variable('rotor_thickness_spl', shape=(num_nodes, num_observers))
+            rotor_tonal_spl = 10*csdl.log10(csdl.exp_a(10., rotor_loading_spl/10.) + csdl.exp_a(10., rotor_thickness_spl/10.))
+        else:
+            rotor_tonal_spl = rotor_loading_spl * 1.
 
         if model_name is not None:
             self.register_output(f'{model_name}_tonal_spl', rotor_tonal_spl * 1)
