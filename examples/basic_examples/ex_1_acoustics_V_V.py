@@ -172,12 +172,12 @@ class AcousticsComparisonModel(csdl.Model):
 # region ==== FLIGHT CASE/SEGMENT (does not need to be changed) ====
 case = 'hover'                  # options are hover or cruise
 if case == 'hover':
-    thrust_dir = np.array([0., 0., 1.])
+    thrust_dir = np.array([0., 0., -1.])
     in_plane_ex = np.array([[1., 0., 0.,]])
 
 elif case == 'cruise':
     thrust_dir = np.array([-1., 0., 0.])
-    in_plane_ex = np.array([[0., 0., 1.,]])
+    in_plane_ex = np.array([[0., 1., 0.,]])
 # endregion
     
 # region ==== SETTING UP ROTOR LOCATION (do change based on configuration) ====
@@ -188,14 +188,6 @@ rotor_location = np.array([0., 0., altitude]) # rotor location in space
 # region ==== OBSERVER DATA (do change to set up custom observers) ====
 observer_mode = 'single'
 observer_pos = np.array([1.75, 0., 0.])
-
-# UNCOMMENT BELOW IF DIRECTIVITY/MULTIPLE OBSEVERS ARE USED
-# observer_mode = 'directivity'
-# observer_pos = [
-#     np.array([1., 0., 0.,]),
-#     np.array([0.5, 0., 0.5,]),
-#     np.array([0., 0., 1.,])
-# ]
 
 a = Acoustics(aircraft_position=rotor_location)
 if observer_mode == 'single': # Options are single and directivity
@@ -217,7 +209,6 @@ file.close()
 inputs = {
     'num_blades': 2,
     'radius': 0.1524, # m
-    'obs_loc': np.array([1.75, 0., 0.]),
     'mach': 0.0705,
     'RPM': 5500.,
     'num_radial': 40,
@@ -225,14 +216,14 @@ inputs = {
 }
 
 num_radial = inputs['num_radial']                 # radial discretization of data
-num_tangential = inputs['num_tangential']              # tangential/temporal discretization of data 
+num_tangential = inputs['num_tangential']         # tangential/temporal discretization of data 
 
 num_blades = inputs['num_blades']
 prop_radius = inputs['radius']
 rpm = inputs['RPM']
 chord_profile = 0.03176 * np.ones((num_radial,)) # shape must be (num_radial,)
 mach_number = inputs['mach']
-Vx = mach_number/343.
+Vx = mach_number*343.
 CT = 1. # thrust coefficient
 
 thrust_origin = rotor_location
@@ -251,7 +242,7 @@ _dT = np.reshape(
 dTdR = (_dT/(prop_radius*0.8/num_radial))[:,:,0]
 dDdR = (_dD/(prop_radius*0.8/num_radial))[:,:,0]
 nondim_sectional_radius = np.linspace(0.2,1,num_radial) # 
-lambda_i = np.linspace(0.07,0.1,num_radial) # LOCAL INDUCED INFLOW RATIO
+lambda_i = np.linspace(0.07,0.1,num_radial) # LOCAL INDUCED INFLOW RATIO (NOTE: MY VERSION USES A DUMMY INPUT)
 # NOTE: we can also use phi, the local induced angle of attack, if this data is available
 # endregion
 

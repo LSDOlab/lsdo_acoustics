@@ -167,7 +167,7 @@ dummy_mesh = DummyMesh(
     num_tangential=1
 )
 
-
+toggle_thickness_noise=True
 m = LowsonModel(
     mesh=dummy_mesh,
     num_blades=num_blades,
@@ -176,7 +176,7 @@ m = LowsonModel(
     # load_harmonics=,
     debug=True,
     use_geometry=False,
-    toggle_thickness_noise=False
+    toggle_thickness_noise=toggle_thickness_noise
 )
 
 sim = Simulator(m, analytics=False)
@@ -281,7 +281,10 @@ ax.plot((90. - Lowson_exp_data[:,0])*np.pi/180., Lowson_exp_data[:,1], label='Ex
 # ax.plot(theta_plot, spl_KS.reshape(num_observers,), label='KS')
 ax.set_rticks([55., 45., 35., 25.])
 ax.set_rlabel_position(-120)
-
+if toggle_thickness_noise:
+    ax.set_title('Directivity comparison (Lowson + thickness noise)')
+else:
+    ax.set_title('Directivity comparison (no thickness noise)')
 ax.grid(True)
 plt.legend()
 
@@ -295,6 +298,19 @@ if num_observers == len(Lowson_HG_MATLAB):
     plt.xlabel('Angle (deg)')
     plt.ylabel('Error (%)')
     plt.grid()
+
+
+if toggle_thickness_noise:
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+    theta_plot = np.linspace(-np.pi/2, np.pi/2, num_observers)
+    ax.plot(theta_plot, spl_Lowson.reshape(num_observers,), label='Total')
+    ax.plot(theta_plot, sim['tonal_spl_loading'].reshape(num_observers,), label='Loading (Lowson)')
+    ax.plot(theta_plot, sim['rotor_thickness_spl'].reshape(num_observers,), label='Thickness (BM)')
+    # ax.plot(theta_plot, spl_KS.reshape(num_observers,), label='KS')
+    ax.set_rticks([55., 45., 35., 25.])
+    ax.set_rlabel_position(-120)
+    ax.grid(True)
+    plt.legend()
 
 
 plt.show()

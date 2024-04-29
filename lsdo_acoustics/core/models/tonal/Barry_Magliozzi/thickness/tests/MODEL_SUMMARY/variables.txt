@@ -1,0 +1,1068 @@
+
+
+
+v616_propeller_radius
+	name:                    propeller_radius
+	unpromoted name:         propeller_radius
+	promoted name:           propeller_radius
+	shape:                   (1,)
+	avg val:                 1.0
+	graph info:              0 in op / 4 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.propeller_radius
+	                         sears_function_model.propeller_radius
+	                         bm_thickness_model.propeller_radius
+
+v594_thrust_dir
+	name:                    thrust_dir
+	unpromoted name:         thrust_dir
+	promoted name:           thrust_dir
+	shape:                   (3,)
+	avg val:                 1.0
+	graph info:              0 in op / 4 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.thrust_dir
+	                         lowson_spl_model.thrust_dir
+	                         observer_location_model.thrust_dir
+
+v6_in_plane_ex
+	name:                    in_plane_ex
+	unpromoted name:         in_plane_ex
+	promoted name:           in_plane_ex
+	shape:                   (3,)
+	avg val:                 1.0
+	graph info:              0 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v128_origin
+	name:                    origin
+	unpromoted name:         origin
+	promoted name:           origin
+	shape:                   (3,)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         observer_location_model.origin
+
+v611_thickness_to_chord_ratio
+	name:                    thickness_to_chord_ratio
+	unpromoted name:         thickness_to_chord_ratio
+	promoted name:           thickness_to_chord_ratio
+	shape:                   (40,)
+	avg val:                 0.12
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.thickness_to_chord_ratio
+
+v586_mach_number
+	name:                    mach_number
+	unpromoted name:         mach_number
+	promoted name:           mach_number
+	shape:                   (1,)
+	avg val:                 1.0
+	graph info:              0 in op / 4 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.mach_number
+
+v49_RA_1000
+	name:                    RA_1000
+	unpromoted name:         RA_1000
+	promoted name:           RA_1000
+	shape:                   (1, 1)
+	avg val:                 0.7943411775965269
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v76_tonal_spl_A_weighted
+	name:                    tonal_spl_A_weighted
+	unpromoted name:         tonal_spl_A_weighted
+	promoted name:           tonal_spl_A_weighted
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v588_rpm
+	name:                    rpm
+	unpromoted name:         rpm
+	promoted name:           rpm
+	shape:                   (1, 1)
+	avg val:                 1.0
+	graph info:              0 in op / 4 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.rpm
+	                         sears_function_model.rpm
+	                         lowson_spl_model.rpm
+
+v36_tonal_spl_loading
+	name:                    tonal_spl_loading
+	unpromoted name:         tonal_spl_loading
+	promoted name:           tonal_spl_loading
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v45_tonal_spl
+	name:                    tonal_spl
+	unpromoted name:         tonal_spl
+	promoted name:           tonal_spl
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v19_td_cross_V_norm
+	name:                    td_cross_V_norm
+	unpromoted name:         td_cross_V_norm
+	promoted name:           td_cross_V_norm
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v17_td_cross_V
+	name:                    td_cross_V
+	unpromoted name:         td_cross_V
+	promoted name:           td_cross_V
+	shape:                   (1, 3)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v617_dr
+	name:                    dr
+	unpromoted name:         dr
+	promoted name:           dr
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.dr
+	                         bm_thickness_model.dr
+
+v322_Vx
+	name:                    Vx
+	unpromoted name:         Vx
+	promoted name:           Vx
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.Vx
+	                         observer_location_model.Vx
+
+v173_n_theta_prod
+	name:                    n_theta_prod
+	unpromoted name:         load_integration_model.n_theta_prod
+	promoted name:           n_theta_prod
+	shape:                   (11, 1)
+	avg val:                 0.0
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v207_bD_integrand
+	name:                    bD_integrand
+	unpromoted name:         load_integration_model.bD_integrand
+	promoted name:           bD_integrand
+	shape:                   (1, 4, 11, 40, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         load_integration_model.bD_unsteady_load_integration_model.bD_integrand
+
+v167__dD
+	name:                    _dD
+	unpromoted name:         load_integration_model._dD
+	promoted name:           _dD
+	shape:                   (1, 40, 1)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v201_bT_integrand
+	name:                    bT_integrand
+	unpromoted name:         load_integration_model.bT_integrand
+	promoted name:           bT_integrand
+	shape:                   (1, 4, 11, 40, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         load_integration_model.bT_unsteady_load_integration_model.bT_integrand
+
+v169__dT
+	name:                    _dT
+	unpromoted name:         load_integration_model._dT
+	promoted name:           _dT
+	shape:                   (1, 40, 1)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v195_aD_integrand
+	name:                    aD_integrand
+	unpromoted name:         load_integration_model.aD_integrand
+	promoted name:           aD_integrand
+	shape:                   (1, 4, 11, 40, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         load_integration_model.aD_unsteady_load_integration_model.aD_integrand
+
+v189_aT_integrand
+	name:                    aT_integrand
+	unpromoted name:         load_integration_model.aT_integrand
+	promoted name:           aT_integrand
+	shape:                   (1, 4, 11, 40, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         load_integration_model.aT_unsteady_load_integration_model.aT_integrand
+
+v188_aT_integrand_dtheta
+	name:                    aT_integrand_dtheta
+	unpromoted name:         load_integration_model.aT_unsteady_load_integration_model.aT_integrand_dtheta
+	promoted name:           aT_integrand_dtheta
+	shape:                   (1,)
+	avg val:                 6.283185307179586
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v348_aT_unsteady
+	name:                    aT_unsteady
+	unpromoted name:         load_integration_model.aT_unsteady_load_integration_model.aT_unsteady
+	promoted name:           aT_unsteady
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.aT_unsteady
+
+v200_bT_integrand_dtheta
+	name:                    bT_integrand_dtheta
+	unpromoted name:         load_integration_model.bT_unsteady_load_integration_model.bT_integrand_dtheta
+	promoted name:           bT_integrand_dtheta
+	shape:                   (1,)
+	avg val:                 6.283185307179586
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v349_bT_unsteady
+	name:                    bT_unsteady
+	unpromoted name:         load_integration_model.bT_unsteady_load_integration_model.bT_unsteady
+	promoted name:           bT_unsteady
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.bT_unsteady
+
+v194_aD_integrand_dtheta
+	name:                    aD_integrand_dtheta
+	unpromoted name:         load_integration_model.aD_unsteady_load_integration_model.aD_integrand_dtheta
+	promoted name:           aD_integrand_dtheta
+	shape:                   (1,)
+	avg val:                 6.283185307179586
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v350_aD_unsteady
+	name:                    aD_unsteady
+	unpromoted name:         load_integration_model.aD_unsteady_load_integration_model.aD_unsteady
+	promoted name:           aD_unsteady
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.aD_unsteady
+
+v206_bD_integrand_dtheta
+	name:                    bD_integrand_dtheta
+	unpromoted name:         load_integration_model.bD_unsteady_load_integration_model.bD_integrand_dtheta
+	promoted name:           bD_integrand_dtheta
+	shape:                   (1,)
+	avg val:                 6.283185307179586
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v351_bD_unsteady
+	name:                    bD_unsteady
+	unpromoted name:         load_integration_model.bD_unsteady_load_integration_model.bD_unsteady
+	promoted name:           bD_unsteady
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.bD_unsteady
+
+v695_rotor_thickness_spl
+	name:                    rotor_thickness_spl
+	unpromoted name:         bm_thickness_model.rotor_thickness_spl
+	promoted name:           rotor_thickness_spl
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         rotor_thickness_spl
+
+v689_SPL_thickness_per_mode
+	name:                    SPL_thickness_per_mode
+	unpromoted name:         bm_thickness_model.SPL_thickness_per_mode
+	promoted name:           SPL_thickness_per_mode
+	shape:                   (1, 33, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v684_PmT_factor
+	name:                    PmT_factor
+	unpromoted name:         bm_thickness_model.PmT_factor
+	promoted name:           PmT_factor
+	shape:                   (1, 33, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v663_PmT_integrated_factor
+	name:                    PmT_integrated_factor
+	unpromoted name:         bm_thickness_model.PmT_integrated_factor
+	promoted name:           PmT_integrated_factor
+	shape:                   (1, 33, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v610_S0
+	name:                    S0
+	unpromoted name:         bm_thickness_model.S0
+	promoted name:           S0
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v598_X
+	name:                    X
+	unpromoted name:         bm_thickness_model.X
+	promoted name:           X
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 3 out op(s)
+	connected to:
+	promoted to:
+
+v669_m_array
+	name:                    m_array
+	unpromoted name:         bm_thickness_model.m_array
+	promoted name:           m_array
+	shape:                   (1, 33, 1)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v592_Omega
+	name:                    Omega
+	unpromoted name:         bm_thickness_model.Omega
+	promoted name:           Omega
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v637_integrand
+	name:                    integrand
+	unpromoted name:         bm_thickness_model.integrand
+	promoted name:           integrand
+	shape:                   (1, 33, 1, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v602_Y
+	name:                    Y
+	unpromoted name:         bm_thickness_model.Y
+	promoted name:           Y
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v629_bessel_term
+	name:                    bessel_term
+	unpromoted name:         bm_thickness_model.bessel_term
+	promoted name:           bessel_term
+	shape:                   (1, 33, 1, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v615_Ax
+	name:                    Ax
+	unpromoted name:         bm_thickness_model.Ax
+	promoted name:           Ax
+	shape:                   (40,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v612_chord_profile
+	name:                    chord_profile
+	unpromoted name:         bm_thickness_model.chord_profile
+	promoted name:           chord_profile
+	shape:                   (40,)
+	avg val:                 1.0
+	graph info:              0 in op / 3 out op(s)
+	connected to:
+	promoted to:
+	                         sears_function_model.chord_profile
+
+v371_n_var
+	name:                    n_var
+	unpromoted name:         lowson_spl_model.n_var
+	promoted name:           n_var
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 4.0
+	graph info:              0 in op / 10 out op(s)
+	connected to:
+	promoted to:
+
+v372_lam_var
+	name:                    lam_var
+	unpromoted name:         lowson_spl_model.lam_var
+	promoted name:           lam_var
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 5.0
+	graph info:              0 in op / 16 out op(s)
+	connected to:
+	promoted to:
+
+v373_term_1_coeff_A
+	name:                    term_1_coeff_A
+	unpromoted name:         lowson_spl_model.term_1_coeff_A
+	promoted name:           term_1_coeff_A
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.45454545454545453
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v374_term_2_coeff_A
+	name:                    term_2_coeff_A
+	unpromoted name:         lowson_spl_model.term_2_coeff_A
+	promoted name:           term_2_coeff_A
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.45454545454545453
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v375_term_1_coeff_B
+	name:                    term_1_coeff_B
+	unpromoted name:         lowson_spl_model.term_1_coeff_B
+	promoted name:           term_1_coeff_B
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.45454545454545453
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v376_term_2_coeff_B
+	name:                    term_2_coeff_B
+	unpromoted name:         lowson_spl_model.term_2_coeff_B
+	promoted name:           term_2_coeff_B
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.45454545454545453
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v377_coeff_sign_matrix_odd
+	name:                    coeff_sign_matrix_odd
+	unpromoted name:         lowson_spl_model.coeff_sign_matrix_odd
+	promoted name:           coeff_sign_matrix_odd
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.45454545454545453
+	graph info:              0 in op / 8 out op(s)
+	connected to:
+	promoted to:
+
+v378_coeff_sign_matrix_even
+	name:                    coeff_sign_matrix_even
+	unpromoted name:         lowson_spl_model.coeff_sign_matrix_even
+	promoted name:           coeff_sign_matrix_even
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.5454545454545454
+	graph info:              0 in op / 8 out op(s)
+	connected to:
+	promoted to:
+
+v379_A_lin_comb_sign_matrix
+	name:                    A_lin_comb_sign_matrix
+	unpromoted name:         lowson_spl_model.A_lin_comb_sign_matrix
+	promoted name:           A_lin_comb_sign_matrix
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 -0.09090909090909091
+	graph info:              0 in op / 4 out op(s)
+	connected to:
+	promoted to:
+
+v380_B_lin_comb_sign_matrix
+	name:                    B_lin_comb_sign_matrix
+	unpromoted name:         lowson_spl_model.B_lin_comb_sign_matrix
+	promoted name:           B_lin_comb_sign_matrix
+	shape:                   (1, 33, 1, 4, 11, 40)
+	avg val:                 0.09090909090909091
+	graph info:              0 in op / 4 out op(s)
+	connected to:
+	promoted to:
+
+v584_tonal_spl_Sears
+	name:                    tonal_spl_Sears
+	unpromoted name:         lowson_spl_model.tonal_spl_Sears
+	promoted name:           tonal_spl_Sears
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         tonal_spl_Sears
+
+v579_SPL_m
+	name:                    SPL_m
+	unpromoted name:         lowson_spl_model.SPL_m
+	promoted name:           SPL_m
+	shape:                   (1, 33, 1)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v570_SPL_unsteady
+	name:                    SPL_unsteady
+	unpromoted name:         lowson_spl_model.SPL_unsteady
+	promoted name:           SPL_unsteady
+	shape:                   (1, 33, 1, 4)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v564_SPL_steady
+	name:                    SPL_steady
+	unpromoted name:         lowson_spl_model.SPL_steady
+	promoted name:           SPL_steady
+	shape:                   (1, 33, 1, 4)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v338_r1_dummy
+	name:                    r1_dummy
+	unpromoted name:         lowson_spl_model.r1_dummy
+	promoted name:           r1_dummy
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v347_Y_in_frame
+	name:                    Y_in_frame
+	unpromoted name:         lowson_spl_model.Y_in_frame
+	promoted name:           Y_in_frame
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v343_z_in_frame
+	name:                    z_in_frame
+	unpromoted name:         lowson_spl_model.z_in_frame
+	promoted name:           z_in_frame
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v474_tonal_spl_uns
+	name:                    tonal_spl_uns
+	unpromoted name:         lowson_spl_model.tonal_spl_uns
+	promoted name:           tonal_spl_uns
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         tonal_spl_uns
+
+v464_bladeSPL_uns
+	name:                    bladeSPL_uns
+	unpromoted name:         lowson_spl_model.bladeSPL_uns
+	promoted name:           bladeSPL_uns
+	shape:                   (1, 33, 1, 4)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v329_aircraft_vel
+	name:                    aircraft_vel
+	unpromoted name:         lowson_spl_model.aircraft_vel
+	promoted name:           aircraft_vel
+	shape:                   (1, 3, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v95_init_obs_x_loc
+	name:                    init_obs_x_loc
+	unpromoted name:         observer_location_model.init_obs_x_loc
+	promoted name:           init_obs_x_loc
+	shape:                   (33,)
+	avg val:                 1.5635109309689081
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v96_init_obs_y_loc
+	name:                    init_obs_y_loc
+	unpromoted name:         observer_location_model.init_obs_y_loc
+	promoted name:           init_obs_y_loc
+	shape:                   (33,)
+	avg val:                 0.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v97_init_obs_z_loc
+	name:                    init_obs_z_loc
+	unpromoted name:         observer_location_model.init_obs_z_loc
+	promoted name:           init_obs_z_loc
+	shape:                   (33,)
+	avg val:                 1.2111523905001707e-16
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v106_aircraft_location
+	name:                    aircraft_location
+	unpromoted name:         observer_location_model.aircraft_location
+	promoted name:           aircraft_location
+	shape:                   (3, 33)
+	avg val:                 0.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v108_time_vectors
+	name:                    time_vectors
+	unpromoted name:         observer_location_model.time_vectors
+	promoted name:           time_vectors
+	shape:                   (33,)
+	avg val:                 0.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v166_rel_obs_angle
+	name:                    rel_obs_angle
+	unpromoted name:         observer_location_model.rel_obs_angle
+	promoted name:           rel_obs_angle
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v138_rel_obs_z_pos
+	name:                    rel_obs_z_pos
+	unpromoted name:         observer_location_model.rel_obs_z_pos
+	promoted name:           rel_obs_z_pos
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 5 out op(s)
+	connected to:
+	promoted to:
+
+v596_rel_obs_dist
+	name:                    rel_obs_dist
+	unpromoted name:         observer_location_model.rel_obs_dist
+	promoted name:           rel_obs_dist
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 5 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.rel_obs_dist
+	                         lowson_spl_model.rel_obs_dist
+
+v158_rel_angle_normal
+	name:                    rel_angle_normal
+	unpromoted name:         observer_location_model.rel_angle_normal
+	promoted name:           rel_angle_normal
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v148_normal_proj
+	name:                    normal_proj
+	unpromoted name:         observer_location_model.normal_proj
+	promoted name:           normal_proj
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v157_rel_angle_plane
+	name:                    rel_angle_plane
+	unpromoted name:         observer_location_model.rel_angle_plane
+	promoted name:           rel_angle_plane
+	shape:                   (1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v593_rel_obs_position
+	name:                    rel_obs_position
+	unpromoted name:         observer_location_model.rel_obs_position
+	promoted name:           rel_obs_position
+	shape:                   (1, 3, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 4 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.rel_obs_position
+	                         bm_thickness_model.rel_obs_position
+
+v135_rel_obs_y_pos
+	name:                    rel_obs_y_pos
+	unpromoted name:         observer_location_model.rel_obs_y_pos
+	promoted name:           rel_obs_y_pos
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v132_rel_obs_x_pos
+	name:                    rel_obs_x_pos
+	unpromoted name:         observer_location_model.rel_obs_x_pos
+	promoted name:           rel_obs_x_pos
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v124_aircraft_z_pos
+	name:                    aircraft_z_pos
+	unpromoted name:         observer_location_model.aircraft_z_pos
+	promoted name:           aircraft_z_pos
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v119_aircraft_y_pos
+	name:                    aircraft_y_pos
+	unpromoted name:         observer_location_model.aircraft_y_pos
+	promoted name:           aircraft_y_pos
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v114_aircraft_x_pos
+	name:                    aircraft_x_pos
+	unpromoted name:         observer_location_model.aircraft_x_pos
+	promoted name:           aircraft_x_pos
+	shape:                   (1, 1, 33)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v101_V_aircraft
+	name:                    V_aircraft
+	unpromoted name:         observer_location_model.V_aircraft
+	promoted name:           V_aircraft
+	shape:                   (1, 3)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+	                         V_aircraft
+
+v326_Vz
+	name:                    Vz
+	unpromoted name:         observer_location_model.Vz
+	promoted name:           Vz
+	shape:                   (1,)
+	avg val:                 0.0
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.Vz
+
+v324_Vy
+	name:                    Vy
+	unpromoted name:         observer_location_model.Vy
+	promoted name:           Vy
+	shape:                   (1,)
+	avg val:                 0.0
+	graph info:              0 in op / 2 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.Vy
+
+v220__dTdR
+	name:                    _dTdR
+	unpromoted name:         sears_function_model._dTdR
+	promoted name:           _dTdR
+	shape:                   (1, 40, 1)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v221__dDdR
+	name:                    _dDdR
+	unpromoted name:         sears_function_model._dDdR
+	promoted name:           _dDdR
+	shape:                   (1, 40, 1)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v618_nondim_sectional_radius
+	name:                    nondim_sectional_radius
+	unpromoted name:         sears_function_model.nondim_sectional_radius
+	promoted name:           nondim_sectional_radius
+	shape:                   (40,)
+	avg val:                 0.6
+	graph info:              0 in op / 3 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.nondim_sectional_radius
+	                         lowson_spl_model.nondim_sectional_radius
+
+v244_lam_var_Sears
+	name:                    lam_var_Sears
+	unpromoted name:         sears_function_model.lam_var_Sears
+	promoted name:           lam_var_Sears
+	shape:                   (1, 4, 11, 40)
+	avg val:                 5.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v283_S_imag_dummy
+	name:                    S_imag_dummy
+	unpromoted name:         sears_function_model.S_imag_dummy
+	promoted name:           S_imag_dummy
+	shape:                   (1, 4, 10, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v279_S_real_dummy
+	name:                    S_real_dummy
+	unpromoted name:         sears_function_model.S_real_dummy
+	promoted name:           S_real_dummy
+	shape:                   (1, 4, 10, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v293_dLdR_dummy
+	name:                    dLdR_dummy
+	unpromoted name:         sears_function_model.dLdR_dummy
+	promoted name:           dLdR_dummy
+	shape:                   (1, 4, 10, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+
+v239_lambda_i
+	name:                    lambda_i
+	unpromoted name:         sears_function_model.lambda_i
+	promoted name:           lambda_i
+	shape:                   (1, 40)
+	avg val:                 1.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v355_bD_Sears
+	name:                    bD_Sears
+	unpromoted name:         sears_function_model.bD_Sears
+	promoted name:           bD_Sears
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   0.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.bD_Sears
+
+v241_phi_exp
+	name:                    phi_exp
+	unpromoted name:         sears_function_model.phi_exp
+	promoted name:           phi_exp
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v353_bT_Sears
+	name:                    bT_Sears
+	unpromoted name:         sears_function_model.bT_Sears
+	promoted name:           bT_Sears
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   0.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.bT_Sears
+
+v354_aD_Sears
+	name:                    aD_Sears
+	unpromoted name:         sears_function_model.aD_Sears
+	promoted name:           aD_Sears
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   0.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.aD_Sears
+
+v352_aT_Sears
+	name:                    aT_Sears
+	unpromoted name:         sears_function_model.aT_Sears
+	promoted name:           aT_Sears
+	shape:                   (1, 4, 11, 40)
+	avg val (overwritten):   0.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+	                         lowson_spl_model.aT_Sears
+
+v587_speed_of_sound
+	name:                    speed_of_sound
+	unpromoted name:         atmosphere_model.speed_of_sound
+	promoted name:           speed_of_sound
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 4 out op(s)
+	connected to:
+	promoted to:
+	                         speed_of_sound
+	                         bm_thickness_model.speed_of_sound
+	                         lowson_spl_model.speed_of_sound
+
+v81_temperature
+	name:                    temperature
+	unpromoted name:         atmosphere_model.temperature
+	promoted name:           temperature
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 5 out op(s)
+	connected to:
+	promoted to:
+
+v92_dynamic_viscosity
+	name:                    dynamic_viscosity
+	unpromoted name:         atmosphere_model.dynamic_viscosity
+	promoted name:           dynamic_viscosity
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 0 out op(s)
+	connected to:
+	promoted to:
+
+v585_density
+	name:                    density
+	unpromoted name:         atmosphere_model.density
+	promoted name:           density
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 2 out op(s)
+	connected to:
+	promoted to:
+	                         bm_thickness_model.density
+	                         sears_function_model.density
+
+v84_pressure
+	name:                    pressure
+	unpromoted name:         atmosphere_model.pressure
+	promoted name:           pressure
+	shape:                   (1,)
+	avg val (overwritten):   1.0
+	graph info:              1 in op / 1 out op(s)
+	connected to:
+	promoted to:
+
+v77_altitude
+	name:                    altitude
+	unpromoted name:         atmosphere_model.altitude
+	promoted name:           altitude
+	shape:                   (1,)
+	avg val:                 0.0
+	graph info:              0 in op / 1 out op(s)
+	connected to:
+	promoted to:

@@ -1,0 +1,114 @@
+(id:4)                source     in     propeller_radius
+ <---(id:306)         promotion  dec    lowson_spl_model.propeller_radius
+ <---(id:217)         promotion  dec    sears_function_model.propeller_radius
+ <---(id:616)         promotion  dec    bm_thickness_model.propeller_radius
+
+(id:5)                source     in     thrust_dir
+ <---(id:594)         promotion  dec    bm_thickness_model.thrust_dir
+ <---(id:340)         promotion  dec    lowson_spl_model.thrust_dir
+ <---(id:146)         promotion  dec    observer_location_model.thrust_dir
+
+(id:7)                source     in     origin
+ <---(id:128)         promotion  dec    observer_location_model.origin
+
+(id:8)                source     in     thickness_to_chord_ratio
+ <---(id:611)         promotion  dec    bm_thickness_model.thickness_to_chord_ratio
+
+(id:10)               source     in     mach_number
+ <---(id:586)         promotion  dec    bm_thickness_model.mach_number
+
+WARNING: Declared variable not promoted/connected to input/output
+(id:2)                source     dec    rpm
+ <---(id:588)         promotion  dec    bm_thickness_model.rpm
+ <---(id:213)         promotion  dec    sears_function_model.rpm
+ <---(id:309)         promotion  dec    lowson_spl_model.rpm
+
+(id:14)               source     out    dr
+ <---(id:308)         promotion  dec    lowson_spl_model.dr
+ <---(id:617)         promotion  dec    bm_thickness_model.dr
+
+(id:12)               source     out    Vx
+ <---(id:322)         promotion  dec    lowson_spl_model.Vx
+ <---(id:98)          promotion  dec    observer_location_model.Vx
+
+(id:187)              source     out    load_integration_model.bD_integrand
+ <---(id:207)         promotion  dec    load_integration_model.bD_unsteady_load_integration_model.bD_integrand
+
+(id:184)              source     out    load_integration_model.bT_integrand
+ <---(id:201)         promotion  dec    load_integration_model.bT_unsteady_load_integration_model.bT_integrand
+
+(id:181)              source     out    load_integration_model.aD_integrand
+ <---(id:195)         promotion  dec    load_integration_model.aD_unsteady_load_integration_model.aD_integrand
+
+(id:179)              source     out    load_integration_model.aT_integrand
+ <---(id:189)         promotion  dec    load_integration_model.aT_unsteady_load_integration_model.aT_integrand
+
+(id:193)              source     out    load_integration_model.aT_unsteady_load_integration_model.aT_unsteady
+ <---(id:348)         promotion  dec    lowson_spl_model.aT_unsteady
+
+(id:205)              source     out    load_integration_model.bT_unsteady_load_integration_model.bT_unsteady
+ <---(id:349)         promotion  dec    lowson_spl_model.bT_unsteady
+
+(id:199)              source     out    load_integration_model.aD_unsteady_load_integration_model.aD_unsteady
+ <---(id:350)         promotion  dec    lowson_spl_model.aD_unsteady
+
+(id:211)              source     out    load_integration_model.bD_unsteady_load_integration_model.bD_unsteady
+ <---(id:351)         promotion  dec    lowson_spl_model.bD_unsteady
+
+(id:695)              source     out    bm_thickness_model.rotor_thickness_spl
+ <---(id:37)          promotion  dec    rotor_thickness_spl
+
+WARNING: Declared variable not promoted/connected to input/output
+(id:612)              source     dec    bm_thickness_model.chord_profile
+ <---(id:219)         promotion  dec    sears_function_model.chord_profile
+
+(id:584)              source     out    lowson_spl_model.tonal_spl_Sears
+ <---(id:22)          promotion  dec    tonal_spl_Sears
+
+(id:474)              source     out    lowson_spl_model.tonal_spl_uns
+ <---(id:21)          promotion  dec    tonal_spl_uns
+
+(id:145)              source     out    observer_location_model.rel_obs_dist
+ <---(id:596)         promotion  dec    bm_thickness_model.rel_obs_dist
+ <---(id:320)         promotion  dec    lowson_spl_model.rel_obs_dist
+
+(id:139)              source     out    observer_location_model.rel_obs_position
+ <---(id:342)         promotion  dec    lowson_spl_model.rel_obs_position
+ <---(id:593)         promotion  dec    bm_thickness_model.rel_obs_position
+
+(id:101)              source     out    observer_location_model.V_aircraft
+ <---(id:16)          promotion  dec    V_aircraft
+
+WARNING: Declared variable not promoted/connected to input/output
+(id:100)              source     dec    observer_location_model.Vz
+ <---(id:326)         promotion  dec    lowson_spl_model.Vz
+
+WARNING: Declared variable not promoted/connected to input/output
+(id:99)               source     dec    observer_location_model.Vy
+ <---(id:324)         promotion  dec    lowson_spl_model.Vy
+
+(id:222)              source     in     sears_function_model.nondim_sectional_radius
+ <---(id:618)         promotion  dec    bm_thickness_model.nondim_sectional_radius
+ <---(id:307)         promotion  dec    lowson_spl_model.nondim_sectional_radius
+
+(id:248)              source     out    sears_function_model.bD_Sears
+ <---(id:355)         promotion  dec    lowson_spl_model.bD_Sears
+
+(id:247)              source     out    sears_function_model.bT_Sears
+ <---(id:353)         promotion  dec    lowson_spl_model.bT_Sears
+
+(id:246)              source     out    sears_function_model.aD_Sears
+ <---(id:354)         promotion  dec    lowson_spl_model.aD_Sears
+
+(id:245)              source     out    sears_function_model.aT_Sears
+ <---(id:352)         promotion  dec    lowson_spl_model.aT_Sears
+
+(id:94)               source     out    atmosphere_model.speed_of_sound
+ <---(id:9)           promotion  dec    speed_of_sound
+ <---(id:587)         promotion  dec    bm_thickness_model.speed_of_sound
+ <---(id:304)         promotion  dec    lowson_spl_model.speed_of_sound
+
+(id:86)               source     out    atmosphere_model.density
+ <---(id:585)         promotion  dec    bm_thickness_model.density
+ <---(id:212)         promotion  dec    sears_function_model.density
+
