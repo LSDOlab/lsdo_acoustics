@@ -21,7 +21,8 @@ class DummyMesh(object):
     def __init__(self, num_radial, num_tangential):
         self.parameters = {
             'num_radial': num_radial,
-            'num_tangential': num_tangential
+            'num_tangential': num_tangential,
+            'mesh_units': 'm'
         }
 
 # region input file + data
@@ -67,9 +68,9 @@ broadband_acoustics.add_observer('obs', input_data['obs_loc'], time_vector=np.ar
 observer_data = broadband_acoustics.assemble_observers()
 
 skm = SKMBroadbandModel(
-    component_name='verif',
-    disk_prefix='rotor_disk',
-    blade_prefix='rotor_blade',
+    # component_name='verif',
+    # disk_prefix='rotor_disk',
+    # blade_prefix='rotor_blade',
     mesh=mesh,
     observer_data=observer_data,
     num_blades=input_data['num_blades'],
@@ -79,9 +80,9 @@ skm = SKMBroadbandModel(
 sim_skm = Simulator(skm)
 
 gl = GLModel(
-    component_name='verif',
-    disk_prefix='rotor_disk',
-    blade_prefix='rotor_blade',
+    # component_name='verif',
+    # disk_prefix='rotor_disk',
+    # blade_prefix='rotor_blade',
     mesh=mesh,
     observer_data=observer_data,
     num_blades=input_data['num_blades'],
@@ -107,14 +108,14 @@ for i in range(num_cases):
     sim_skm['propeller_radius'] = input_data['radius']
     sim_skm['CT'] = input_data['CT'][i]
     sim_skm.run()
-    skm_noise.append(sim_skm['verif_broadband_spl'][0][0])
+    skm_noise.append(sim_skm['broadband_spl'][0][0])
 
     sim_gl['rpm'] = input_data['RPM'][i]
     sim_gl['chord_profile'] = chord*np.ones((num_radial,))
     sim_gl['propeller_radius'] = input_data['radius']
     sim_gl['CT'] = input_data['CT'][i]
     sim_gl.run()
-    gl_noise.append(sim_gl['verif_broadband_spl'][0][0])
+    gl_noise.append(sim_gl['broadband_spl'][0][0])
 
     # SKM ERRORS
     skm_HJ_error.append((HJ_SKM[i] - skm_noise[i]) / HJ_SKM[i])
@@ -123,4 +124,6 @@ for i in range(num_cases):
     # GL ERRORS
     gl_HJ_error.append((HJ_GL[i] - gl_noise[i]) / HJ_GL[i])
     gl_exp_error.append((exp_data[i] - gl_noise[i]) / exp_data[i])
+
+    print(gl_exp_error)
 
