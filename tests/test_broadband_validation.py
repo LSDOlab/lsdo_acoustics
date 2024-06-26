@@ -114,6 +114,7 @@ for i in range(num_cases):
     sim_gl['chord_profile'] = chord*np.ones((num_radial,))
     sim_gl['propeller_radius'] = input_data['radius']
     sim_gl['CT'] = input_data['CT'][i]
+    sim_gl['thrust_dir'] = np.array([0., 0., -1.])
     sim_gl.run()
     gl_noise.append(sim_gl['broadband_spl'][0][0])
 
