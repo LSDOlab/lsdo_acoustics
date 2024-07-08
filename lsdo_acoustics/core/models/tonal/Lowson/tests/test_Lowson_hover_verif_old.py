@@ -1,8 +1,10 @@
 import numpy as np 
-import csdl_alpha as csdl
+import csdl
+from python_csdl_backend import Simulator
 
 from lsdo_acoustics.core.acoustics import Acoustics
-from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model import Lowson_model, LowsonVariableGroup
+from lsdo_acoustics.core.models.tonal.Lowson.Lowson_model_old import LowsonModel
+from lsdo_acoustics.core.models.tonal.KS.KvurtStalnov_model import KvurtStalnovModel
 
 '''
 This script runs a verification case for the newly-formulated Lowson model.
@@ -166,49 +168,41 @@ dummy_mesh = DummyMesh(
 )
 
 toggle_thickness_noise=True
-
-
-recorder = csdl.Recorder(inline=True)
-recorder.start()
-
-thrust_vector = csdl.Variable(value=np.array([0., 0., 1.]))
-thrust_origin = csdl.Variable(value=np.array([0., 0., 0.]))
-RPM = csdl.Variable(value=RPM)
-
-Lowson_vg = LowsonVariableGroup(
-    thrust_vector=thrust_vector,
-    thrust_origin=thrust_origin,
-    RPM=RPM,
-    speed_of_sound=340.3,
-    rotor_radius=radius,
-    mach_number=0,
-    density=1.225,
-    velocity=np.array([0.,0.,0.]),
+m = LowsonModel(
     mesh=dummy_mesh,
-    dDdR=dLdR_s * np.sin(lambda_i/nondim_sectional_radius).reshape((1, num_radial)),
-    dTdR=dLdR_s * np.cos(lambda_i/nondim_sectional_radius).reshape((1, num_radial)),
-    lambda_i=lambda_i,
-    nondim_sectional_radius=nondim_sectional_radius,
-    chord_profile=chord_profile,
-    thickness_to_chord_ratio=np.ones_like(chord_profile)*0.12
-)
-
-spl_Lowson = Lowson_model(
-    LowsonVariableGroup=Lowson_vg,
-    observer_data=observer_data,
     num_blades=num_blades,
-    num_nodes=1,
+    observer_data=observer_data,
     modes=[1],
+    # load_harmonics=,
     debug=True,
+    use_geometry=False,
     toggle_thickness_noise=toggle_thickness_noise
 )
 
-spl_avg = csdl.average(spl_Lowson)
-print('==================== running derivatives ====================')
-asdf = csdl.derivative(ofs=spl_avg, wrts=RPM)
-print(f'derivative value: {asdf.value}')
+sim = Simulator(m, analytics=False)
 
-# exit()
+sim['propeller_radius'] = radius
+sim['rpm'] = np.array([RPM])
+sim['thrust_dir'] = np.array([0., 0., 1.])
+sim['origin'] = np.array([0., 0., 0.])
+sim['chord_profile'] = chord_profile
+sim['in_plane_ex'] = np.array([1., 0., 0.])
+sim['mach_number'] = M
+# sim['_dTdR'] = dTdR * nondim_sectional_radius
+# sim['_dDdR'] = dDdR * nondim_sectional_radius
+sim['_dTdR'] = dLdR_s * np.cos(lambda_i/nondim_sectional_radius)
+sim['_dDdR'] = dLdR_s * np.sin(lambda_i/nondim_sectional_radius)
+sim['lambda_i'] = lambda_i
+sim['nondim_sectional_radius'] = nondim_sectional_radius
+
+sim.run()
+spl_Lowson = sim['tonal_spl']
+spl_Lowson_A_weighted = sim['tonal_spl_A_weighted']
+Lowson_unsteady_aT = sim['aT_Sears']
+Lowson_unsteady_aD = sim['aD_Sears']
+Lowson_unsteady_bT = sim['bT_Sears']
+Lowson_unsteady_bD = sim['bD_Sears']
+
 # m = KvurtStalnovModel(
 #     mesh=dummy_mesh,
 #     num_blades=num_blades,
@@ -241,8 +235,8 @@ print(f'derivative value: {asdf.value}')
 # KS_dDdR_real = sim['dDdR_real_exp']
 # KS_dDdR_imag = sim['dDdR_imag_exp']
 
-print('Lowson SPL (dB): ', spl_Lowson.value)
-# print('Lowson A-weighted SPL (dBA): ', spl_Lowson_A_weighted)
+print('Lowson SPL (dB): ', spl_Lowson)
+print('Lowson A-weighted SPL (dBA): ', spl_Lowson_A_weighted)
 # print('KS SPL (dB): ', spl_KS)
 # print('KS A-weighted SPL (dBA): ', spl_KS_A_weighted)
 
@@ -282,7 +276,7 @@ import matplotlib.pyplot as plt
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
 theta_plot = np.linspace(-np.pi/2, np.pi/2, num_observers)
 ax.plot(np.linspace(np.pi/2, -np.pi/2, len(Lowson_HG_MATLAB)), Lowson_HG_MATLAB, label='HG Matlab')
-ax.plot(theta_plot, spl_Lowson.value.reshape(num_observers,), label='Lowson')
+ax.plot(theta_plot, spl_Lowson.reshape(num_observers,), label='Lowson')
 ax.plot((90. - Lowson_exp_data[:,0])*np.pi/180., Lowson_exp_data[:,1], label='Exp. data')
 # ax.plot(theta_plot, spl_KS.reshape(num_observers,), label='KS')
 ax.set_rticks([55., 45., 35., 25.])
@@ -295,7 +289,7 @@ ax.grid(True)
 plt.legend()
 
 if num_observers == len(Lowson_HG_MATLAB):
-    Lowson_error = (spl_Lowson.value.reshape(num_observers,) - Lowson_HG_MATLAB[::-1])/Lowson_HG_MATLAB[::-1] * 100
+    Lowson_error = (spl_Lowson.reshape(num_observers,) - Lowson_HG_MATLAB[::-1])/Lowson_HG_MATLAB[::-1] * 100
     print('Lowson error percentage: ', Lowson_error)
 
     plt.figure()
@@ -306,17 +300,17 @@ if num_observers == len(Lowson_HG_MATLAB):
     plt.grid()
 
 
-# if toggle_thickness_noise:
-#     fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-#     theta_plot = np.linspace(-np.pi/2, np.pi/2, num_observers)
-#     ax.plot(theta_plot, spl_Lowson.reshape(num_observers,), label='Total')
-#     ax.plot(theta_plot, sim['tonal_spl_loading'].reshape(num_observers,), label='Loading (Lowson)')
-#     ax.plot(theta_plot, sim['rotor_thickness_spl'].reshape(num_observers,), label='Thickness (BM)')
-#     # ax.plot(theta_plot, spl_KS.reshape(num_observers,), label='KS')
-#     ax.set_rticks([55., 45., 35., 25.])
-#     ax.set_rlabel_position(-120)
-#     ax.grid(True)
-#     plt.legend()
+if toggle_thickness_noise:
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+    theta_plot = np.linspace(-np.pi/2, np.pi/2, num_observers)
+    ax.plot(theta_plot, spl_Lowson.reshape(num_observers,), label='Total')
+    ax.plot(theta_plot, sim['tonal_spl_loading'].reshape(num_observers,), label='Loading (Lowson)')
+    ax.plot(theta_plot, sim['rotor_thickness_spl'].reshape(num_observers,), label='Thickness (BM)')
+    # ax.plot(theta_plot, spl_KS.reshape(num_observers,), label='KS')
+    ax.set_rticks([55., 45., 35., 25.])
+    ax.set_rlabel_position(-120)
+    ax.grid(True)
+    plt.legend()
 
 
 plt.show()

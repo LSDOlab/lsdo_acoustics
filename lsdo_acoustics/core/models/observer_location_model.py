@@ -1,137 +1,69 @@
-import csdl
-import numpy as np
+import csdl_alpha as csdl
 
-class SteadyObserverLocationModel(csdl.Model):
+def steady_observer_location_model(num_nodes, observer_data, rotor_origin, thrust_vector, velocity):
     '''
-    This model is used to compute the observer locations relative to the moving aircraft.
-    We treat the problem such that the aircraft is still and the observer moves.
+    The input observer_data is a dictionary containing keys:
+    - original x, y, z position of observers
+    - time vectors 
+    - total number of observers 
     '''
-    def initialize(self):
-        self.parameters.declare('aircraft_location')
-        self.parameters.declare('init_obs_x_loc')
-        self.parameters.declare('init_obs_y_loc')
-        self.parameters.declare('init_obs_z_loc')
-        self.parameters.declare('time_vectors')
-        self.parameters.declare('total_num_observers') # NOT OBSERVER GROUPS
-        self.parameters.declare('num_nodes', default=1)
+
+    # initializing data
+    aircraft_location = observer_data['aircraft_position']
+    init_obs_x = observer_data['x']
+    init_obs_y = observer_data['y']
+    init_obs_z = observer_data['z']
+    time_vectors = observer_data['time']
+    num_observers = observer_data['num_observers']
+
+    # setting target shape for expansions
+    target_shape = (num_nodes, 3, num_observers)
+
+    # computing expanded aircraft position
+    v_exp = csdl.expand(velocity, target_shape, 'ij->ija')
+    init_aircraft_loc_exp = csdl.expand(aircraft_location, target_shape, 'ij->aij')
+    if num_observers == 1:
+        time = csdl.expand(time_vectors, target_shape)
+        init_obs_x_exp = csdl.expand(init_obs_x, target_shape)
+        init_obs_y_exp = csdl.expand(init_obs_y, target_shape)
+        init_obs_z_exp = csdl.expand(init_obs_z, target_shape)
+    else:
+        time = csdl.expand(time_vectors, target_shape, 'i->abi')
+        init_obs_x_exp = csdl.expand(init_obs_x, target_shape, 'i->abi')
+        init_obs_y_exp = csdl.expand(init_obs_y, target_shape, 'i->abi')
+        init_obs_z_exp = csdl.expand(init_obs_z, target_shape, 'i->abi')
+
+    aircraft_x_pos = init_aircraft_loc_exp[:,0,:] + v_exp[:,0,:]*time[:,0,:]
+    aircraft_y_pos = init_aircraft_loc_exp[:,1,:] + v_exp[:,1,:]*time[:,1,:]
+    aircraft_z_pos = init_aircraft_loc_exp[:,2,:] + v_exp[:,2,:]*time[:,2,:]
+
+    # computing observer position relative to rotor thrust origin
+    rotor_position = csdl.expand(rotor_origin, target_shape, 'i->aib')
+
+    print(init_obs_x.shape)
+    print(aircraft_x_pos.shape)
+    print(rotor_position[:,0,:].shape)
+
+    rel_obs_pos_x = init_obs_x.reshape((num_nodes, num_observers)) - (aircraft_x_pos + rotor_position[:,0,:])
+    rel_obs_pos_y = init_obs_y.reshape((num_nodes, num_observers)) - (aircraft_y_pos + rotor_position[:,1,:])
+    rel_obs_pos_z = init_obs_z.reshape((num_nodes, num_observers)) - (aircraft_z_pos + rotor_position[:,2,:])
+
+    rel_obs_position = csdl.Variable(shape=(num_nodes, 3, num_observers), value=0.)
+    rel_obs_position = rel_obs_position.set(csdl.slice[:,0,:], value=rel_obs_pos_x)
+    rel_obs_position = rel_obs_position.set(csdl.slice[:,1,:], value=rel_obs_pos_y)
+    rel_obs_position = rel_obs_position.set(csdl.slice[:,2,:], value=rel_obs_pos_z)
+
+    rel_obs_dist = csdl.norm(rel_obs_position, axes=(1,))
+    # print(rel_obs_dist.value)
     
-    def define(self):
-        num_nodes = self.parameters['num_nodes']
-        aircraft_location = self.parameters['aircraft_location']
-        init_obs_x_loc = self.parameters['init_obs_x_loc']
-        init_obs_y_loc = self.parameters['init_obs_y_loc']
-        init_obs_z_loc = self.parameters['init_obs_z_loc']
-        time_vectors = self.parameters['time_vectors']
 
-        # total number of observers is equal to sum[(size of observer group) * (number of time steps)]
-        num_observers =  self.parameters['total_num_observers'] 
-        num_observer_groups = len(time_vectors)
+    thrust_dir_exp = csdl.expand(thrust_vector, target_shape, 'i->aib')
+    normal_proj = csdl.sum(rel_obs_position*thrust_dir_exp, axes=(1,))
+    rel_angle_plane = csdl.arcsin(normal_proj/rel_obs_dist)
+    rel_angle_normal = csdl.arccos(normal_proj/rel_obs_dist)
+    # print(normal_proj.value)
+    # print(rel_angle_plane.value)
+    # print(rel_angle_normal.value)
+    # exit()
 
-        init_obs_x_loc = self.create_input('init_obs_x_loc', init_obs_x_loc)
-        init_obs_y_loc = self.create_input('init_obs_y_loc', init_obs_y_loc)
-        init_obs_z_loc = self.create_input('init_obs_z_loc', init_obs_z_loc)
-
-        Vx = self.declare_variable('Vx', shape=(num_nodes,), val=0.)
-        Vy = self.declare_variable('Vy', shape=(num_nodes,), val=0.)
-        Vz = self.declare_variable('Vz', shape=(num_nodes,), val=0.)
-
-        # aircraft_location = self.declare_variable('aircraft_location', aircraft_location)
-        V_aircraft = self.create_output('V_aircraft', shape=(num_nodes, 3))
-        V_aircraft[:,0] = csdl.expand(Vx, (num_nodes,1), 'i->ia')
-        V_aircraft[:,1] = csdl.expand(Vy, (num_nodes,1), 'i->ia')
-        V_aircraft[:,2] = csdl.expand(Vz, (num_nodes,1), 'i->ia')
-
-        V_expanded = csdl.expand(V_aircraft, (num_nodes, 3, num_observers), 'ij->ija')
-
-        # need to compute how the observer location changes relative to aircraft CG
-        # we can expand this later to be relative to the rotors
-        # print(aircraft_location)
-        # aircraft_location = self.declare_variable('aircraft_location', aircraft_location)
-
-        init_aircraft_location = csdl.expand(
-            self.create_input('aircraft_location', aircraft_location),
-            (num_nodes, 3, num_observers), 'ij->aij'
-        )
-
-        time = csdl.expand(
-            self.create_input('time_vectors', time_vectors),
-            (num_nodes, 3, num_observers), 'i->abi'
-        )
-
-        aircraft_x_pos = self.register_output(
-            'aircraft_x_pos',
-            init_aircraft_location[:,0,:] + V_expanded[:,0,:]*time[:,0,:]
-        )
-
-        aircraft_y_pos = self.register_output(
-            'aircraft_y_pos',
-            init_aircraft_location[:,1,:] + V_expanded[:,1,:]*time[:,1,:]
-        )
-
-        aircraft_z_pos = self.register_output(
-            'aircraft_z_pos',
-            init_aircraft_location[:,2,:] + V_expanded[:,2,:]*time[:,2,:]
-        )
-
-        init_obs_x_loc = csdl.expand(init_obs_x_loc, (num_nodes, 1, num_observers), 'i->abi')
-        init_obs_y_loc = csdl.expand(init_obs_y_loc, (num_nodes, 1, num_observers), 'i->abi')
-        init_obs_z_loc = csdl.expand(init_obs_z_loc, (num_nodes, 1, num_observers), 'i->abi')
-
-        # ROTOR POSITION RELATIVE TO NOSE OF AIRCRAFT
-        rotor_position = csdl.expand(
-            self.declare_variable(
-                'origin', # NOTE: CHECK AGAIN LATER
-                val=0.,
-                shape=((3,))
-            ),
-            shape=(num_nodes, 3, num_observers),
-            indices='i->aib'
-        ) # HOLDS x, y, z POSITION OF ROTOR RELATIVE TO AIRCRAFT NOSE
-
-        # OBSERVER LOCATIONS RELATIVE TO AIRCRAFT LOCATION
-        rel_obs_x_pos = self.register_output('rel_obs_x_pos', init_obs_x_loc - (aircraft_x_pos + rotor_position[:,0,:]))
-        rel_obs_y_pos = self.register_output('rel_obs_y_pos', init_obs_y_loc - (aircraft_y_pos + rotor_position[:,1,:]))
-        rel_obs_z_pos = self.register_output('rel_obs_z_pos', init_obs_z_loc - (aircraft_z_pos + rotor_position[:,2,:]))
-
-        rel_obs_position = self.create_output('rel_obs_position', shape=(num_nodes, 3, num_observers))
-        rel_obs_position[:,0,:] = rel_obs_x_pos
-        rel_obs_position[:,1,:] = rel_obs_y_pos
-        rel_obs_position[:,2,:] = rel_obs_z_pos
-
-        rel_obs_dist = self.register_output(
-            'rel_obs_dist',
-            (rel_obs_x_pos**2 + rel_obs_y_pos**2 + rel_obs_z_pos**2)**(0.5),
-        )
-
-        thrust_dir = csdl.expand(self.declare_variable('thrust_dir', shape=(3,)), (num_nodes, 3, num_observers), 'i->aib')
-
-        normal_proj = csdl.dot(rel_obs_position, thrust_dir, axis=1)
-        self.register_output('normal_proj', normal_proj)
-
-        asdf = csdl.expand(normal_proj, (num_nodes, 3, num_observers), 'ij->iaj') * thrust_dir
-        # self.register_output('asdf', asdf)
-
-        '''
-        STEPS TO FIND ANGLE:
-        1. take dot product between thrust direction and relative observer distance
-        2. multiply by the thrust direction to get the vector direction
-        3. compute angle from plane (arcsin(proj_dir, rel_obs_dist))
-        4. compute angle from axis parallel to thrust direction (arccos(proj_dir, rel_obs_dist))
-        '''
-
-        rel_angle_plane = csdl.arcsin(csdl.expand(normal_proj, (num_nodes, 1, num_observers), 'ij->iaj')/rel_obs_dist)
-        rel_angle_normal = csdl.arccos(csdl.expand(normal_proj, (num_nodes, 1, num_observers), 'ij->iaj')/rel_obs_dist)
-
-        rel_angle_plane = self.register_output('rel_angle_plane', csdl.reshape(rel_angle_plane, (num_nodes, num_observers)))
-        rel_angle_normal = self.register_output('rel_angle_normal', csdl.reshape(rel_angle_normal, (num_nodes, num_observers)))
-
-
-
-
-
-        rel_obs_angle = self.register_output(
-            'rel_obs_angle',
-            csdl.arccos(rel_obs_z_pos / rel_obs_dist) *  \
-                (rel_obs_z_pos + 1e-12) / ((rel_obs_z_pos + 1e-12)**2)**(0.5)
-        ) # CHECK THIS LATER
-
+    return  rel_obs_position, rel_obs_dist, rel_angle_plane, rel_angle_normal

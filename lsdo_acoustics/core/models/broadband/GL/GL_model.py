@@ -1,125 +1,135 @@
-import csdl
 import numpy as np
+import csdl_alpha as csdl
+from dataclasses import dataclass
+from csdl_alpha.utils.typing import VariableLike, Variable
+from typing import Union, Optional
 
+from lsdo_acoustics.core.models.broadband.GL.gl_spl_model import GL_spl_model
+from lsdo_acoustics.core.models.observer_location_model import steady_observer_location_model
+from lsdo_acoustics.utils.a_weighting import A_weighting_function
 
-from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
-from lsdo_acoustics.core.models.broadband.GL.gl_spl_model import GLSPLModel
-from lsdo_acoustics.utils.a_weighting import A_weighting_func
+@dataclass
+class GLVariableGroup(csdl.VariableGroup):
+    thrust_vector: VariableLike
+    thrust_origin: VariableLike
+    CT: VariableLike
+    rotor_radius: VariableLike
+    
+    rpm: VariableLike
+    speed_of_sound: VariableLike
+    mesh: VariableLike
+    
+    chord_length: Optional[VariableLike] = None
+    chord_profile: Optional[VariableLike] = None
+    theta: Optional[VariableLike] = None
+    mach_number: Optional[VariableLike] = None
+    Vx: Optional[VariableLike] = None
+    Vy: Optional[VariableLike] = None
+    Vz: Optional[VariableLike] = None
+    
 
+    # def define_checks(self):
+    #     self.add_check('thrust_vector', type=Union(Variable, np.ndarray))
+    #     self.add_check('thrust_origin', type=Union(Variable, np.ndarray))
 
-class GLModel(csdl.Model):
-    def initialize(self):
-        self.parameters.declare('mesh')
-        self.parameters.declare('name', types=str, default=None, allow_none=True)
-        self.parameters.declare('observer_data')
-        self.parameters.declare('num_blades')
-        self.parameters.declare('num_nodes', default=1)
-        self.parameters.declare('debug', default=False)
-        self.parameters.declare('use_geometry', default=True)
-        self.parameters.declare('freq_band', default=np.array(
+def GL_model(GLVariableGroup, observer_data, num_blades, num_nodes, debug=False, use_geometry=False, A_weighting=False):
+    freq_band = np.array(
             [12.5, 16, 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 
              500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000,
              10000, 12500, 16000, 20000,
-             25000, 31500, 40000, 50000, 63000 # additional ones used by Hyunjune
-             ] 
-        ))
+             25000, 31500, 40000, 50000, 63000 # additional frequencies used by Hyunjune
+             ])
+    
+    mesh = GLVariableGroup.mesh
+    units = mesh.parameters['mesh_units']
+    num_radial = mesh.parameters['num_radial']
 
-    def define(self):
-        
-        mesh = self.parameters['mesh']
-        units = mesh.parameters['mesh_units']
-        observer_data = self.parameters['observer_data']
-        num_observers = observer_data['num_observers']
-        num_blades = self.parameters['num_blades'] 
-        num_nodes = self.parameters['num_nodes']
-        test = self.parameters['debug']
-        use_geometry = self.parameters['use_geometry']
-        freq_band = self.parameters['freq_band']
-        model_name = self.parameters['name']
+    a = GLVariableGroup.speed_of_sound
 
-        num_radial = mesh.parameters['num_radial']
+    if debug or not use_geometry:
+        propeller_radius = GLVariableGroup.rotor_radius
+        chord_profile = GLVariableGroup.chord_profile
+        thrust_dir = GLVariableGroup.thrust_vector
+        thrust_origin = GLVariableGroup.thrust_origin
 
+        M = GLVariableGroup.mach_number
+        Vx = csdl.expand(M, (num_nodes,)) * a
+        Vy = csdl.Variable(value=np.zeros(shape=Vx.shape))
+        Vz = csdl.Variable(value=np.zeros(shape=Vx.shape))
+    else:
+        Vx = GLVariableGroup.Vx
+        Vy = GLVariableGroup.Vy
+        Vz = GLVariableGroup.Vz
+        M = (Vx**2 + Vy**2 + Vz**2 + 1.e-12)**0.5 / a
 
-        if test or not use_geometry:
-            rotor_radius = self.declare_variable('propeller_radius')
-            chord_profile = self.declare_variable('chord_profile', shape=(num_radial,1))
-            self.declare_variable('thrust_dir', shape=(3,))
+        if units == 'ft':
+            r = GLVariableGroup.rotor_radius
+            propeller_radius = r * 0.3048
+            thrust_origin = GLVariableGroup.thrust_origin * 0.3048
         else:
-            # Thrust vector and origin
-            if units == 'ft':
-                r = self.declare_variable('R', shape=(num_nodes, 1))
-                rotor_radius = self.register_output('propeller_radius', r * 0.3048)
-                to = self.declare_variable(f'disk_origin', shape=(3, )) * 0.3048
-                self.register_output('origin', to)
-            else:
-                r = self.declare_variable('R', shape=(num_nodes, 1))
-                rotor_radius = self.register_output('propeller_radius', r * 1)
-                to = self.declare_variable(f'disk_origin', shape=(3, ))
-                self.register_output('origin', to*1)
-                            
+            r = GLVariableGroup.rotor_radius
+            propeller_radius = r
+            thrust_origin = GLVariableGroup.thrust_origin
 
-            # Chord 
-            chord_length = self.declare_variable(f'chord_length', shape=(num_radial, )) # NOTE: GENERALIZE THIS NAMING
-            if units == 'ft':
-                chord_profile = self.register_output('chord_profile', chord_length * 0.3048)
-            else:
-                chord_profile = self.register_output('chord_profile', chord_length * 1)
-
-            # FINDING THRUST VECTOR DIRECTION
-            theta = self.declare_variable(name='theta', shape=(num_nodes, 1), val=0.*np.pi/180.)
-            rotation_matrix = self.create_output('rot_mat', shape=(3,3), val=0.)
-            # ONLY CONSIDERING PITCH CHANGES (X-Z), NO YAW OR ROLL FOR NOW
-            rotation_matrix[1, 1] = (theta + 10)/(theta + 10)
-            rotation_matrix[0, 0] = csdl.cos(theta)
-            rotation_matrix[0, 2] = -1 * csdl.sin(theta)
-            rotation_matrix[2, 0] = -1 * csdl.sin(theta)
-            rotation_matrix[2, 2] = -1 * csdl.cos(theta)
-            thrust_vec = self.declare_variable('thrust_vector', shape=(3, ))
-            thrust_dir = csdl.matvec(rotation_matrix, thrust_vec/csdl.expand(csdl.pnorm(thrust_vec), shape=(3,)))
-            self.register_output('thrust_dir', thrust_dir)
-
-        self.add(
-            SteadyObserverLocationModel(
-                num_nodes=num_nodes,
-                aircraft_location=observer_data['aircraft_position'],
-                init_obs_x_loc=observer_data['x'],
-                init_obs_y_loc=observer_data['y'],
-                init_obs_z_loc=observer_data['z'],
-                time_vectors=observer_data['time'],
-                total_num_observers=observer_data['num_observers'],
-            ),
-            'steady_observer_location_model'
-        )
-
-        rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
-        # rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
-
-        norm_hub_rad = 0.2
-        dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)
-        self.register_output('dr', dr)
-
-        self.add(
-            GLSPLModel(
-                num_nodes=num_nodes,
-                name=model_name,
-                num_observers=num_observers,
-                num_blades=num_blades,
-                num_radial=num_radial,
-                freq_band=freq_band
-            ),
-            'gl_spl_model'
-        )
-
-        if model_name is not None:
-            rotor_broadband_spl = self.declare_variable(f'{model_name}_broadband_spl', shape=(num_nodes, num_observers))
+        chord_length = GLVariableGroup.chord_length
+        if units == 'ft':
+            chord_profile = chord_length * 0.3048
         else:
-            rotor_broadband_spl = self.declare_variable('broadband_spl', shape=(num_nodes, num_observers))
+            chord_profile = chord_length
 
-        # A-WEIGHTING
+        # FINDING THRUST VECTOR DIRECTION
+        theta = GLVariableGroup.theta
+        rot_mat = csdl.Variable(shape=(3,3), value=0.)
+        # ONLY CONSIDERING PITCH CHANGES (X-Z), NO YAW OR ROLL FOR NOW
+        rot_mat = rot_mat.set(csdl.slice[1,1], value=1.)
+        rot_mat = rot_mat.set(csdl.slice[0,0], value=csdl.cos(theta))
+        rot_mat = rot_mat.set(csdl.slice[2,2], value=-1 * csdl.cos(theta))
+        rot_mat = rot_mat.set(csdl.slice[0,2], value=-1 * csdl.sin(theta))
+        rot_mat = rot_mat.set(csdl.slice[2,0], value=-1 * csdl.sin(theta))
+
+        thrust_vec = GLVariableGroup.thrust_vector
+        thrust_dir = csdl.matvec(rot_mat, thrust_vec/csdl.expand(csdl.norm(thrust_vec), shape=(3,)))
+    
+    velocity = csdl.Variable(shape=(num_nodes, 3), value=0.)
+    velocity = velocity.set(csdl.slice[:,0], value=Vx)
+    velocity = velocity.set(csdl.slice[:,1], value=Vy)
+    velocity = velocity.set(csdl.slice[:,2], value=Vz)
+
+    rel_obs_position, rel_obs_dist, rel_angle_plane, rel_angle_normal = steady_observer_location_model(
+        num_nodes=num_nodes,
+        observer_data=observer_data,
+        rotor_origin=thrust_origin,
+        thrust_vector=thrust_dir,
+        velocity=velocity
+    )
+
+    norm_hub_rad = 0.2
+    dr = (1 - norm_hub_rad) * propeller_radius / (num_radial-1)
+
+    num_observers = observer_data['num_observers']
+
+    rpm = GLVariableGroup.rpm
+    CT = GLVariableGroup.CT
+
+    inputs_dict = {
+        'CT': CT,
+        'chord_profile': chord_profile,
+        'rel_obs_dist': rel_obs_dist,
+        'rel_angle_plane': rel_angle_plane,
+        'propeller_radius': propeller_radius,
+        'dr': dr,
+        'rpm': rpm,
+        'speed_of_sound': a,
+        'velocity': velocity
+
+    }
+    GL_spl = GL_spl_model(num_nodes, num_observers, num_blades, inputs_dict, frequency_band=freq_band)
+
+    if A_weighting:
         BPF = 1. * rpm * num_blades/ 60.
-        rotor_broadband_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_broadband_spl, f=BPF)
+        GL_spl_A_weighted = A_weighting_function(SPL=GL_spl, f=BPF)
+        
+        return GL_spl, GL_spl_A_weighted
 
-        if model_name is not None:
-            self.register_output(f'{model_name}_broadband_spl_A_weighted', rotor_broadband_spl_A)
-        else:
-            self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
+    else:
+        return GL_spl

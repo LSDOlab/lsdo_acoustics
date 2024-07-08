@@ -1,12 +1,12 @@
 import csdl 
 import numpy as np 
-from lsdo_acoustics.core.models.observer_location_model import SteadyObserverLocationModel
+from lsdo_acoustics.core.models.observer_location_model_old import SteadyObserverLocationModel
 # from lsdo_acoustics.core.models.tonal.KS.ks_spl_model_old import KSSPLModel
 from lsdo_acoustics.core.models.tonal.KS.ks_spl_model import KSSPLModel
 
 
 
-from lsdo_acoustics.utils.a_weighting import A_weighting_func
+from lsdo_acoustics.utils.a_weighting_old import A_weighting_func
 from lsdo_acoustics.utils.atmosphere_model import AtmosphereModel
 
 class KvurtStalnovModel(csdl.Model):

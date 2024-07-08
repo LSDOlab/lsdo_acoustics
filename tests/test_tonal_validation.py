@@ -26,7 +26,7 @@ class DummyMesh(object):
         }
 
 num_radial = 40
-mode = 'KS'
+mode = 'Lowson'
 
 # region inputs
 if mode == 'Lowson':
@@ -94,8 +94,8 @@ observer_data = a.assemble_observers()
 # endregion
 if mode == 'Lowson':
     m = model(
-        component_name='verif',
-        disk_prefix='rotor_disk',
+        # component_name='verif',
+        # disk_prefix='rotor_disk',
         # blade_prefix='rotor_blade',
         mesh=mesh,
         observer_data=observer_data,

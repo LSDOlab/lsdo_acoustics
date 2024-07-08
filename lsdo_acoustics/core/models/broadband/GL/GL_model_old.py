@@ -1,39 +1,45 @@
-import numpy as np
 import csdl
+import numpy as np
 
 from lsdo_acoustics.core.models.observer_location_model_old import SteadyObserverLocationModel
-from lsdo_acoustics.core.models.broadband.SKM.skm_spl_model import SKMSPLModel
-
-
-
+from lsdo_acoustics.core.models.broadband.GL.gl_spl_model_old import GLSPLModel
 from lsdo_acoustics.utils.a_weighting_old import A_weighting_func
 
-class SKMBroadbandModel(csdl.Model):
+
+class GLModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('mesh')
+        self.parameters.declare('name', types=str, default=None, allow_none=True)
         self.parameters.declare('observer_data')
         self.parameters.declare('num_blades')
         self.parameters.declare('num_nodes', default=1)
         self.parameters.declare('debug', default=False)
-        self.parameters.declare('name', types=str, default=None, allow_none=True)
+        self.parameters.declare('use_geometry', default=True)
+        self.parameters.declare('freq_band', default=np.array(
+            [12.5, 16, 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 
+             500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000,
+             10000, 12500, 16000, 20000,
+             25000, 31500, 40000, 50000, 63000 # additional ones used by Hyunjune
+             ] 
+        ))
 
     def define(self):
+        
         mesh = self.parameters['mesh']
+        units = mesh.parameters['mesh_units']
         observer_data = self.parameters['observer_data']
         num_observers = observer_data['num_observers']
         num_blades = self.parameters['num_blades'] 
         num_nodes = self.parameters['num_nodes']
         test = self.parameters['debug']
-
-        num_radial = mesh.parameters['num_radial']
-        units = mesh.parameters['mesh_units']
-
+        use_geometry = self.parameters['use_geometry']
+        freq_band = self.parameters['freq_band']
         model_name = self.parameters['name']
 
+        num_radial = mesh.parameters['num_radial']
 
-        self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
 
-        if test:
+        if test or not use_geometry:
             rotor_radius = self.declare_variable('propeller_radius')
             chord_profile = self.declare_variable('chord_profile', shape=(num_radial,1))
             self.declare_variable('thrust_dir', shape=(3,))
@@ -84,19 +90,23 @@ class SKMBroadbandModel(csdl.Model):
             'steady_observer_location_model'
         )
 
+        rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
+        # rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
+
         norm_hub_rad = 0.2
         dr = (1 - norm_hub_rad) * rotor_radius / (num_radial-1)
         self.register_output('dr', dr)
 
         self.add(
-            SKMSPLModel(
+            GLSPLModel(
                 num_nodes=num_nodes,
-                num_observers=observer_data['num_observers'],
+                name=model_name,
+                num_observers=num_observers,
                 num_blades=num_blades,
                 num_radial=num_radial,
-                name=model_name
+                freq_band=freq_band
             ),
-            'skm_spl_model'
+            'gl_spl_model'
         )
 
         if model_name is not None:
@@ -105,7 +115,6 @@ class SKMBroadbandModel(csdl.Model):
             rotor_broadband_spl = self.declare_variable('broadband_spl', shape=(num_nodes, num_observers))
 
         # A-WEIGHTING
-        rpm = self.declare_variable('rpm', shape=(num_nodes, 1), units='rpm')
         BPF = 1. * rpm * num_blades/ 60.
         rotor_broadband_spl_A = A_weighting_func(self=self, tonal_SPL=rotor_broadband_spl, f=BPF)
 
@@ -113,19 +122,3 @@ class SKMBroadbandModel(csdl.Model):
             self.register_output(f'{model_name}_broadband_spl_A_weighted', rotor_broadband_spl_A)
         else:
             self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
-
-        # self.register_output(f'broadband_spl_A_weighted', rotor_broadband_spl_A)
-
-if __name__ == '__main__':
-    model = SKMBroadbandModel(
-        num_nodes=2,
-        num_observers=3,
-        component_name='dummy',
-        num_blades=2,
-        num_radial=5
-    )
-
-    from python_csdl_backend import Simulator
-    sim = Simulator(model)
-
-    sim.run()

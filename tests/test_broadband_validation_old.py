@@ -1,12 +1,12 @@
 import numpy as np
-import csdl_alpha as csdl
+import csdl
 from python_csdl_backend import Simulator
 import csv
 
 import pickle
 from lsdo_acoustics import Acoustics, ROOT
-from lsdo_acoustics.core.models.broadband.GL.GL_model import GL_model, GLVariableGroup
-from lsdo_acoustics.core.models.total_noise_model import total_noise_model
+from lsdo_acoustics.core.models.broadband.SKM.SKM_model import SKMBroadbandModel
+from lsdo_acoustics.core.models.broadband.GL.GL_model_old import GLModel
 
 '''
 This file is a validation test for the SKM and GL broadband noise models.
@@ -67,64 +67,64 @@ broadband_acoustics = Acoustics(aircraft_position=np.array([0.,0.,0.]))
 broadband_acoustics.add_observer('obs', input_data['obs_loc'], time_vector=np.array([0.]))
 observer_data = broadband_acoustics.assemble_observers()
 
+skm = SKMBroadbandModel(
+    # component_name='verif',
+    # disk_prefix='rotor_disk',
+    # blade_prefix='rotor_blade',
+    mesh=mesh,
+    observer_data=observer_data,
+    num_blades=input_data['num_blades'],
+    num_nodes=1,
+    debug=True
+)
+sim_skm = Simulator(skm)
+
+gl = GLModel(
+    # component_name='verif',
+    # disk_prefix='rotor_disk',
+    # blade_prefix='rotor_blade',
+    mesh=mesh,
+    observer_data=observer_data,
+    num_blades=input_data['num_blades'],
+    num_nodes=1,
+    debug=True
+)
+sim_gl = Simulator(gl)
+
 chord = input_data['chord']
 
+skm_noise = []
 gl_noise = []
+
+skm_exp_error = []
+skm_HJ_error = []
 gl_exp_error = []
 gl_HJ_error = []
 
 num_cases = len(RPM)
-num_nodes = 1
-velocity = np.zeros((num_nodes, 3))
-recorder = csdl.Recorder(inline=True)
-recorder.start()
-
 for i in range(num_cases):
+    sim_skm['rpm'] = input_data['RPM'][i]
+    sim_skm['chord_profile'] = chord*np.ones((num_radial,))
+    sim_skm['propeller_radius'] = input_data['radius']
+    sim_skm['CT'] = input_data['CT'][i]
+    sim_skm.run()
+    skm_noise.append(sim_skm['broadband_spl'][0][0])
 
-    RPM = csdl.Variable(value=input_data['RPM'][i])
+    sim_gl['rpm'] = input_data['RPM'][i]
+    sim_gl['chord_profile'] = chord*np.ones((num_radial,))
+    sim_gl['propeller_radius'] = input_data['radius']
+    sim_gl['CT'] = input_data['CT'][i]
+    sim_gl['thrust_dir'] = np.array([0., 0., -1.])
+    sim_gl.run()
+    gl_noise.append(sim_gl['broadband_spl'][0][0])
 
-    gl_vg = GLVariableGroup(
-        thrust_vector=np.array([0., 0., -1.]),
-        thrust_origin=np.array([0., 0., 0.]),
-        CT=np.array([input_data['CT'][i]]),
-        rotor_radius=input_data['radius'],
-        chord_profile=chord*np.ones((num_radial,)),
-        mach_number=0.,
-        speed_of_sound=340.3,
-        rpm=RPM,
-        mesh=mesh,
-        # chord_length=0,
-        # theta=0,
-    )
-
-    gl_spl, gl_spl_A_weighted = GL_model(
-        GLVariableGroup=gl_vg,
-        observer_data=observer_data,
-        num_blades=input_data['num_blades'],
-        num_nodes=num_nodes,
-        debug=True,
-        A_weighting=True
-    )
-
-    print(f'GL noise: {gl_spl.value}')
-    print(f'A-weighted GL noise: {gl_spl_A_weighted.value}')
-    
-    gl_noise.append(gl_spl)
+    # SKM ERRORS
+    skm_HJ_error.append((HJ_SKM[i] - skm_noise[i]) / HJ_SKM[i])
+    skm_exp_error.append((exp_data[i] - skm_noise[i]) / exp_data[i])
 
     # GL ERRORS
-    gl_HJ_error.append((HJ_GL[i] - gl_noise[i].value) / HJ_GL[i])
-    gl_exp_error.append((exp_data[i] - gl_noise[i].value) / exp_data[i])
+    gl_HJ_error.append((HJ_GL[i] - gl_noise[i]) / HJ_GL[i])
+    gl_exp_error.append((exp_data[i] - gl_noise[i]) / exp_data[i])
 
-    asdf = csdl.derivative(ofs=gl_spl, wrts=RPM)
-    print(f'derivative value: {asdf.value}')
+    print(gl_exp_error)
 
-print('================ spl values: ================')
-print([spl.value[0] for spl in gl_noise])
-
-print('================ gl error (%): ================')
-print([error[0] for error in gl_exp_error])
-
-
-total_spl = total_noise_model(SPL_list = gl_noise)
-print(total_spl.value)
-recorder.stop()
