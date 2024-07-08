@@ -115,8 +115,9 @@ for i in range(num_cases):
     gl_HJ_error.append((HJ_GL[i] - gl_noise[i].value) / HJ_GL[i])
     gl_exp_error.append((exp_data[i] - gl_noise[i].value) / exp_data[i])
 
-    asdf = csdl.derivative(ofs=gl_spl, wrts=RPM)
-    print(f'derivative value: {asdf.value}')
+    # asdf = csdl.derivative(ofs=gl_spl, wrts=RPM)
+    # print(f'derivative value: {asdf.value}')
+    asdf = csdl.derivative_utils.verify_derivatives(ofs=gl_spl, wrts=RPM, step_size=1.e-6)
 
 print('================ spl values: ================')
 print([spl.value[0] for spl in gl_noise])

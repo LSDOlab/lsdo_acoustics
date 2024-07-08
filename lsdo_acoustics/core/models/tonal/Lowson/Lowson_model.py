@@ -22,7 +22,6 @@ class LowsonVariableGroup(csdl.VariableGroup):
     rotor_radius: VariableLike
     density: VariableLike
     
-    velocity: VariableLike
     mesh: VariableLike
 
     dD: Optional[VariableLike] = None
@@ -36,11 +35,13 @@ class LowsonVariableGroup(csdl.VariableGroup):
 
     chord_length: Optional[VariableLike] = None
     chord_profile: Optional[VariableLike] = None
-    theta: Optional[VariableLike] = None
+    theta: Optional[VariableLike] = None # pitch angle
+
     mach_number: Optional[VariableLike] = None
     Vx: Optional[VariableLike] = None
     Vy: Optional[VariableLike] = None
     Vz: Optional[VariableLike] = None
+
     thickness_to_chord_ratio: Optional[VariableLike] = None
     nondim_sectional_radius: Optional[VariableLike] = None
     

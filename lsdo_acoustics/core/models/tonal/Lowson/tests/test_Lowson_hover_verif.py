@@ -183,7 +183,6 @@ Lowson_vg = LowsonVariableGroup(
     rotor_radius=radius,
     mach_number=0,
     density=1.225,
-    velocity=np.array([0.,0.,0.]),
     mesh=dummy_mesh,
     dDdR=dLdR_s * np.sin(lambda_i/nondim_sectional_radius).reshape((1, num_radial)),
     dTdR=dLdR_s * np.cos(lambda_i/nondim_sectional_radius).reshape((1, num_radial)),
@@ -205,8 +204,9 @@ spl_Lowson = Lowson_model(
 
 spl_avg = csdl.average(spl_Lowson)
 print('==================== running derivatives ====================')
-asdf = csdl.derivative(ofs=spl_avg, wrts=RPM)
-print(f'derivative value: {asdf.value}')
+# asdf = csdl.derivative(ofs=spl_avg, wrts=RPM)
+# print(f'derivative value: {asdf.value}')
+asdf = csdl.derivative_utils.verify_derivatives(ofs=spl_avg, wrts=RPM, step_size=1.e-6)
 
 # exit()
 # m = KvurtStalnovModel(
