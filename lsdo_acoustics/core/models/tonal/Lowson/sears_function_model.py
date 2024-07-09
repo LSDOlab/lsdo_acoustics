@@ -95,7 +95,7 @@ def Sears_function_model(input_dict, num_nodes, num_blades, num_radial, num_azim
     bT_Sears = csdl.Variable(shape=target_shape, value=0.) # dTdR_imag_exp
     bD_Sears = csdl.Variable(shape=target_shape, value=0.) # dDdR_imag_exp
 
-    print(dTdR_real.shape)
+    # print(dTdR_real.shape)
     aT_Sears = aT_Sears.set(csdl.slice[:,:,0,:], value=csdl.expand(dTdR_real, (num_nodes, B, num_radial), 'ij->iaj'))
     aD_Sears = aD_Sears.set(csdl.slice[:,:,0,:], value=csdl.expand(dDdR_real, (num_nodes, B, num_radial), 'ij->iaj'))
 

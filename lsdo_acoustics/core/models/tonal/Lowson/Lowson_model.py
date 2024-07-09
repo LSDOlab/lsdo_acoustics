@@ -22,8 +22,9 @@ class LowsonVariableGroup(csdl.VariableGroup):
     rotor_radius: VariableLike
     density: VariableLike
     
-    mesh: VariableLike
-
+    num_radial: int
+    num_tangential: int
+    
     dD: Optional[VariableLike] = None
     dT: Optional[VariableLike] = None
 
@@ -54,10 +55,8 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
 
     num_observers = observer_data['num_observers']
 
-    mesh = LowsonVariableGroup.mesh
-    units = mesh.parameters['mesh_units']
-    num_radial = mesh.parameters['num_radial']
-    num_azim = mesh.parameters['num_tangential']
+    num_radial = LowsonVariableGroup.num_radial
+    num_azim = LowsonVariableGroup.num_tangential
 
     test = debug
 
@@ -80,20 +79,11 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
         Vz = LowsonVariableGroup.Vz
         M = (Vx**2 + Vy**2 + Vz**2 + 1.e-12)**0.5 / a
 
-        if units == 'ft':
-            r = LowsonVariableGroup.rotor_radius
-            propeller_radius = r * 0.3048
-            thrust_origin = LowsonVariableGroup.thrust_origin * 0.3048
-        else:
-            r = LowsonVariableGroup.rotor_radius
-            propeller_radius = r
-            thrust_origin = LowsonVariableGroup.thrust_origin
-
+        r = LowsonVariableGroup.rotor_radius
+        propeller_radius = r
+        thrust_origin = LowsonVariableGroup.thrust_origin
         chord_length = LowsonVariableGroup.chord_length
-        if units == 'ft':
-            chord_profile = chord_length * 0.3048
-        else:
-            chord_profile = chord_length
+        chord_profile = chord_length
 
         # FINDING THRUST VECTOR DIRECTION
         theta = LowsonVariableGroup.theta
@@ -215,8 +205,8 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
     )
     # endregion
 
-    print(spl_unsteady.value)
-    print(spl_Sears.value)
+    # print(spl_unsteady.value)
+    # print(spl_Sears.value)
 
     # region SPL smoothing
     V_inf = csdl.norm(velocity + 1.e-12, axes=(1,))
@@ -231,9 +221,9 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
 
     thrust_dir_exp = csdl.expand(thrust_dir, (num_nodes, 3), 'i->ai')
     td_cross_V = csdl.cross(thrust_dir_exp, V_dir, axis=1) # should have max norm 1
-    print(V_dir.value)
-    print(thrust_dir_exp.value)
-    print(td_cross_V.value)
+    # print(V_dir.value)
+    # print(thrust_dir_exp.value)
+    # print(td_cross_V.value)
     # exit()
     td_cross_V_norm = csdl.norm(td_cross_V + 1.e-12, axes=(1,))
     target_shape = (num_nodes, num_observers)
@@ -242,7 +232,7 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
     else:
         td_cross_V_norm_exp = csdl.expand(td_cross_V_norm, target_shape, 'i->ia')
 
-    print(td_cross_V_norm_exp.value)
+    # print(td_cross_V_norm_exp.value)
     funcs_list = [spl_Sears, spl_unsteady]
     bounds_list = [1.e-1]
     loading_noise = switch_func(

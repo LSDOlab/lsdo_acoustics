@@ -17,7 +17,10 @@ class GLVariableGroup(csdl.VariableGroup):
     
     rpm: VariableLike
     speed_of_sound: VariableLike
-    mesh: VariableLike
+    mesh: VariableLike = None
+
+    num_radial: int = None
+    num_tangential: int = None
     
     chord_length: Optional[VariableLike] = None
     chord_profile: Optional[VariableLike] = None
@@ -40,9 +43,7 @@ def GL_model(GLVariableGroup, observer_data, num_blades, num_nodes, debug=False,
              25000, 31500, 40000, 50000, 63000 # additional frequencies used by Hyunjune
              ])
     
-    mesh = GLVariableGroup.mesh
-    units = mesh.parameters['mesh_units']
-    num_radial = mesh.parameters['num_radial']
+    num_radial = GLVariableGroup.num_radial
 
     a = GLVariableGroup.speed_of_sound
 
@@ -62,20 +63,11 @@ def GL_model(GLVariableGroup, observer_data, num_blades, num_nodes, debug=False,
         Vz = GLVariableGroup.Vz
         M = (Vx**2 + Vy**2 + Vz**2 + 1.e-12)**0.5 / a
 
-        if units == 'ft':
-            r = GLVariableGroup.rotor_radius
-            propeller_radius = r * 0.3048
-            thrust_origin = GLVariableGroup.thrust_origin * 0.3048
-        else:
-            r = GLVariableGroup.rotor_radius
-            propeller_radius = r
-            thrust_origin = GLVariableGroup.thrust_origin
-
+        r = GLVariableGroup.rotor_radius
+        propeller_radius = r
+        thrust_origin = GLVariableGroup.thrust_origin
         chord_length = GLVariableGroup.chord_length
-        if units == 'ft':
-            chord_profile = chord_length * 0.3048
-        else:
-            chord_profile = chord_length
+        chord_profile = chord_length
 
         # FINDING THRUST VECTOR DIRECTION
         theta = GLVariableGroup.theta

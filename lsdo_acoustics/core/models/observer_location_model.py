@@ -40,18 +40,23 @@ def steady_observer_location_model(num_nodes, observer_data, rotor_origin, thrus
     # computing observer position relative to rotor thrust origin
     rotor_position = csdl.expand(rotor_origin, target_shape, 'i->aib')
 
-    print(init_obs_x.shape)
-    print(aircraft_x_pos.shape)
-    print(rotor_position[:,0,:].shape)
+    # print(init_obs_x.shape)
+    # print(aircraft_x_pos.shape)
+    # print(rotor_position[:,0,:].shape)
 
     rel_obs_pos_x = init_obs_x.reshape((num_nodes, num_observers)) - (aircraft_x_pos + rotor_position[:,0,:])
     rel_obs_pos_y = init_obs_y.reshape((num_nodes, num_observers)) - (aircraft_y_pos + rotor_position[:,1,:])
     rel_obs_pos_z = init_obs_z.reshape((num_nodes, num_observers)) - (aircraft_z_pos + rotor_position[:,2,:])
 
     rel_obs_position = csdl.Variable(shape=(num_nodes, 3, num_observers), value=0.)
-    rel_obs_position = rel_obs_position.set(csdl.slice[:,0,:], value=rel_obs_pos_x)
-    rel_obs_position = rel_obs_position.set(csdl.slice[:,1,:], value=rel_obs_pos_y)
-    rel_obs_position = rel_obs_position.set(csdl.slice[:,2,:], value=rel_obs_pos_z)
+    if num_nodes == 1 and num_observers == 1:
+        rel_obs_position = rel_obs_position.set(csdl.slice[:, 0, :], value=rel_obs_pos_x.flatten())
+        rel_obs_position = rel_obs_position.set(csdl.slice[:, 1, :], value=rel_obs_pos_y.flatten())
+        rel_obs_position = rel_obs_position.set(csdl.slice[:, 2, :], value=rel_obs_pos_z.flatten())
+    else:
+        rel_obs_position = rel_obs_position.set(csdl.slice[:, 0, :], value=rel_obs_pos_x)
+        rel_obs_position = rel_obs_position.set(csdl.slice[:, 1, :], value=rel_obs_pos_y)
+        rel_obs_position = rel_obs_position.set(csdl.slice[:, 2, :], value=rel_obs_pos_z)
 
     rel_obs_dist = csdl.norm(rel_obs_position, axes=(1,))
     # print(rel_obs_dist.value)
