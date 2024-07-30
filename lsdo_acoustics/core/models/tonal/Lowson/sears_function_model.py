@@ -51,6 +51,13 @@ def Sears_function_model(input_dict, num_nodes, num_blades, num_radial, num_azim
         dT = input_dict['dT']
         dD = input_dict['dD']
         dr = input_dict['dr']
+
+        if dT.shape != (num_nodes, num_radial, num_azim):
+            dT = dT.reshape((num_nodes, num_radial, num_azim))
+
+        if dD.shape != (num_nodes, num_radial, num_azim):
+            dD = dD.reshape((num_nodes, num_radial, num_azim))
+
         dTdR = dT / csdl.expand(dr, dT.shape)
         dDdR = dD / csdl.expand(dr, dD.shape)
 
@@ -78,7 +85,11 @@ def Sears_function_model(input_dict, num_nodes, num_blades, num_radial, num_azim
         lambda_i_exp = csdl.expand(lambda_i, target_shape, 'ij->iabj')
         phi_exp = lambda_i_exp / r_exp
     else:
-        phi = input_dict['phi'][:,:,0].reshape((num_nodes, num_radial)) # originally (nn, nr, na) and taking one azimuth
+        phi_input = input_dict['phi']
+        if phi_input.shape != (num_nodes, num_radial, num_azim):
+            phi_input = phi_input.reshape((num_nodes, num_radial, num_azim))
+        
+        phi = phi_input[:,:,0].reshape((num_nodes, num_radial)) # originally (nn, nr, na) and taking one azimuth
         phi_exp = csdl.expand(phi, target_shape, 'ij->iabj')
         lambda_i_exp = phi_exp*r_exp
 

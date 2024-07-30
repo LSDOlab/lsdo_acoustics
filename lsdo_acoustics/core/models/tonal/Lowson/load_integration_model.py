@@ -6,6 +6,10 @@ def load_integration_model(load_integration_inputs, num_nodes, num_blades, num_r
     dD = load_integration_inputs['dD'] # sectional loads (num_nodes, num_radial, num_azim)
     dT = load_integration_inputs['dT'] # sectional loads
 
+    if dD.shape != (num_nodes, num_radial, num_azim):
+        dD = dD.reshape((num_nodes, num_radial, num_azim))
+        dT = dT.reshape((num_nodes, num_radial, num_azim))
+
     dD_exp = csdl.expand(dD, (num_nodes, num_blades, num_radial, num_azim), 'ijk->iajk')
     dT_exp = csdl.expand(dT, (num_nodes, num_blades, num_radial, num_azim), 'ijk->iajk')
 
