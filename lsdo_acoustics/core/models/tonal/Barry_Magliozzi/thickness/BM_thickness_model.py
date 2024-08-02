@@ -104,4 +104,4 @@ def BM_thickness_model(BM_inputs, num_nodes, num_blades, num_observers, num_radi
         base=10.
     )
 
-    return SPL_thickness
+    return SPL_thickness, PmT_per_mode

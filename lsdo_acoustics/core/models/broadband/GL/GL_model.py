@@ -6,7 +6,7 @@ from typing import Union, Optional
 
 from lsdo_acoustics.core.models.broadband.GL.gl_spl_model import GL_spl_model
 from lsdo_acoustics.core.models.observer_location_model import steady_observer_location_model
-from lsdo_acoustics.utils.a_weighting import A_weighting_function
+from lsdo_acoustics.utils.a_weighting import A_weighting_function, A_weighting_function_new
 
 @dataclass
 class GLVariableGroup(csdl.VariableGroup):
@@ -127,7 +127,10 @@ def GL_model(GLVariableGroup, observer_data, num_blades, num_nodes, debug=False,
 
     if A_weighting:
         BPF = 1. * rpm * num_blades/ 60.
-        GL_spl_A_weighted = A_weighting_function(SPL=GL_spl, f=BPF)
+        # GL_spl_A_weighted = A_weighting_function(SPL=GL_spl, f=BPF)
+
+        Pc_2 = csdl.power(10., GL_spl/10 ) * (20e-6)**2
+        GL_spl_A_weighted = A_weighting_function_new(Pc_2, BPF)
         
         return GL_spl, GL_spl_A_weighted
 

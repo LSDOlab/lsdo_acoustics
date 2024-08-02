@@ -10,7 +10,7 @@ from lsdo_acoustics.core.models.tonal.Lowson.lowson_spl_model import Lowson_spl_
 from lsdo_acoustics.core.models.tonal.Lowson.sears_function_model import Sears_function_model
 from lsdo_acoustics.core.models.tonal.Barry_Magliozzi.thickness.BM_thickness_model import BM_thickness_model
 
-from lsdo_acoustics.utils.a_weighting import A_weighting_function
+from lsdo_acoustics.utils.a_weighting import A_weighting_function, A_weighting_function_new
 from lsdo_acoustics.utils.csdl_switch import switch_func
 
 @dataclass
@@ -205,7 +205,7 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
         'bT_Sears': bT_Sears,
         'bD_Sears': bD_Sears,
     }
-    spl_unsteady, spl_Sears = Lowson_spl_model(
+    spl_unsteady, spl_Sears, P_uns, P_Sears_s, P_Sears_uns = Lowson_spl_model(
         Lowson_inputs=unsteady_Lowson_inputs,
         num_nodes=num_nodes,
         num_observers=num_observers,
@@ -272,7 +272,7 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
             'nondim_sectional_radius': nondim_sectional_radius,
 
         }
-        thickness_noise = BM_thickness_model(
+        thickness_noise, PmT_per_mode = BM_thickness_model(
             BM_inputs=BM_inputs,
             num_nodes=num_nodes,
             num_blades=num_blades,
@@ -291,11 +291,59 @@ def Lowson_model(LowsonVariableGroup, observer_data, num_blades, num_nodes, mode
     # region A_weighting
     if A_weighting:
         BPF = 1. * rpm * num_blades/ 60.
-        Lowson_spl_A_weighted = A_weighting_function(SPL=Lowson_spl, f=BPF)
+        # Lowson_spl_dBA = A_weighting_function(SPL=Lowson_spl, f=BPF)
+
+        dBA_unsteady = A_weighting_function_new(P_mag=P_uns, fm=BPF)
+
+        ex = csdl.power(10., dBA_unsteady/10.)
+        ex_sum = csdl.sum(ex, axes=(3,))
+        SPL_m = 10.*csdl.log(ex_sum, base=10.)
+        spl_unsteady_dBA = 10*csdl.log(csdl.sum(csdl.power(10.,SPL_m/10.), axes=(2,)), base=10.) # SHAPE IS (num_nodes, num_observers)
+
+        dBA_Sears_s = A_weighting_function_new(P_mag=P_Sears_s, fm=BPF)
+        dBA_Sears_uns = A_weighting_function_new(P_mag=P_Sears_uns, fm=BPF)
+
+        SPL_per_mode_per_blade = 10*csdl.log(
+            csdl.power(10., dBA_Sears_s/10.) + csdl.power(10., dBA_Sears_uns/10.),
+            base=10.
+        )
+        SPL_m = csdl.reshape(SPL_per_mode_per_blade[:,:,:,0], (num_nodes, num_observers, len(modes)))
+        spl_Sears_dBA = 10*csdl.log(csdl.sum(csdl.power(10.,SPL_m/10.), axes=(2,)), base=10.) # SHAPE IS (num_nodes, num_observers)
+
+        funcs_list = [spl_Sears_dBA, spl_unsteady_dBA]
+        bounds_list = [1.e-1]
+        loading_noise_dBA = switch_func(
+            x=td_cross_V_norm_exp,
+            funcs_list=funcs_list,
+            bounds_list=bounds_list,
+            scale=100.
+        )
+
+        if toggle_thickness_noise:
+            dBA_thickness = A_weighting_function_new(P_mag=PmT_per_mode, fm=BPF)
+            thickness_noise_dBA  = 10.*csdl.log(
+                csdl.sum(
+                    csdl.power(
+                        10., 
+                        dBA_thickness/10. + 1.e-6
+                    ),
+                    axes=(2,)
+                ),
+                base=10.
+            )
+
+            Lowson_spl_dBA = 10*csdl.log(
+                csdl.power(10., loading_noise_dBA/10.) + csdl.power(10., thickness_noise_dBA/10.),
+                base=10.
+            )
+            
+        else:
+            Lowson_spl_dBA = loading_noise
+
     # endregion
 
     if A_weighting:
-        return Lowson_spl, Lowson_spl_A_weighted
+        return Lowson_spl, Lowson_spl_dBA
     else:
         return Lowson_spl
         

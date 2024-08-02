@@ -257,7 +257,7 @@ def Lowson_spl_model(Lowson_inputs, num_nodes, num_observers, B, num_radial, mod
     spl_Sears = 10*csdl.log(csdl.sum(csdl.power(10.,SPL_m/10.), axes=(2,)), base=10.) # SHAPE IS (num_nodes, num_observers)
     # endregion
 
-    return spl_unsteady, spl_Sears
+    return spl_unsteady, spl_Sears, sum_A_B, C_n_trapz_s, C_n_trapz_uns
 
 
 def convection_adjustment(P, S, Vx, Vy, Vz, a):

@@ -192,14 +192,15 @@ Lowson_vg = LowsonVariableGroup(
     thickness_to_chord_ratio=np.ones_like(chord_profile)*0.12
 )
 
-spl_Lowson = Lowson_model(
+spl_Lowson, spl_Lowson_dBA = Lowson_model(
     LowsonVariableGroup=Lowson_vg,
     observer_data=observer_data,
     num_blades=num_blades,
     num_nodes=1,
     modes=[1],
     debug=True,
-    toggle_thickness_noise=toggle_thickness_noise
+    toggle_thickness_noise=toggle_thickness_noise,
+    A_weighting=True
 )
 
 spl_avg = csdl.average(spl_Lowson)

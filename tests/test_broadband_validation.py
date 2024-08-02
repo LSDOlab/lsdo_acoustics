@@ -54,7 +54,8 @@ input_data = {
     'RPM': np.array(RPM),
     'CT': np.array(CT),
     # 'M': np.array(M),
-    'obs_loc': np.array([float(val[1]) for val in rows[6:9]])
+    # 'obs_loc': np.array([float(val[1]) for val in rows[6:9]])*2.
+    'obs_loc': np.array([3., 0., 0.])*5
 }
 # endregion
 num_radial=5

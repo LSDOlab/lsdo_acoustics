@@ -21,3 +21,19 @@ def A_weighting_function(SPL, f):
         A = 10.*csdl.log(csdl.power(10., (SPL + csdl.expand(A_shift, shape, 'i->ij'))/10.), base=10.)
 
     return A
+
+def A_weighting_function_new(P_mag, fm):
+    K1 = 2.243e16
+    K3 = 1.562
+    f1 = 20.599
+    f2 = 107.653
+    f3 = 737.862
+    f4 = 12194.22
+
+    wC_m = K1*fm**4 / ((fm**2 + f1**2)**2 * (fm**2 + f4**2)**2)
+    wA_m = wC_m*K3*fm**4 / ((fm**2 + f2**2) * (fm**2  + f3**2))
+
+    p2_A = 0.5*wA_m*P_mag
+    dBA = 10*csdl.log((p2_A)/(20.e-6)**2, base=10.)
+
+    return dBA
