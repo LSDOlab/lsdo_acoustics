@@ -11,18 +11,14 @@ def A_weighting_function(SPL, f):
     RA_1000 = RA_func(1000.)
     RA_f = RA_func(f)
     num_nodes = f.shape[0]
-    A_shift = csdl.reshape(
-        20.*csdl.log(RA_f, base=10.) - 20.*csdl.log(RA_1000, base=10.),
-        (f.shape[0],)
-    )
-    if num_nodes == 1:
-        A = 10.*csdl.log(csdl.power(10., (SPL + csdl.expand(A_shift, shape))/10.), base=10.)
-    else:
-        A = 10.*csdl.log(csdl.power(10., (SPL + csdl.expand(A_shift, shape, 'i->ij'))/10.), base=10.)
+    A_shift = 20.*csdl.log(RA_f, base=10.) - 20.*csdl.log(RA_1000, base=10.)
+
+    A = 10.*csdl.log(csdl.power(10., (SPL + A_shift)/10.), base=10.)
 
     return A
 
-def A_weighting_function_new(P_mag, fm):
+def A_weighting_function_new(P_mag, fm, freq_axis=None):
+    
     K1 = 2.243e16
     K3 = 1.562
     f1 = 20.599
@@ -33,7 +29,10 @@ def A_weighting_function_new(P_mag, fm):
     wC_m = K1*fm**4 / ((fm**2 + f1**2)**2 * (fm**2 + f4**2)**2)
     wA_m = wC_m*K3*fm**4 / ((fm**2 + f2**2) * (fm**2  + f3**2))
 
-    p2_A = 0.5*wA_m*P_mag
+    if freq_axis is not None:
+        p2_A = 0.5*csdl.sum(wA_m*P_mag, axes=(freq_axis,))
+    else:
+        p2_A = 0.5*wA_m*P_mag
     dBA = 10*csdl.log((p2_A)/(20.e-6)**2, base=10.)
 
     return dBA

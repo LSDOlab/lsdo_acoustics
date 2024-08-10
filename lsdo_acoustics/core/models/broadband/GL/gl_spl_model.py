@@ -89,4 +89,4 @@ def GL_spl_model(num_nodes, num_observers, num_blades, inputs_dict, frequency_ba
         ),
         base=10
     )
-    return GL_spl
+    return GL_spl, SPL_1_3

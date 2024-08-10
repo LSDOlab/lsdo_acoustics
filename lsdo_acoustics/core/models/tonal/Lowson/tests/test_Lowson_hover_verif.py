@@ -209,7 +209,7 @@ spl_avg = csdl.average(spl_Lowson)
 print('==================== running derivatives ====================')
 # asdf = csdl.derivative(ofs=spl_avg, wrts=RPM)
 # print(f'derivative value: {asdf.value}')
-asdf = csdl.derivative_utils.verify_derivatives(ofs=spl_avg, wrts=RPM, step_size=1.e-6)
+# asdf = csdl.derivative_utils.verify_derivatives(ofs=spl_avg, wrts=RPM, step_size=1.e-6)
 
 # exit()
 # m = KvurtStalnovModel(
@@ -245,7 +245,7 @@ asdf = csdl.derivative_utils.verify_derivatives(ofs=spl_avg, wrts=RPM, step_size
 # KS_dDdR_imag = sim['dDdR_imag_exp']
 
 print('Lowson SPL (dB): ', spl_Lowson.value)
-# print('Lowson A-weighted SPL (dBA): ', spl_Lowson_A_weighted)
+print('Lowson A-weighted SPL (dBA): ', spl_Lowson_dBA.value)
 # print('KS SPL (dB): ', spl_KS)
 # print('KS A-weighted SPL (dBA): ', spl_KS_A_weighted)
 

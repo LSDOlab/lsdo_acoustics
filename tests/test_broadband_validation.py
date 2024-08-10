@@ -91,7 +91,7 @@ for i in range(num_cases):
         CT=np.array([input_data['CT'][i]]),
         rotor_radius=input_data['radius'],
         chord_profile=chord*np.ones((num_radial,)),
-        mach_number=0.,
+        mach_number=.0,
         speed_of_sound=340.3,
         rpm=RPM,
         mesh=mesh,

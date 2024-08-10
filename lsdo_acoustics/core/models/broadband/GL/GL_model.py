@@ -8,6 +8,8 @@ from lsdo_acoustics.core.models.broadband.GL.gl_spl_model import GL_spl_model
 from lsdo_acoustics.core.models.observer_location_model import steady_observer_location_model
 from lsdo_acoustics.utils.a_weighting import A_weighting_function, A_weighting_function_new
 
+from lsdo_acoustics.utils.csdl_switch import switch_func
+
 @dataclass
 class GLVariableGroup(csdl.VariableGroup):
     thrust_vector: VariableLike
@@ -115,14 +117,57 @@ def GL_model(GLVariableGroup, observer_data, num_blades, num_nodes, debug=False,
         'velocity': velocity
 
     }
-    GL_spl = GL_spl_model(num_nodes, num_observers, num_blades, inputs_dict, frequency_band=freq_band)
+    GL_spl, GL_SPL_1_3 = GL_spl_model(num_nodes, num_observers, num_blades, inputs_dict, frequency_band=freq_band)
+
+    thrust_dir_exp = csdl.expand(thrust_dir, (num_nodes, 3), 'i->ai')
+    a = csdl.cross(thrust_dir_exp, velocity, axis=1)
+    b = csdl.cross(thrust_dir_exp, a, axis=1)
+    # a, b now define two vectors in the rotor plane
+    a_norm = csdl.norm(a+1.e-12, axes=(1,))
+    b_norm = csdl.norm(b+1.e-12, axes=(1,))
+
+    b_dir = b/b_norm
+    edgewise_vel = csdl.norm(velocity*b_dir, axes=(1,))
+
+    omega = rpm*2*np.pi/60.
+    adv_ratio = edgewise_vel/(omega*propeller_radius)
+    lower_func=0.
+    bounds_list = [0.05]
+    if num_blades == 2:
+        upper_func = (3.7/(.25))*adv_ratio - .74
+    else:
+        upper_func = (2.5/.25)*adv_ratio - .5
+    funcs_list = [lower_func, upper_func]
+    edgewise_adjustment = switch_func(adv_ratio, funcs_list, bounds_list, scale=1000)
+    # print('J', adv_ratio.value)
+    # print(edgewise_adjustment.value)
+    # print('GL', GL_spl.value)
+
+    GL_spl = GL_spl + edgewise_adjustment
+    # print('adjusted GL', GL_spl.value)
+
+    # convert the 1/3 octave band GL_spl to narrow band with GL_spl - 10*log10(0.2315*freq_band)
+    # compute A-weighting
+    # convert back with A_weighted_spl + 10*log10(0.2315*freq_band)
 
     if A_weighting:
         BPF = 1. * rpm * num_blades/ 60.
-        # GL_spl_A_weighted = A_weighting_function(SPL=GL_spl, f=BPF)
+        fm = csdl.Variable(value=freq_band)
 
-        Pc_2 = csdl.power(10., GL_spl/10 ) * (20e-6)**2
-        GL_spl_A_weighted = A_weighting_function_new(Pc_2, BPF)
+        fm_expanded = csdl.expand(fm, GL_SPL_1_3.shape, 'a->ija')
+
+        GL_spl_A_weighted_spectrum = A_weighting_function(SPL=GL_SPL_1_3, f=fm_expanded)
+        GL_spl_A_weighted = 10 * csdl.log(
+            csdl.sum(
+                csdl.power(10., GL_spl_A_weighted_spectrum/10.),
+                axes=(2,)
+            ),
+            base=10
+        )
+
+        # Pc_2 = csdl.power(10., GL_SPL_1_3/10 ) * (20e-6)**2
+        # # Pc_2_expanded = csdl.expand(Pc_2, Pc_2.shape + (fm.shape[0],), 'ij->ija')
+        # GL_spl_A_weighted = A_weighting_function_new(Pc_2, fm_expanded, freq_axis=2)
         
         return GL_spl, GL_spl_A_weighted
 
