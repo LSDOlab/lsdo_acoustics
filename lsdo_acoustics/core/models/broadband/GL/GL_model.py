@@ -151,9 +151,10 @@ def GL_model(GLVariableGroup, observer_data, num_blades, num_nodes, debug=False,
     # convert back with A_weighted_spl + 10*log10(0.2315*freq_band)
 
     if A_weighting:
-        BPF = 1. * rpm * num_blades/ 60.
-        fm = csdl.Variable(value=freq_band)
+        # BPF = 1. * rpm * num_blades/ 60.
+        # GL_spl_A_weighted_spectrum = A_weighting_function(SPL=GL_SPL_1_3, f=BPF)
 
+        fm = csdl.Variable(value=freq_band)
         fm_expanded = csdl.expand(fm, GL_SPL_1_3.shape, 'a->ija')
 
         GL_spl_A_weighted_spectrum = A_weighting_function(SPL=GL_SPL_1_3, f=fm_expanded)

@@ -13,7 +13,8 @@ def A_weighting_function(SPL, f):
     num_nodes = f.shape[0]
     A_shift = 20.*csdl.log(RA_f, base=10.) - 20.*csdl.log(RA_1000, base=10.)
 
-    A = 10.*csdl.log(csdl.power(10., (SPL + A_shift)/10.), base=10.)
+    # A = 10.*csdl.log(csdl.power(10., (SPL + A_shift)/10.), base=10.)
+    A = SPL + A_shift
 
     return A
 
